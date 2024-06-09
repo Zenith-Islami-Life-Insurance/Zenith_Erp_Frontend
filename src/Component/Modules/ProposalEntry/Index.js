@@ -912,7 +912,7 @@ console.log(value)
       );
       console.log(response)
     } catch (err) {
-      console.log(err);
+      console.log('Error:', err);
     }
   };
   return (
