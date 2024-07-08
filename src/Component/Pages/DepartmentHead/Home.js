@@ -21,7 +21,7 @@ const Home = () => {
   const departmentHeadList = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/department-head/${PERSONAL_ID}`
+        `http://localhost:5001/api/department-head/${PERSONAL_ID}`
       );
       setDept_head(response.data?.dept_head_details);
     } catch (error) {
@@ -38,7 +38,7 @@ const Home = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/dept-head-pmodule-list/${PERSONAL_ID}`
+        `http://localhost:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
       );
       setModueleList(response.data?.module_list);
       setSpinner(false);

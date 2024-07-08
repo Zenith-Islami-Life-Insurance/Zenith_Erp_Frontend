@@ -35,8 +35,8 @@ const Index = () => {
   const [proposalInfo, setProposalInfo] = useState([]);
   const [policyInfo, setPolicyInfo] = useState([]);
 
-  const [proposal_date, setProposalDate] = useState();
-  const [birth_date, setBirthDate] = useState();
+  const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
+  const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
   const [resident, setResident] = useState();
   const [district, setDistrict] = useState();
   const [thana, setThana] = useState();
@@ -61,6 +61,7 @@ const Index = () => {
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
   const [commencementDate, setUpdateCommDate] = useState();
+  console.log('commence', commencementDate);
   const [planName, setPlan] = useState();
   const [premage, setPremAge] = useState();
   const [termList, setTermList] = useState([""]);
@@ -99,6 +100,7 @@ const Index = () => {
   const [ipdPlanNo, setIpdplanNo] = useState();
   const [isChecked, setIsChecked] = useState(true);
   const [riderPremRate, setRiderPremRate] = useState([]);
+
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
     // Set the riderPremRate based on the checkbox state
@@ -182,7 +184,7 @@ const Index = () => {
 
   const UserD = JSON.parse(localStorage.getItem("UserDetails"));
   const USER_ID = UserD?.PERSONALID;
-  // console.log(UserD);
+  const USER_TYPE = UserD?.USER_TYPE
 
   const formatAsMMDDYYYY = (dateString) => {
     const dateObj = new Date(dateString);
@@ -198,7 +200,19 @@ const Index = () => {
     const year = dateObj.getFullYear();
     return `${year}-${month}-${day}`;
   };
+  console.log(formatAsMMDDYYYYy(commencementDate?.comm_date[0]))
+  // current date (date: 7/7/2024)---Start ----
+  const [currentDates, setCurrentDate] = useState('');
+  const currentDate = formatAsMMDDYYYY(currentDates)
+
+  useEffect(() => {
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString(); // Change the formatting as needed
+    setCurrentDate(formattedDate);
+  }, []);
+  // -------------END-------------
   const comm_datee = formatAsMMDDYYYY(risk_date);
+
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
 
   const dob = formatAsMMDDYYYY(birth_date);
@@ -247,7 +261,7 @@ const Index = () => {
   };
   const handlePlan = (e) => {
     const value = e.target.value;
-console.log(value)
+    console.log(value)
     const [
       planId,
       calcuType,
@@ -325,9 +339,23 @@ console.log(value)
     }
   }, [proposalInfo]);
 
-  const handleAddress = (e) => {
+  //address part  Start
+  const [permanentAddress, setPermanentAddress] = useState('');
+  const [isAddressChecked, setIsAddressChecked] = useState(false);
+  const handleAddressChange = (e) => {
     setAddress(e.target.value);
   };
+
+  const handleAddressCheckboxChange = (e) => {
+    const checked = e.target.checked;
+    setIsAddressChecked(checked);
+    if (checked) {
+      setPermanentAddress(address);
+    } else {
+      setPermanentAddress('');
+    }
+  };
+  //  address part end
 
   useEffect(() => {
     if (proposalInfo[0]?.address1) {
@@ -375,12 +403,27 @@ console.log(value)
     }
   }, [proposalInfo]);
 
-  const handleproposalDateChange = (e) => {
-    setProposalDate(e.target.value);
+  // handle policytype change 
+  const handlePolicyTypeChange = (e) => {
+    const newPolicyType = e.target.value;
+    setPolicyType(newPolicyType);
+    setProposalDate(''); // Reset proposal date
+    setRiskdate(''); // Reset risk date
+  };
+  const handleproposalDateChange = (event) => {
+    const newProposalDate = event.target.value;
+    console.log(newProposalDate)
+    setProposalDate(newProposalDate);
+
+    // Automatically set the risk date to the proposal date
+    if (!proposalInfo[0]?.risk_date) {
+      setRiskdate(newProposalDate);
+    }
   };
 
-  const handleriskDateChange = (e) => {
-    setRiskdate(e.target.value);
+  const handleriskDateChange = (event) => {
+    console.log(event.target.value)
+    setRiskdate(event.target.value);
   };
 
   useEffect(() => {
@@ -439,7 +482,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/policy-info?policy_no=${policyNo}`
+          `http://localhost:5001/api/policy-info?policy_no=${policyNo}`
         );
         setPolicyInfo(response?.data);
       } catch (error) {
@@ -455,7 +498,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/proposal-info?proposal_no=${proposalNo}`
+          `http://localhost:5001/api/proposal-info?proposal_no=${proposalNo}`
         );
         setProposalInfo(response?.data);
       } catch (error) {
@@ -472,7 +515,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/endAtDate/${comm_datee}`
+          `http://localhost:5001/api/endAtDate/${comm_datee}`
         );
         setEndatDate(response?.data);
       } catch (error) {
@@ -487,7 +530,7 @@ console.log(value)
   //total installment
   useEffect(() => {
     const InstallmentData = async () => {
-      const url = `http://localhost:5000/api/total-installment/${pmode}/${selectTerm}`;
+      const url = `http://localhost:5001/api/total-installment/${pmode}/${selectTerm}`;
       try {
         const response = await axios.get(url);
         setInstallment(response?.data);
@@ -505,7 +548,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/prem-plan-list/${sumAssured}
+          `http://localhost:5001/api/prem-plan-list/${sumAssured}
             `
         );
         setPremPlanlist(response?.data);
@@ -523,7 +566,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/chain-list/${projectId}/${agentValue}`
+          `http://localhost:5001/api/chain-list/${projectId}/${agentValue}`
         );
         setChainList(response?.data);
       } catch (error) {
@@ -539,7 +582,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/rate-calculation/${calcuAge}/${selectTerm}/${planName}`
+          `http://localhost:5001/api/rate-calculation/${calcuAge}/${selectTerm}/${planName}`
         );
         setRate(response?.data?.rate);
       } catch (error) {
@@ -554,9 +597,8 @@ console.log(value)
   // get age
   useEffect(() => {
     const fetchData = async () => {
-      const abc = `http://localhost:5000/api/get-age/${comm_datee}/${
-        birth_dateE ? birth_dateE : dob
-      }`;
+      const abc = `http://localhost:5001/api/get-age/${comm_datee}/${birth_dateE ? birth_dateE : dob
+        }`;
       try {
         const response = await axios.get(abc);
         setCalage(response?.data);
@@ -574,7 +616,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/term-list/${planName}/${calcuAge}`
+          `http://localhost:5001/api/term-list/${planName}/${calcuAge}`
         );
         setTermList(response?.data);
       } catch (error) {
@@ -591,7 +633,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/proposal-number?OFFICE_CODE=${branch}`
+          `http://localhost:5001/api/proposal-number?OFFICE_CODE=${branch}`
         );
         setNewProposalNo(response?.data);
       } catch (error) {
@@ -608,7 +650,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/comm_date/${comm_datee}/${policytype}`
+          `http://localhost:5001/api/comm_date/${currentDate}/${policytype}`
         );
         setUpdateCommDate(response?.data);
       } catch (error) {
@@ -625,7 +667,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${pmode}`
+          `http://localhost:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${pmode}`
         );
         setSuppPrem(response?.data);
       } catch (error) {
@@ -642,7 +684,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${pmode}/${sumAssured}/'A' `
+          `http://localhost:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${pmode}/${sumAssured}/'A' `
         );
         setBasicPrem(response?.data);
       } catch (error) {
@@ -659,7 +701,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/sumat-risk/${planName}/${sumAssured}/${basicPrem}/${pFactor}/${pmode}
+          `http://localhost:5001/api/sumat-risk/${planName}/${sumAssured}/${basicPrem}/${pFactor}/${pmode}
           `
         );
         setSumAtRisk(response?.data);
@@ -677,7 +719,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/ipd-prem-rate/${ipdPlanNo}/${dob}/${comm_datee}/${pmode}/${planName}`
+          `http://localhost:5001/api/ipd-prem-rate/${ipdPlanNo}/${dob}/${comm_datee}/${pmode}/${planName}`
         );
         setIpdPlanRate(response?.data);
       } catch (error) {
@@ -694,7 +736,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/rider-prem-rate/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${pmode}`
+          `http://localhost:5001/api/rider-prem-rate/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${pmode}`
         );
         setRiderPremRate(response?.data);
       } catch (error) {
@@ -711,7 +753,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/waiver-prem/${calcuAge}/${planName}/${basicPrem}`
+          `http://localhost:5001/api/waiver-prem/${calcuAge}/${planName}/${basicPrem}`
         );
         setWaiverPrem(response?.data);
       } catch (error) {
@@ -728,7 +770,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}/${pmode}`
+          `http://localhost:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}/${pmode}`
         );
         setSuppliRate(response?.data);
       } catch (error) {
@@ -745,7 +787,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/oe-rate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${pmode}`
+          `http://localhost:5001/api/oe-rate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${pmode}`
         );
         setOeRatePrem(response?.data);
       } catch (error) {
@@ -762,7 +804,7 @@ console.log(value)
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/hospital-premrate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${pmode}`
+          `http://localhost:5001/api/hospital-premrate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${pmode}`
         );
         setHospitalRatePrem(response?.data);
       } catch (error) {
@@ -837,12 +879,12 @@ console.log(value)
     },
   ];
 
-// console.log(newProposalNo)
+  // console.log(newProposalNo)
   // Enter proposal Entry
   const saveProposal = async () => {
     const pDate = formatAsMMDDYYYY(proposal_date) ? formatAsMMDDYYYY(proposal_date) : "";
     try {
-      const response = await fetch("http://localhost:5000/api/proposal-entry", {
+      const response = await fetch("http://localhost:5001/api/proposal-entry", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -902,12 +944,12 @@ console.log(value)
       // email: userEmail ? userEmail : singleUser?.email,
       // userRole: role ? role : singleUser?.userRole,
       ADDRESS2: 'Kulaura,Sulhet',
-      ADDRESS3:'Chokoriya,Cox',
+      ADDRESS3: 'Chokoriya,Cox',
       ZIP: "35"
     };
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/proposal-update/B023000000002%2F24`,
+        `http://localhost:5001/api/proposal-update/B023000000002%2F24`,
         data,
       );
       console.log(response)
@@ -931,11 +973,10 @@ console.log(value)
             return (
               <li
                 key={index}
-                className={`border-b-transparent mr-3 px-4 inline-flex items-center gap-2 text-sm font-medium text-center text-dark rounded-t-lg py-3 border rounded  ${
-                  selectedTopbarItem === item.code
-                    ? "bg-[#087f23] text-[#fff]"
-                    : ""
-                }`}
+                className={`border-b-transparent mr-3 px-4 inline-flex items-center gap-2 text-sm font-medium text-center text-dark rounded-t-lg py-3 border rounded  ${selectedTopbarItem === item.code
+                  ? "bg-[#087f23] text-[#fff]"
+                  : ""
+                  }`}
                 onClick={() => handleTopbarItemClick(item.code)}
               >
                 {" "}
@@ -950,35 +991,57 @@ console.log(value)
         <div className="shadow-lg border lg:mx-48 mt-1 m-2 ">
           <div class="p-4 flex grid grid-cols-1       mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
             <div className="justify-center  flex gap-2">
-              <div className="flex items-center gap-2">
-                <Radio
-                  onChange={(e) => setPolicyType(e.target.value)}
-                  id="cp"
-                  name="countries"
-                  value="1"
-                  // Check the radio button if policyType is '1'
-                />
-                <Label htmlFor="cp">CURRENT POLICY</Label>
-              </div>
+              {
+                USER_TYPE === "IN" ?
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Radio
+                        // onChange={(e) => setPolicyType(e.target.value)}
+                        onChange={handlePolicyTypeChange}
+                        id="cp"
+                        name="countries"
+                        value="1"
+                        defaultChecked
+                      // Check the radio button if policyType is '1'
+                      />
+                      <Label htmlFor="cp">CURRENT POLICY</Label>
+                    </div>
 
-              <div className="flex items-center gap-2">
-                <Radio
-                  onChange={(e) => setPolicyType(e.target.value)}
-                  id="tp"
-                  name="countries"
-                  value="10"
-                />
-                <Label htmlFor="tp">TP POLICY</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Radio
-                  onChange={(e) => setPolicyType(e.target.value)}
-                  id="bp"
-                  name="countries"
-                  value="13"
-                />
-                <Label htmlFor="bp">BACK DATE POLICY</Label>
-              </div>
+                    <div className="flex items-center gap-2">
+                      <Radio
+                        // onChange={(e) => setPolicyType(e.target.value)}
+                        onChange={handlePolicyTypeChange}
+                        id="tp"
+                        name="countries"
+                        value="10"
+                      />
+                      <Label htmlFor="tp">TP POLICY</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Radio
+                        onChange={(e) => setPolicyType(e.target.value)}
+                        id="bp"
+                        name="countries"
+                        value="13"
+                      />
+                      <Label htmlFor="bp">SPECIAL/BACK DATE POLICY</Label>
+                    </div>
+
+                  </>
+                  :
+                  <div className="flex items-center gap-2">
+                    <Radio
+                      // onChange={(e) => setPolicyType(e.target.value)}
+                      onChange={handlePolicyTypeChange}
+                      id="cp"
+                      name="countries"
+                      value="1"
+                      defaultChecked
+                    // Check the radio button if policyType is '1'
+                    />
+                    <Label htmlFor="cp">CURRENT POLICY</Label>
+                  </div>
+              }
             </div>
 
             <div className="bg-white w-full   mt-3 lg:ml-12 lg:mt-0">
@@ -1015,6 +1078,7 @@ console.log(value)
                 onChange={handleBranch}
                 className="form-input shadow text-sm border-[#E3F2FD] mt-1 w-full"
               >
+                <option>SELECT</option>
                 {branchList?.map((branchName, i) => (
                   <option key={i} value={branchName?.branch_id}>
                     {branchName?.branch_name} - {branchName?.branch_id}
@@ -1029,6 +1093,7 @@ console.log(value)
                 className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                 value={projectId}
               >
+                <option>SELECT</option>
                 {projectList?.map((project, i) => (
                   <option key={i} value={project?.project_code}>
                     {project?.project_name}
@@ -1044,6 +1109,7 @@ console.log(value)
                 className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                 value={agentValue}
               >
+                <option>SELECT</option>
                 {agentList?.map((agent, i) => (
                   <option key={i} value={agent?.agent_code}>
                     {agent?.agent_name}- {agent?.agent_code}
@@ -1065,7 +1131,8 @@ console.log(value)
                 <input
                   type="date"
                   id="success"
-                  value={proposal_date}
+                  // value={proposal_date}
+                  value={formatAsMMDDYYYYy(policytype === '1' ? commencementDate?.comm_date[0] : proposal_date)}
                   className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                   onChange={handleproposalDateChange}
                 />
@@ -1077,16 +1144,17 @@ console.log(value)
                 <input
                   type="text"
                   id="success"
-                  class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                  value={risk_date}
+                  className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                  value={proposal_date}
                   onChange={handleriskDateChange}
                 />
               ) : (
                 <input
                   type="date"
                   id="success"
-                  class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                  value={risk_date}
+                  className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                  // value={risk_date}
+                  value={formatAsMMDDYYYYy(policytype === '1' ? commencementDate?.comm_date[0] : risk_date)}
                   onChange={handleriskDateChange}
                 />
               )}
@@ -1168,7 +1236,7 @@ console.log(value)
                     )}
                   </div>
                   <div className="bg-white align-items-center m-1  lg:mt-0">
-                    <label className="text-start text-xs">HUSBAND/WIFE</label>
+                    <label className="text-start text-xs">SPOUSE</label>
 
                     {proposalInfo[0]?.fatherhusb ? (
                       <input
@@ -1241,7 +1309,9 @@ console.log(value)
                     )}
                   </div>
                 </div>
-                <div className="text-start">
+
+                {/* // join life will be postponded for the next page */}
+                {/* <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
                     <label className="text-sm p-2">JOINT LIFE POLICY</label>
                     <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
@@ -1275,7 +1345,8 @@ console.log(value)
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
+
               </div>
 
               <div className="m-3 shadow-lg">
@@ -1320,29 +1391,32 @@ console.log(value)
                     <label className="text-sm font-bold text-center p-2">
                       PRESENT ADDRESS
                     </label>
+
                     <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="bg-white  align-items-center m-1  lg:mt-0">
                         <label className="align-items-center  text-xs">
-                          F/H/R/VILLAGE
+                          FLAT/HOUSE/ROAD/VILLAGE
                         </label>
                         {proposalInfo[0]?.address1 ? (
                           <input
                             type="text"
                             id="success"
-                            value={
-                              proposalInfo[0]?.address1
-                                ? proposalInfo[0]?.address1
-                                : ""
-                            }
+                            // value={
+                            //   proposalInfo[0]?.address1
+                            //     ? proposalInfo[0]?.address1
+                            //     : ""
+                            // }
+                            value={address}
                             class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                            onChange={handleAddress}
+                            onChange={handleAddressChange}
+
                           />
                         ) : (
                           <input
                             type="text"
                             id="success"
                             class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                            onChange={handleAddress}
+                            onChange={handleAddressChange}
                           />
                         )}
                       </div>
@@ -1407,18 +1481,30 @@ console.log(value)
               <div className="text-start px-0">
                 <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
-                    <label className="text-sm font-bold text-center p-2">
-                      PERMANENT ADDRESS
-                    </label>
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className="flex justify-between">
+                      <label className="text-sm font-bold text-center p-2">
+                        PERMANENT ADDRESS
+                      </label>
+                      <div className="flex items-center gap-x-1">
+                        <Checkbox
+                          type="checkbox"
+                          checked={isAddressChecked}
+                          onChange={handleAddressCheckboxChange}
+                        />
+                        <Label className="text-sm font-bold">Do</Label>
+                      </div>
+                    </div>
+
+                    <div class=" mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="bg-white  align-items-center m-1  lg:mt-0">
                         <label className="align-items-center  text-xs">
-                          F/H/R/VILLAGE
+                          FLAT/HOUSE/ROAD/VILLAGE
                         </label>
                         <input
                           type="text"
                           id="success"
-                          value={proposalInfo[0]?.address1}
+                          // value={proposalInfo[0]?.address1}
+                          value={permanentAddress}
                           class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
@@ -1871,7 +1957,7 @@ console.log(value)
         </div>
       )}
 
-      {selectedTopbarItem === "P" ?(
+      {selectedTopbarItem === "P" ? (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
           <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="text-start px-2">
@@ -2484,7 +2570,7 @@ console.log(value)
                           id="uk"
                           name="countries"
                           value="1"
-                          // Check the radio button if policyType is '1'
+                        // Check the radio button if policyType is '1'
                         />
                         <Label htmlFor="uk">A</Label>
                       </div>
@@ -2504,7 +2590,7 @@ console.log(value)
                           id="ukS"
                           name="CS"
                           value="1"
-                          // Check the radio button if policyType is '1'
+                        // Check the radio button if policyType is '1'
                         />
                         <Label htmlFor="ukS">STANDARD</Label>
                       </div>
@@ -2534,7 +2620,7 @@ console.log(value)
                           id="ukS"
                           name="CS"
                           value="1"
-                          // Check the radio button if policyType is '1'
+                        // Check the radio button if policyType is '1'
                         />
                         <Label htmlFor="ukS">MEDICAL</Label>
                       </div>
@@ -2559,7 +2645,7 @@ console.log(value)
             </button>
           </div>
         </div>)
-        :selectedTopbarItem === "P" ? <div className="my-2 text-center text-lg text-red-600">Please fill up the proposal info form</div> : ''
+        : selectedTopbarItem === "P" ? <div className="my-2 text-center text-lg text-red-600">Please fill up the proposal info form</div> : ''
       }
       {selectedTopbarItem === "PRBM" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
@@ -2811,7 +2897,7 @@ console.log(value)
                   </Table.Row>
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Husb/Wife
+                      SPOUSE
                     </Table.Cell>
                     <div className="w-16">
                       <input
@@ -3810,11 +3896,10 @@ console.log(value)
                     <input
                       type="text"
                       id="success"
-                      value={`${pol_proposer ? pol_proposer : "0"} ,${
-                        pol_suminsure ? pol_suminsure : "0"
-                      } ,${formatAsMMDDYYYYy(
-                        pol_riskdate ? pol_riskdate : "0"
-                      )}`}
+                      value={`${pol_proposer ? pol_proposer : "0"} ,${pol_suminsure ? pol_suminsure : "0"
+                        } ,${formatAsMMDDYYYYy(
+                          pol_riskdate ? pol_riskdate : "0"
+                        )}`}
                       disabled
                       class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                       onChange={handlePolicyNumber}
@@ -4015,7 +4100,7 @@ console.log(value)
               dark:hover:bg-red-700 
               dark:focus:ring-red-900
             "
-            
+
             >
               EXIT
             </button>

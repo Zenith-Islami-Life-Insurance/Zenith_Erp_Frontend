@@ -61,9 +61,8 @@ const Navbar = () => {
               {role_id === 0 && (
                 <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname.includes("dashboard") && "bg-green-800 "
-                    }`}
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
+                      }`}
                   >
                     <AiOutlineHome className="mt-1 text-white mr-1" />{" "}
                     <NavLink
@@ -76,9 +75,8 @@ const Navbar = () => {
                   </li>
 
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname.includes("department-head") && "bg-green-800"
-                    }`}
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("department-head") && "bg-green-800"
+                      }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
@@ -89,9 +87,8 @@ const Navbar = () => {
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname.includes("module-list") && "bg-green-800"
-                    }`}
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("module-list") && "bg-green-800"
+                      }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
@@ -102,10 +99,9 @@ const Navbar = () => {
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname.includes("permission-user-list") &&
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("permission-user-list") &&
                       "bg-green-800"
-                    }`}
+                      }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
@@ -116,9 +112,8 @@ const Navbar = () => {
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname === "/module" && "bg-green-800"
-                    }`}
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/module" && "bg-green-800"
+                      }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
@@ -130,9 +125,8 @@ const Navbar = () => {
                   </li>
 
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname === "/user-list" && "bg-green-800"
-                    }`}
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/user-list" && "bg-green-800"
+                      }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
@@ -143,9 +137,8 @@ const Navbar = () => {
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${
-                      pathname.includes("proposal-entry") && "bg-green-800"
-                    }`}
+                    class={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("proposal-entry") && "bg-green-800"
+                      }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
@@ -176,6 +169,116 @@ const Navbar = () => {
                 </ul>
               )}
               {role_id === 1 && (
+                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
+                      }`}
+                  >
+                    <AiOutlineHome className="mt-1 text-white mr-1" />{" "}
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/dashboard"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Home
+                    </NavLink>
+                  </li>
+
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("department-head") && "bg-green-800"
+                      }`}
+                  >
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/department-head"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Module List
+                    </NavLink>
+                  </li>
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("module-list") && "bg-green-800"
+                      }`}
+                  >
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/module-list"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Access Permission
+                    </NavLink>
+                  </li>
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("permission-user-list") &&
+                      "bg-green-800"
+                      }`}
+                  >
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/permission-user-list"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Privilage List
+                    </NavLink>
+                  </li>
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/module" && "bg-green-800"
+                      }`}
+                  >
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/module"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Module Assign
+                    </NavLink>
+                  </li>
+
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/user-list" && "bg-green-800"
+                      }`}
+                  >
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/user-list"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Department User List
+                    </NavLink>
+                  </li>
+                  <li
+                    class={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("proposal-entry") && "bg-green-800"
+                      }`}
+                  >
+                    <NavLink
+                      className="text-white pr-3 font-weight-bold"
+                      to="/proposal-entry"
+                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                    >
+                      Proposal Entry
+                    </NavLink>
+                  </li>
+
+                  {/* <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                                <NavLink className='text-white pr-3' to='/about'>About us</NavLink>
+                                </li>
+                                <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                                <NavLink className='text-white pr-3' to='/contact'>Contact us</NavLink>
+                                </li> */}
+                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-2 mt-1 pr-0 p-1.5 mr-0 rounded hover:bg-[#005005]">
+                    <NavLink
+                      className="text-white pr-3"
+                      onClick={handleLogout}
+                      to="/"
+                    >
+                      Logout
+                    </NavLink>
+
+                    {/* <a class="nav-link block pr-2 lg:px-2 py-2 text-white hover:text-white focus:text-white transition duration-150 ease-in-out" href="#!" data-mdb-ripple="true" data-mdb-ripple-color="light">Contact Us</a> */}
+                  </li>
+                </ul>
+              )}
+              {role_id === 2 && (
                 <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
                   <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/development">

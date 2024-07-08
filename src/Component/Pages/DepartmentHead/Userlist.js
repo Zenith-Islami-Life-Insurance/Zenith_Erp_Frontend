@@ -18,7 +18,7 @@ const Userlist = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/permission-list-depthead/${PERSONAL_ID}/${DEPT_CODE}`
+        `http://localhost:5001/api/permission-list-depthead/${PERSONAL_ID}/${DEPT_CODE}`
       );
       setpermissionList(response.data?.permission_list);
       setSpinner(false);

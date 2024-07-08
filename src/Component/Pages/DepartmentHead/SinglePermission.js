@@ -17,7 +17,7 @@ const SinglePermission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/single-privilage-list/${id}/${name}`
+        `http://localhost:5001/api/single-privilage-list/${id}/${name}`
       );
       setPermissionDetails(response.data?.permission_list);
       setSpinner(false);

@@ -54,7 +54,7 @@ const Permission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/dept-head-pmodule-list/${PERSONAL_ID}`
+        `http://localhost:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
       );
       setModueleRoleList(response.data?.module_list);
       setSpinner(false);
@@ -151,7 +151,7 @@ const Permission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/department-head-list"
+        "http://localhost:5001/api/department-head-list"
       );
       setDeptHeadList(response.data?.dept_head);
       setSpinner(false);
@@ -171,7 +171,7 @@ const Permission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/module-list/${id}`
+        `http://localhost:5001/api/module-list/${id}`
       );
       setModuleList(response.data?.sub_module_list);
       setSpinner(false);
@@ -190,7 +190,7 @@ const Permission = () => {
   const selectedDepatData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/dept-list-mIdwise/${moduleName}`
+        `http://localhost:5001/api/dept-list-mIdwise/${moduleName}`
       );
       setselectdept(response.data?.department_list);
     } catch (error) {
@@ -230,7 +230,7 @@ const Permission = () => {
 
       console.log(permissions);
 
-      const url = "http://localhost:5000/api/create-permission";
+      const url = "http://localhost:5001/api/create-permission";
       fetch(url, {
         method: "POST",
         headers: {

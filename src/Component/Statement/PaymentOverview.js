@@ -36,8 +36,8 @@ const PaymentOverview = () => {
                                 <img className=' w-24 h-12' src={nagad} alt="Bkash" />
                             </div>
                             <div class="mt-1">
-                                <h4 className='text-dark text-sm mt-2  p-0 font-bold  rounded font-bold  text-left'>PROPOSER             : <span c>{name}</span>   </h4>
-                                <h4 className='text-dark text-sm  mt-2 p-0 font-bold rounded font-bold  text-left'>POLICY NUMBER       : <span>{id}</span>  </h4>
+                                <h4 className='text-dark text-sm mt-2  p-0   rounded font-bold  text-left'>PROPOSER             : <span c>{name}</span>   </h4>
+                                <h4 className='text-dark text-sm  mt-2 p-0 font-bold rounded text-left'>POLICY NUMBER       : <span>{id}</span>  </h4>
                             </div>
                         </div>
 
@@ -79,8 +79,6 @@ const PaymentOverview = () => {
                 </form>
 
             </div> */}
-
-
 
             {/* 
             <a href="#" onClick={handleSend}>

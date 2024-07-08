@@ -15,7 +15,7 @@
 //         const fetchData = async () => {
 //           try {
 //             const response = await axios.get(
-//               `http://localhost:5000/api/proposal-info?proposal_no=${proposalNo}`
+//               `http://localhost:5001/api/proposal-info?proposal_no=${proposalNo}`
 //             );
 //             setProposalInfo(response?.data);
 //           } catch (error) {
