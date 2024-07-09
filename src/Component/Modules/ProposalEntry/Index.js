@@ -9,6 +9,7 @@ import {
   useGetCountrylistQuery,
   useGetDistrictlisttQuery,
   useGetEducationListQuery,
+  useGetReligionListQuery,
   useGetGenderQuery,
   useGetLocallityQuery,
   useGetModelistQuery,
@@ -45,6 +46,7 @@ const Index = () => {
   const [pthana, setPThana] = useState();
   const [ppostOffice, setPPostoffice] = useState();
   const [policytype, setPolicyType] = useState(1);
+  console.log(policytype)
   const [risk_date, setRiskdate] = useState();
   const [proposerName, setProposer] = useState();
   const [fatherName, setFather] = useState();
@@ -61,7 +63,6 @@ const Index = () => {
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
   const [commencementDate, setUpdateCommDate] = useState();
-  console.log('commence', commencementDate);
   const [planName, setPlan] = useState();
   const [premage, setPremAge] = useState();
   const [termList, setTermList] = useState([""]);
@@ -193,6 +194,7 @@ const Index = () => {
     const year = dateObj.getFullYear();
     return `${year}${month}${day}`;
   };
+  console.log(formatAsMMDDYYYY(proposal_date))
   const formatAsMMDDYYYYy = (dateString) => {
     const dateObj = new Date(dateString);
     const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
@@ -356,6 +358,14 @@ const Index = () => {
     }
   };
   //  address part end
+
+  // education document start---
+  const [isEduDocChecked, setIsEduDocChecked] = useState(false);
+
+  const handleEduDocChange = (e) => {
+    setIsEduDocChecked(e.target.checked);
+  };
+  // education document end---
 
   useEffect(() => {
     if (proposalInfo[0]?.address1) {
@@ -839,8 +849,8 @@ const Index = () => {
   const { data: countryList } = useGetCountrylistQuery();
   const { data: occupationList } = useGetOccupationlistQuery();
   const { data: educationList } = useGetEducationListQuery();
+  const { data: religionList } = useGetReligionListQuery();
   const { data: planList } = useGetPlanlistQuery(calcuAge);
-  console.log(planList)
   const { data: premiumList } = useGetPremiumListQuery();
   const { data: SupplementaryList } = useGetSupplimentClassListQuery();
   const { data: SupplementList } = useGetSupplimentListQuery();
@@ -894,6 +904,7 @@ const Index = () => {
           PROPOSAL_D: pDate,
           RISKDATE: formatAsMMDDYYYY(commencementDate?.comm_date[0]) ? formatAsMMDDYYYY(commencementDate?.comm_date[0]) : "",
           PROPOSER: proposerName,
+          POL_ENTRY_STATUS: policytype,
           FATHERS_NAME: fatherName,
           FATHERHUSB: fatherName,
           MOTHERS_NAME: motherName,
@@ -917,6 +928,7 @@ const Index = () => {
           LOCALITY_COUNTRY: country,
           SPOUSE: "",
           PD_CODE: projectId,
+          LAST_EDU_DOCUMENT: isEduDocChecked ? 'Y' : 'N',
         }),
       });
 
@@ -1681,7 +1693,7 @@ const Index = () => {
                           />
                         </div>
                       </div>
-                      <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                      <div class=" mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                         <div className="bg-white flex align-items-center m-1  lg:mt-0">
                           <label className="w-24 mt-4 font-bold text-xs">
                             EMAIL{" "}
@@ -1706,7 +1718,7 @@ const Index = () => {
               <div className="text-start px-0">
                 <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div class=" mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="text-start flex px-1">
                         <label className="w-32 mt-4 font-bold text-xs">
                           PLACE OF BIRTH
@@ -1768,10 +1780,11 @@ const Index = () => {
                           className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                         >
                           <>
-                            <option value="ISLAM">ISLAM</option>
-                            <option value="HINDU">HINDU</option>
-                            <option value="KHRISTAN">KHRISTAN</option>
-                            <option value="BOUDDHA">BOUDDHA</option>
+                            {religionList?.map((list) => (
+                              <option key={list?.religion_id} value={list?.religion_name}>
+                                {list?.religion_name}
+                              </option>
+                            ))}
                           </>
                         </select>
                       </div>
@@ -1819,7 +1832,53 @@ const Index = () => {
                 <div className="text-start">
                   <div className="text-start px-0">
                     <div className="shadow-lg border m-2 rounded p-0">
-                      <div class=" mb-0 flex grid grid-cols-1 rounded p-2    mt-1 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                      <div class=" mb-0 flex justify-between rounded p-2 mt-1 lg:grid-cols-2 gap-0 w-full align-items-center   lg:mx-auto lg:mt-0">
+                        <div className="text-start flex px-1">
+                          <label className="w-32 text-center  mt-3 font-bold text-xs">
+                            EDUCATION
+                          </label>
+
+                          <select
+                            onChange={handleEducation}
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          >
+                            {educationList?.map((education, i) => (
+                              <option key={i} value={education?.education_name}>
+                                {education?.education_name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex items-center gap-x-2.5">
+                          <Checkbox
+                            type="checkbox"
+                            checked={isEduDocChecked}
+                            onChange={handleEduDocChange}
+                          />
+                          <div>
+                            <label className="text-center mt-3 font-bold text-xs">
+                              EDUCATION DOCUMENT
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* // POSTPONDED bY SIR */}
+                        {/* <div className="text-start flex px-1">
+                          <label className="w-32 text-center  mt-3 font-bold text-xs">
+                            EDU STATUS
+                          </label>
+
+                          <select
+                            onChange={handleEducationStatus}
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-3 w-full"
+                          >
+                            <option>SELECT EDU. STATUS</option>
+                            <option value={"YES"}>YES</option>
+                            <option value={"NO"}>NO</option>
+                          </select>
+                        </div> */}
+                      </div>
+                      <div className="m-2 rounded p-2">
                         <div className="text-start flex px-0">
                           <label className="w-32   mt-3 font-bold text-xs">
                             OCCUPATION
@@ -1837,72 +1896,10 @@ const Index = () => {
                             ))}
                           </select>
                         </div>
-                        <div className="text-start flex px-1">
-                          <label className="w-32 text-center  mt-3 font-bold text-xs">
-                            EDUCATION
-                          </label>
-
-                          <select
-                            onChange={handleEducation}
-                            className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                          >
-                            {educationList?.map((education, i) => (
-                              <option key={i} value={education?.education_name}>
-                                {education?.education_name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="text-start flex px-1">
-                          <label className="w-32 text-center  mt-3 font-bold text-xs">
-                            EDU STATUS
-                          </label>
-
-                          <select
-                            onChange={handleEducationStatus}
-                            className="form-input text-sm shadow border-[#E3F2FD] mt-3 w-full"
-                          >
-                            <option>SELECT EDU. STATUS</option>
-                            <option value={"YES"}>YES</option>
-                            <option value={"NO"}>NO</option>
-                          </select>
-                        </div>
                       </div>
 
-                      <hr className="mt-2  bg-[#333]" />
-                      <div class=" mb-0 flex grid grid-cols-1 rounded  p-2   mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
-                        <div class="flex border items-center shadow p-2 mb-0">
-                          <input
-                            id="default-checkbox"
-                            type="checkbox"
-                            value=""
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label
-                            for="default-checkbox"
-                            class="ms-2 ml-2  text-sm font-medium text-gray-900 dark:text-gray-300"
-                          >
-                            FIRST PREGNANCY
-                          </label>
-                        </div>
-                        <div class="flex border items-center ml-2 shadow p-2 mb-0">
-                          <input
-                            id="default-checkbox"
-                            type="checkbox"
-                            value=""
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label
-                            for="default-checkbox"
-                            class="ms-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                          >
-                            MINORITY
-                          </label>
-                        </div>
-                      </div>
-
-                      <div class=" mb-0 flex grid grid-cols-1 rounded  p-2   mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                      {/* LIEN permanently postponded */}
+                      {/* <div class=" mb-0 flex grid grid-cols-1 rounded  p-2   mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                         <div class="flex border items-center shadow p-2 mb-2">
                           <input
                             id="default-checkbox"
@@ -1938,7 +1935,7 @@ const Index = () => {
                             class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                           />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -3265,7 +3262,36 @@ const Index = () => {
               </Table>
             </div>
           </div>
-
+          <div class=" mb-0 flex rounded p-2 mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center   lg:mx-auto lg:mt-2">
+            <div class="flex border items-center shadow p-2 mb-0">
+              <input
+                id="default-checkbox"
+                type="checkbox"
+                value=""
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="default-checkbox"
+                class="ms-2 ml-2  text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                FIRST PREGNANCY
+              </label>
+            </div>
+            <div class="flex border items-center ml-2 shadow p-2 mb-0">
+              <input
+                id="default-checkbox"
+                type="checkbox"
+                value=""
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="default-checkbox"
+                class="ms-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                MINORITY
+              </label>
+            </div>
+          </div>
           <div class=" mb-0 flex grid grid-cols-2 rounded lg:px-80    mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
             <div className="bg-white flex align-items-center m-1  lg:mt-0">
               <label className="text-xs text-center w-48 mt-3 p-0">

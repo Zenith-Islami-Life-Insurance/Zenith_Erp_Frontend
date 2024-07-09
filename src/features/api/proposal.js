@@ -8,6 +8,12 @@ const proposal = apiSlice.injectEndpoints({
       }),
       providesTags: ["proposal_head"],
     }),
+    getReligionList: builder.query({
+      query: () => ({
+        url: "/religionList",
+      }),
+      providesTags: ["proposal_head"],
+    }),
 
     getSupplimentClassList: builder.query({
       query: () => ({
@@ -163,6 +169,7 @@ export const {
   useGetPlanlistQuery,
   useCreateProposalEntryMutation,
   useGetEducationListQuery,
+  useGetReligionListQuery,
   useGetOccupationlistQuery,
   useGetCountrylistQuery,
   useGetLocallityQuery,
