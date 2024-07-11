@@ -34,6 +34,7 @@ const Index = () => {
   const [proposalNo, setProposalNo] = useState("");
   const [chainlist, setChainList] = useState([]);
   const [proposalInfo, setProposalInfo] = useState([]);
+  console.log('proposal info', proposalInfo)
   const [policyInfo, setPolicyInfo] = useState([]);
 
   const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
@@ -200,7 +201,7 @@ const Index = () => {
     const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
     const day = String(dateObj.getDate()).padStart(2, "0"); // Add leading zero if needed
     const year = dateObj.getFullYear();
-    return `${year}-${month}-${day}`;
+    return `${day}-${month}-${year}`;
   };
   console.log(formatAsMMDDYYYYy(commencementDate?.comm_date[0]))
   // current date (date: 7/7/2024)---Start ----
@@ -420,6 +421,24 @@ const Index = () => {
     setProposalDate(''); // Reset proposal date
     setRiskdate(''); // Reset risk date
   };
+  // updated from chatgpt
+  // const handlePolicyTypeChange = (e) => {
+  //   const newPolicyType = e.target.value;
+  //   console.log("New Policy Type:", newPolicyType);
+  //   console.log("Proposal Info:", proposalInfo);
+
+  //   if (proposalInfo[0]?.policy_type) {
+  //     console.log("Using existing policy type from proposalInfo");
+  //     setPolicyType(proposalInfo[0].policy_type);
+  //   } else {
+  //     console.log("Using new policy type from input");
+  //     setPolicyType(newPolicyType);
+  //   }
+
+  //   setProposalDate(''); // Reset proposal date
+  //   setRiskDate(''); // Reset risk date
+  // };
+
   const handleproposalDateChange = (event) => {
     const newProposalDate = event.target.value;
     console.log(newProposalDate)
@@ -888,7 +907,6 @@ const Index = () => {
       title: "OTHERS INFO",
     },
   ];
-
   // console.log(newProposalNo)
   // Enter proposal Entry
   const saveProposal = async () => {
@@ -1202,27 +1220,46 @@ const Index = () => {
                   </div>
                   <div className="text-start px-2">
                     <label className="text-start text-xs">MARITAL STATUS</label>
-                    <select
-                      onChange={handleMaritalStatus}
-                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full "
-                    >
-                      {maritalStatus === "" && (
-                        <option value="1">Select</option>
-                      )}
+                    {
+                      proposalInfo[0]?.marital_status ? <input
+                        type="text"
+                        value={proposalInfo[0]?.marital_status === '2' || 'M' ? 'Married' : 'Single'}
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                        readOnly
+                      />
+                        :
+                        <select
+                          onChange={handleMaritalStatus}
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full "
+                        >
+                          {maritalStatus === "" && (
+                            <option value="1">Select</option>
+                          )}
 
-                      <option value={1}>SINGLE</option>
-                      <option value={2}>MARRIED</option>
-                      <option value={3}>WIDOWED</option>
-                      <option value={4}>DEVORCED</option>
-                    </select>
+                          <option value={1}>SINGLE</option>
+                          <option value={2}>MARRIED</option>
+                          <option value={3}>WIDOWED</option>
+                          <option value={4}>DEVORCED</option>
+                        </select>
+                    }
                   </div>
                   <div className="text-start px-2">
                     <label className="text-start text-xs">MARRIAGE DATE</label>
-                    <input
-                      type="date"
-                      id="success"
-                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                    />
+                    {
+                      proposalInfo[0]?.marrige_date ?
+                        <input
+                          type="text"
+                          value={formatAsMMDDYYYYy(proposalInfo[0]?.marrige_date)}
+                          className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          readOnly
+                        />
+                        :
+                        <input
+                          type="date"
+                          id="success"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        />
+                    }
                   </div>
                 </div>
 
