@@ -16,8 +16,8 @@ const proposal = apiSlice.injectEndpoints({
     }),
 
     getSupplimentClassList: builder.query({
-      query: () => ({
-        url: "/suppli-class",
+      query: ({ occup_id, supp_code }) => ({
+        url: `/suppli-class/${occup_id}/${supp_code}`,
       }),
       providesTags: ["proposal_head"],
     }),

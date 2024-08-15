@@ -34,7 +34,7 @@ const Index = () => {
   const [proposalNo, setProposalNo] = useState("");
   const [chainlist, setChainList] = useState([]);
   const [proposalInfo, setProposalInfo] = useState([]);
-  console.log('proposal info', proposalInfo)
+  console.log(proposalInfo)
   const [policyInfo, setPolicyInfo] = useState([]);
 
   const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
@@ -47,7 +47,6 @@ const Index = () => {
   const [pthana, setPThana] = useState();
   const [ppostOffice, setPPostoffice] = useState();
   const [policytype, setPolicyType] = useState(1);
-  console.log(policytype)
   const [risk_date, setRiskdate] = useState();
   const [proposerName, setProposer] = useState();
   const [fatherName, setFather] = useState();
@@ -59,7 +58,7 @@ const Index = () => {
   const [age, setAge] = useState();
   const [occupation, setOccupation] = useState();
   const [branch, setBranch] = useState();
-  const [education, setEducation] = useState();
+  const [educationName, setEducation] = useState();
   const [religion, setReligion] = useState();
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
@@ -68,24 +67,32 @@ const Index = () => {
   const [premage, setPremAge] = useState();
   const [termList, setTermList] = useState([""]);
   const [calAge, setCalage] = useState();
-  const [pmode, setPaymode] = useState();
+  const [pmode, setPaymode] = useState(0);
+  const [paymentMode, setPaymentMode] = useState('4');
   const [t_installment, setInstallment] = useState();
   const [selectTerm, setTerm] = useState();
   const [calcuType, setCalcuType] = useState();
   const [rate, setRate] = useState();
   const [bankCode, setBankCode] = useState();
+  const [suplimentary, setSuplimentary] = useState();
+  console.log(suplimentary)
+  const [major_diseage, setMajordiseage] = useState();
+  const [prem_waiver, setPremWaiver] = useState();
+  const [impatient_reader, setImpatientReader] = useState();
+  const [extra_loading, setExtraLoading] = useState();
   const [minAge, setMinage] = useState();
   const [maxAge, setMaxAge] = useState();
   const [minTerm, setMinterm] = useState();
   const [maxTerm, setMaxterm] = useState();
   const [maxSumInsure, setMaxSumInsure] = useState();
   const [minSumInsure, setMinSumInsure] = useState();
-
   const [supplimentId, setSuppli] = useState();
-  const [supplimentClass, setSuppliClass] = useState();
+  const [supplimentClass, setSuppliClass] = useState('Select Suppli. Class');
   const [sumAssured, setSumassured] = useState();
   const [suppPremium, setSuppPrem] = useState([]);
   const [basicPremium, setBasicPrem] = useState([]);
+  const [getBasicPremium, setBasicPremium] = useState('');
+  const [sumassurance, setSumassurance] = useState([]);
   const [sumAtrisk, setSumAtRisk] = useState([]);
   const [premPlanlist, setPremPlanlist] = useState([]);
   const [endAtDate, setEndatDate] = useState([]);
@@ -95,9 +102,10 @@ const Index = () => {
   const [premWaiver, setWaiverPrem] = useState([]);
   const [eduStatus, setEducationStatus] = useState();
   const [policyNo, setPolicyNo] = useState();
+  const [marriage_date, setMarriageDate] = useState();
+  const [eduName, setEducationName] = useState();
   const [getPolicyNumber, setGetPolicyNo] = useState();
   const [proposalFirstPage, setProposalFristPage] = useState('');
-  console.log(proposalFirstPage)
 
   const [ipdPlanNo, setIpdplanNo] = useState();
   const [isChecked, setIsChecked] = useState(true);
@@ -113,6 +121,7 @@ const Index = () => {
 
   const [iChecked, setIChecked] = useState(true);
   const [suppliRate, setSuppliRate] = useState([]);
+  console.log(suppliRate)
   const handleCheckboxxChange = () => {
     setIChecked(!iChecked);
     // Set the riderPremRate based on the checkbox state
@@ -122,22 +131,11 @@ const Index = () => {
   };
 
   const [birth_dateE, setBirthDateE] = useState();
-  console.log(
-    "minAge" + minAge,
-    "maxAge" + maxAge,
-    "minTerm" + minTerm,
-    "maxTerm" + maxTerm
-  );
-
-  // console.log(bankCode);
-  // console.log(rate);
-  // console.log(selectTerm, pmode);
-  // console.log(calcuType);
 
   const totalInstallment = t_installment?.total_install[0];
   // console.log(totalInstallment);
   const calcuAge = calAge?.age[0];
-  const sPrem = suppPremium[0]?.premium;
+  const sPrem = Math.ceil(suppPremium[0]?.premium);
   const basicPrem = basicPremium[0]?.basic_premium;
   const sumAtRisk = sumAtrisk[0]?.sum_at_risk;
   const IpdPremRate = ipdPremRate[0]?.ipd_prem_rate;
@@ -150,16 +148,15 @@ const Index = () => {
   const pol_proposer = policyInfo[0]?.proposer;
   const pol_riskdate = policyInfo[0]?.risk_date;
   const pol_suminsure = policyInfo[0]?.sum_insure;
-  console.log(pol_i);
 
   const [oeRate, oePrem] = oEPremRate ? oEPremRate.split("_") : "0";
   const [hosRate, hosPrem] = hosPremRate ? hosPremRate.split("_") : "0";
-
   const suppliment_rate = suppliRate[0]?.supp_rate;
   const premiumWaiver = premWaiver[0]?.waiver_prem;
 
   const pRate = rate?.[0]?.toFixed(2);
   const pFactor = rate?.[1]?.toFixed(2);
+
 
   // console.log(pRate, pFactor);
 
@@ -195,7 +192,7 @@ const Index = () => {
     const year = dateObj.getFullYear();
     return `${year}${month}${day}`;
   };
-  console.log(formatAsMMDDYYYY(proposal_date))
+
   const formatAsMMDDYYYYy = (dateString) => {
     const dateObj = new Date(dateString);
     const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
@@ -203,7 +200,7 @@ const Index = () => {
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
-  console.log(formatAsMMDDYYYYy(commencementDate?.comm_date[0]))
+
   // current date (date: 7/7/2024)---Start ----
   const [currentDates, setCurrentDate] = useState('');
   const currentDate = formatAsMMDDYYYY(currentDates)
@@ -219,15 +216,11 @@ const Index = () => {
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
 
   const dob = formatAsMMDDYYYY(birth_date);
-  // console.log(dob);
-  // console.log(formatAsMMDDYYYY(commencementDate?.comm_date[0]));
-  // console.log(formatAsMMDDYYYY(proposal_date));
 
   const handleClearClick = () => {
-    // Check for any actions causing a page reload
     window.location.reload(); // Remove this line if present
-    // ... other logic
   };
+  // const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   const handleClearPolicydata = () => {
     setPolicyInfo("");
@@ -239,7 +232,7 @@ const Index = () => {
 
   const handleSumAssured = (e) => {
     setSumassured(e.target.value);
-  };
+  }
 
   const handleSupply = (e) => {
     setSuppli(e.target.value);
@@ -253,21 +246,32 @@ const Index = () => {
   };
 
   const handleterm = (e) => {
+    console.log(e.target.value)
     setTerm(e.target.value);
   };
   const handlePaymode = (e) => {
     setPaymode(e.target.value);
   };
+  const handlePaymentMode = (e) => {
+    setPaymentMode(e.target.value);
+  };
+
 
   const handlePremAge = (e) => {
     setPremAge(e.target.value);
   };
+
   const handlePlan = (e) => {
     const value = e.target.value;
     console.log(value)
     const [
       planId,
       calcuType,
+      suplimentary,
+      extra_loading,
+      major_diseage,
+      impatient_reader,
+      prem_waiver,
       min_age,
       max_age,
       min_term,
@@ -277,13 +281,24 @@ const Index = () => {
     ] = value.split("-");
     setPlan(planId);
     setCalcuType(calcuType);
+    setSuplimentary(suplimentary);
+    setPremWaiver(prem_waiver);
+    setImpatientReader(impatient_reader);
+    setExtraLoading(extra_loading);
+    setMajordiseage(major_diseage);
     setMinage(min_age);
     setMaxAge(max_age);
     setMinterm(min_term);
     setMaxterm(max_term);
     setMaxSumInsure(max_suminsured);
     setMinSumInsure(min_suminsured);
+    setSupplementList([])
+    setClassList([])
+    setSuppPrem([])
+    setSuppliRate([])
+    setSuppliClass()
   };
+  console.log(sPrem)
   const handleCountry = (e) => {
     setCountry(e.target.value);
   };
@@ -308,6 +323,11 @@ const Index = () => {
   };
   const handleOccupation = (e) => {
     setOccupation(e.target.value);
+    setSupplementList([])
+    setClassList([])
+    setSuppPrem([])
+    setSuppliRate([])
+    setSuppliClass()
   };
   const handleAge = (e) => {
     setAge(e.target.value);
@@ -318,7 +338,7 @@ const Index = () => {
 
   useEffect(() => {
     if (proposalInfo[0]?.dob) {
-      setBirthDateE(formatAsMMDDYYYY(proposalInfo[0]?.dob));
+      setBirthDateE(formatAsMMDDYYYYy(proposalInfo[0]?.dob));
     }
   }, [proposalInfo]);
 
@@ -375,7 +395,8 @@ const Index = () => {
   }, [proposalInfo]);
 
   const handleMotherName = (e) => {
-    setMother(e.target.value);
+    const updatedValue = e.target.value.toUpperCase();
+    setMother(updatedValue);
   };
 
   useEffect(() => {
@@ -385,7 +406,8 @@ const Index = () => {
   }, [proposalInfo]);
 
   const handleHusband = (e) => {
-    setHusband(e.target.value);
+    const updatedValue = e.target.value.toUpperCase();
+    setHusband(updatedValue);
   };
 
   useEffect(() => {
@@ -395,7 +417,8 @@ const Index = () => {
   }, [proposalInfo]);
 
   const handleFather = (e) => {
-    setFather(e.target.value);
+    const updatedValue = e.target.value.toUpperCase();
+    setFather(updatedValue);
   };
 
   useEffect(() => {
@@ -405,7 +428,8 @@ const Index = () => {
   }, [proposalInfo]);
 
   const handleGetProposer = (e) => {
-    setProposer(e.target.value);
+    const updatedValue = e.target.value.toUpperCase();
+    setProposer(updatedValue);
   };
 
   useEffect(() => {
@@ -413,6 +437,15 @@ const Index = () => {
       setProposer(proposalInfo[0]?.proposer);
     }
   }, [proposalInfo]);
+  //handle marriage data change
+  const handleMarrigeDate = (e) => {
+    setMarriageDate(e.target.value);
+  }
+  //handle EducationName
+  const handleEducationName = (e) => {
+    const updatedValue = e.target.value.toUpperCase();
+    setEducationName(updatedValue);
+  }
 
   // handle policytype change 
   const handlePolicyTypeChange = (e) => {
@@ -606,21 +639,8 @@ const Index = () => {
   }, [projectId, agentValue]);
   // get chainlist
 
-  // get rate calculation
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/api/rate-calculation/${calcuAge}/${selectTerm}/${planName}`
-        );
-        setRate(response?.data?.rate);
-      } catch (error) {
-      } finally {
-      }
-    };
 
-    fetchData();
-  }, [calcuAge, selectTerm, planName]);
+
   // get rate calculation
 
   // get age
@@ -638,7 +658,46 @@ const Index = () => {
 
     fetchData();
   }, [comm_datee, birth_dateE, dob]);
-  // get age
+
+  const [childDob, setChildDob] = useState(() => new Date().toISOString().split('T')[0]);
+  const handleChildBirthChange = (e) => {
+    setChildDob(e.target.value);
+  };
+  const [childAge, setChildAge] = useState();
+  const childFinalAge = childAge?.age[0]
+  console.log(childFinalAge)
+  const cDob = formatAsMMDDYYYY(childDob)
+  // get child age
+  useEffect(() => {
+    const fetchChildAge = async () => {
+      const childAgeUrl = `http://localhost:5001/api/get-age/${comm_datee}/${cDob}`;
+      try {
+        const response = await axios.get(childAgeUrl);
+        setChildAge(response?.data);
+      } catch (error) {
+        console.error("Error fetching child's age:", error);
+      }
+    };
+
+    fetchChildAge();
+  }, [comm_datee, childDob]);
+
+  // get rate calculation
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/rate-calculation/${calcuAge}/${selectTerm}/${planName}/${childFinalAge}`
+        );
+        setRate(response?.data?.rate);
+      } catch (error) {
+        console.error("Error fetching rate calculation:", error);
+      }
+    };
+
+    fetchData();
+  }, [calcuAge, selectTerm, planName, childFinalAge]);
+
 
   // get term-list
   useEffect(() => {
@@ -692,11 +751,12 @@ const Index = () => {
   // get commencement date
 
   // get suppliment premium
+  console.log(planName, occupation, supplimentId, supplimentClass, sumAssured, paymentMode)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${pmode}`
+          `http://localhost:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${paymentMode}`
         );
         setSuppPrem(response?.data);
       } catch (error) {
@@ -708,12 +768,29 @@ const Index = () => {
   }, [planName, occupation, supplimentId, supplimentClass, sumAssured, pmode]);
   //get suppliment premium
 
-  // get basic premium
+  // get sum assurance
+  console.log(planName, selectTerm, calcuAge, +pmode)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${pmode}/${sumAssured}/'A' `
+          `http://localhost:5001/api/sumAssurance/${planName}/${selectTerm}/${calcuAge}/${+pmode}/${0}`
+        );
+        setSumassurance(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [planName, selectTerm, calcuAge, pmode]);
+  // get basic premium
+  console.log(planName, selectTerm, calcuAge, paymentMode, sumAssured)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${paymentMode}/${sumAssured}/A/${0}/Y`
         );
         setBasicPrem(response?.data);
       } catch (error) {
@@ -722,15 +799,16 @@ const Index = () => {
     };
 
     fetchData();
-  }, [planName, selectTerm, calcuAge, pmode, sumAssured]);
+  }, [planName, selectTerm, calcuAge, paymentMode, sumAssured]);
   //get basic premium
 
   // get sum at risk
+  console.log(planName, sumassurance[0] || sumAssured, basicPrem || pmode, pFactor, paymentMode)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/sumat-risk/${planName}/${sumAssured}/${basicPrem}/${pFactor}/${pmode}
+          `http://localhost:5001/api/sumat-risk/${planName}/${sumassurance[0] || sumAssured}/${basicPrem || pmode}/${pFactor}/${paymentMode}
           `
         );
         setSumAtRisk(response?.data);
@@ -740,7 +818,7 @@ const Index = () => {
     };
 
     fetchData();
-  }, [planName, sumAssured, basicPrem, pFactor, pmode]);
+  }, [planName, sumAssured, basicPrem, pmode, sumassurance[0], pFactor, paymentMode]);
   // get sum at risk
 
   // get idp premium rate
@@ -795,11 +873,12 @@ const Index = () => {
   // get waiver premium
 
   // get supplimentary rate
+  console.log(occupation, supplimentId, supplimentClass, paymentMode)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}/${pmode}`
+          `http://localhost:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}`
         );
         setSuppliRate(response?.data);
       } catch (error) {
@@ -808,7 +887,7 @@ const Index = () => {
     };
 
     fetchData();
-  }, [occupation, supplimentId, supplimentClass, pmode]);
+  }, [occupation, supplimentId, supplimentClass, paymentMode]);
   // get supplimentary rate
 
   // get Occupation prem rate
@@ -859,6 +938,7 @@ const Index = () => {
   const { data: projectList, isLoadingg, isErrorr } = useGetProjectlistQuery();
   const { data: agentList } = useGetAgentlistQuery(projectId);
   const { data: modeList } = useGetModelistQuery(planName);
+  console.log(modeList);
   const { data: bankList } = useGetBankListQuery();
   const { data: bankbranchList } = useGetBankbranchlistQuery(bankCode);
   const { data: districtList } = useGetDistrictlisttQuery();
@@ -871,18 +951,14 @@ const Index = () => {
   const { data: religionList } = useGetReligionListQuery();
   const { data: planList } = useGetPlanlistQuery(calcuAge);
   const { data: premiumList } = useGetPremiumListQuery();
-  const { data: SupplementaryList } = useGetSupplimentClassListQuery();
-  const { data: SupplementList } = useGetSupplimentListQuery();
-  const { data: TypeList } = useGetallTypeListQuery();
 
+  const { data: TypeList } = useGetallTypeListQuery();
   const { data: thanaList } = useGetThanalistQuery(
     district ? district : pdistrict
   );
   const { data: postOfficeList } = useGetPostofficelistQuery(
     thana ? thana : pthana
   );
-
-  // console.log(agentList);
 
   const [selectedTopbarItem, setSelectedTopbarItem] = useState("PI");
 
@@ -910,7 +986,10 @@ const Index = () => {
   // console.log(newProposalNo)
   // Enter proposal Entry
   const saveProposal = async () => {
-    const pDate = formatAsMMDDYYYY(proposal_date) ? formatAsMMDDYYYY(proposal_date) : "";
+    const pDate = formatAsMMDDYYYY(proposal_date);
+    const riskDate = formatAsMMDDYYYY(commencementDate?.comm_date[0]);
+    const marriageDate = formatAsMMDDYYYY(marriage_date);
+
     try {
       const response = await fetch("http://localhost:5001/api/proposal-entry", {
         method: "POST",
@@ -918,9 +997,9 @@ const Index = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          PROPOSAL_N: newProposalNo?.proposal_no[0] ? newProposalNo?.proposal_no[0] : "",
+          PROPOSAL_N: newProposalNo?.proposal_no[0] || "",
           PROPOSAL_D: pDate,
-          RISKDATE: formatAsMMDDYYYY(commencementDate?.comm_date[0]) ? formatAsMMDDYYYY(commencementDate?.comm_date[0]) : "",
+          RISKDATE: riskDate,
           PROPOSER: proposerName,
           POL_ENTRY_STATUS: policytype,
           FATHERS_NAME: fatherName,
@@ -931,18 +1010,19 @@ const Index = () => {
           POST_CODE_PER: "13",
           CITY: district,
           MOBILE: mobile,
-          LOCALITY: resident ? resident : "",
+          LOCALITY: resident || "",
           N_ID_NUMBER: nid,
-          DOB: "19980202",
+          DOB: "1998-02-02", // Example date in YYYY-MM-DD format
           AGE: age,
           SEX: gender,
           OCCUPATION: occupation,
           AGENT_ID: agentValue,
-          BRANCH_ID: branch ? branch : "",
+          BRANCH_ID: branch || "",
           USERID: "650",
-          LAST_EDUCATION: "BSC",
+          LAST_EDUCATION: educationName,
           RELIGION: religion,
           MARITAL_STATUS: maritalStatus,
+          MARRIAGE_DATE: marriageDate,
           LOCALITY_COUNTRY: country,
           SPOUSE: "",
           PD_CODE: projectId,
@@ -954,11 +1034,31 @@ const Index = () => {
       console.log(data);
 
       if (data === "Proposal Entry Successfully") {
-        setProposalFristPage('ok')
-        swal({
-          title: "Proposal Entry Successfully",
-          icon: "success",
+        const secondResponse = await fetch("http://localhost:5001/api/proposal-entry-address", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            PROPOSAL_N: newProposalNo?.proposal_no[0] || "",
+            DCODE: "25",
+            TCODE: "30",
+            POST_CODE: "35",
+          }),
         });
+
+        const secondData = await secondResponse.json();
+        console.log(secondData);
+
+        if (secondData.success) {
+          setProposalFristPage('ok');
+          swal({
+            title: "Proposal Entry Successfully",
+            icon: "success",
+          });
+        } else {
+          console.error("Error in second post request:", secondData?.error);
+        }
       } else {
         console.error("Error saving proposal:", data?.error);
       }
@@ -966,6 +1066,66 @@ const Index = () => {
       console.error("Error saving proposal:", error.message);
     }
   };
+
+
+  // const saveProposal = async () => {
+  //   const pDate = formatAsMMDDYYYY(proposal_date) ? formatAsMMDDYYYY(proposal_date) : "";
+  //   try {
+  //     const response = await fetch("http://localhost:5001/api/proposal-entry", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         PROPOSAL_N: newProposalNo?.proposal_no[0] ? newProposalNo?.proposal_no[0] : "",
+  //         PROPOSAL_D: pDate,
+  //         RISKDATE: formatAsMMDDYYYY(commencementDate?.comm_date[0]) ? formatAsMMDDYYYY(commencementDate?.comm_date[0]) : "",
+  //         PROPOSER: proposerName,
+  //         POL_ENTRY_STATUS: policytype,
+  //         FATHERS_NAME: fatherName,
+  //         FATHERHUSB: fatherName,
+  //         MOTHERS_NAME: motherName,
+  //         ADDRESS1: address,
+  //         POST_CODE_CUR: "12",
+  //         POST_CODE_PER: "13",
+  //         CITY: district,
+  //         MOBILE: mobile,
+  //         LOCALITY: resident ? resident : "",
+  //         N_ID_NUMBER: nid,
+  //         DOB: "19980202",
+  //         AGE: age,
+  //         SEX: gender,
+  //         OCCUPATION: occupation,
+  //         AGENT_ID: agentValue,
+  //         BRANCH_ID: branch ? branch : "",
+  //         USERID: "650",
+  //         LAST_EDUCATION: educationName,
+  //         RELIGION: religion,
+  //         MARITAL_STATUS: maritalStatus,
+  //         MARRIAGE_DATE: formatAsMMDDYYYY(marriage_date),
+  //         LOCALITY_COUNTRY: country,
+  //         SPOUSE: "",
+  //         PD_CODE: projectId,
+  //         LAST_EDU_DOCUMENT: isEduDocChecked ? 'Y' : 'N',
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+  //     console.log(data);
+
+  //     if (data === "Proposal Entry Successfully") {
+  //       setProposalFristPage('ok')
+  //       swal({
+  //         title: "Proposal Entry Successfully",
+  //         icon: "success",
+  //       });
+  //     } else {
+  //       console.error("Error saving proposal:", data?.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving proposal:", error.message);
+  //   }
+  // };
   // 2nd page update proposal
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -987,6 +1147,69 @@ const Index = () => {
       console.log('Error:', err);
     }
   };
+
+  //handler for reset 
+  const { data: SupplementaryList, refetch: refetchClassList } = useGetSupplimentClassListQuery({ occup_id: occupation, supp_code: supplimentId });
+  const { data: SupplementList, refetch: refetchSupplementList } = useGetSupplimentListQuery();
+
+  const [supplementList, setSupplementList] = useState([]);
+  const [classList, setClassList] = useState([]);
+  console.log(supplementList)
+  console.log(classList)
+
+  useEffect(() => {
+    setSupplementList(SupplementList);
+  }, [SupplementList]);
+
+  useEffect(() => {
+    setClassList(SupplementaryList);
+  }, [SupplementaryList]);
+
+  console.log(SupplementList, SupplementaryList, sPrem, suppliment_rate)
+  const handleResetSupplyment = () => {
+    setSupplementList([])
+    setClassList([])
+    setSuppPrem([])
+    setSuppliRate([])
+    setSuppliClass()
+  };
+
+  // get supplimentary rate
+  console.log(occupation, supplimentId, supplimentClass, paymentMode)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}`
+        );
+        setSuppliRate(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [occupation, supplimentId, supplimentClass, paymentMode]);
+  // get suppliment premium
+  console.log(planName, occupation, supplimentId, supplimentClass, sumAssured, paymentMode)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${paymentMode}`
+        );
+        setSuppPrem(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [planName, occupation, supplimentId, supplimentClass, sumAssured, pmode]);
+
+  // Final Premium Calculation 
+
+  const finalPremiumCalculation = (basicPrem || pmode) + sPrem
   return (
     <div>
       <Navbar />
@@ -1251,13 +1474,14 @@ const Index = () => {
                           type="text"
                           value={formatAsMMDDYYYYy(proposalInfo[0]?.marrige_date)}
                           className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                          readOnly
+                          onChange={handleMarrigeDate}
                         />
                         :
                         <input
                           type="date"
                           id="success"
                           className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          onChange={handleMarrigeDate}
                         />
                     }
                   </div>
@@ -1272,14 +1496,14 @@ const Index = () => {
                         type="text"
                         id="success"
                         value={proposer ? proposer : ""}
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleGetProposer}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleGetProposer}
                       />
                     )}
@@ -1296,14 +1520,14 @@ const Index = () => {
                             ? proposalInfo[0]?.fatherhusb
                             : ""
                         }
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleHusband}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleHusband}
                       />
                     )}
@@ -1321,21 +1545,20 @@ const Index = () => {
                             ? proposalInfo[0]?.fathers_name
                             : ""
                         }
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleFather}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleFather}
                       />
                     )}
                   </div>
                   <div className="bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-start text-xs">MOTHER</label>
-
                     {proposalInfo[0]?.mothers_name ? (
                       <input
                         type="text"
@@ -1345,14 +1568,14 @@ const Index = () => {
                             ? proposalInfo[0]?.mothers_name
                             : ""
                         }
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleMotherName}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleMotherName}
                       />
                     )}
@@ -1880,7 +2103,7 @@ const Index = () => {
                             className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                           >
                             {educationList?.map((education, i) => (
-                              <option key={i} value={education?.education_name}>
+                              <option key={i} value={education?.education_name} onChange={handleEducationName}>
                                 {education?.education_name}
                               </option>
                             ))}
@@ -1928,7 +2151,7 @@ const Index = () => {
                             <option>Select Occupation</option>
                             {occupationList?.map((occupation, i) => (
                               <option key={i} value={occupation?.occupation_ID}>
-                                {occupation?.occupation_name}
+                                {occupation?.occupation_ID}-{occupation?.occupation_name}
                               </option>
                             ))}
                           </select>
@@ -2011,6 +2234,8 @@ const Index = () => {
                         disabled
                         class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                         onChange={handlePlan}
+
+
                       />
                     </div>
                   ) : (
@@ -2025,7 +2250,7 @@ const Index = () => {
                           {planList?.map((plan, i) => (
                             <option
                               key={i}
-                              value={`${plan?.plan_id}-${plan?.calcu_type}-${plan?.min_age}-${plan?.max_age}-${plan?.min_term}-${plan?.max_term}-${plan?.min_suminsured}-${plan?.max_suminsured}`}
+                              value={`${plan?.plan_id}-${plan?.calcu_type}-${plan?.suplimentary}-${plan?.extra_loading}-${plan?.major_diseage}-${plan?.impatient_reader}-${plan?.prem_waiver}-${plan?.min_age}-${plan?.max_age}-${plan?.min_term}-${plan?.max_term}-${plan?.min_suminsured}-${plan?.max_suminsured}`}
                             >
                               {plan?.plan_id}-{plan?.plan_name}
                             </option>
@@ -2035,6 +2260,69 @@ const Index = () => {
                     </div>
                   )}
                 </div>
+                {(planName === '08' || planName === '09') && (
+                  <div className="shadow-lg border m-2 rounded p-2">
+                    <div className="mb-0 flex grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-1">
+                      <div className="bg-white align-items-center m-1 lg:mt-0">
+                        <label className="text-start text-xs">CHILD NAME</label>
+                        <input
+                          type="text"
+                          id="success"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          placeholder="CHILD NAME"
+                        />
+                      </div>
+
+                      <div className="bg-white align-items-center m-1 lg:mt-0">
+                        <label className="text-start text-xs">CHILD AGE</label>
+                        <input
+                          type="date"
+                          id="success"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          placeholder="CHILD AGE"
+                          onChange={handleChildBirthChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {planName === '19' && (
+                  <div className="text-start">
+                    <div className="shadow-lg border m-2 rounded p-2">
+                      <label className="text-sm p-2">JOINT LIFE POLICY</label>
+                      <div className="mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                        <div className="bg-white align-items-center m-1 lg:mt-0">
+                          <input
+                            type="text"
+                            id="success"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            placeholder="NAME"
+                          />
+                        </div>
+                      </div>
+                      <div className="mb-0 flex grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-1">
+                        <div className="bg-white align-items-center m-1 lg:mt-0">
+                          <input
+                            type="date"
+                            id="success"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            placeholder="DOB"
+                          />
+                        </div>
+
+                        <div className="bg-white align-items-center m-1 lg:mt-0">
+                          <input
+                            type="date"
+                            id="success"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            placeholder="AGE"
+                            onChange={setAge}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div class="p-1 mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="w-full lg:w-full bg-white align-items-center pr-2 m-1  lg:mt-0">
@@ -2098,14 +2386,14 @@ const Index = () => {
                         value={proposalInfo[0]?.instmode}
                         disabled
                         class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePaymode}
+                        onChange={handlePaymentMode}
                       />
                     </div>
                   ) : (
                     <div className=" bg-white align-items-center m-1  lg:mt-0">
                       <label className="text-start text-xs">PAYMENT MODE</label>
                       <select
-                        onChange={handlePaymode}
+                        onChange={handlePaymentMode}
                         className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                       >
                         <>
@@ -2120,7 +2408,9 @@ const Index = () => {
                     </div>
                   )}
                 </div>
-                <div class="p-1 mb-8 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                {/* //total installment and age admitted postponded by Sir  */}
+
+                {/* <div class="p-1 mb-8 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="col-span-2 bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-start text-xs">
                       TOTAL INSTALLMENT
@@ -2155,23 +2445,100 @@ const Index = () => {
                       </>
                     </select>
                   </div>
-                </div>
+                </div> */}
               </div>
 
-              <div className="text-start mt-28 mb-2">
+              <div className="text-start mt-4 mb-2">
+                <div class=" mb-0 grid grid-cols-4 rounded mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                  <div className="bg-white align-items-center m-1  lg:mt-0">
+                    <label className="text-xs text-start w-44 mt-3 p-0">
+                      CALCULATION_TYPE
+                    </label>
+                    <input
+                      onChange={handleSumAssured}
+                      type="text"
+                      id="success"
+                      value={calcuType}
+                      disabled
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
+                  <div className="bg-white align-items-center m-1  lg:mt-0">
+                    <label className="text-xs text-start w-44 mt-3 p-0">
+                      SUPPLEMENTARY
+                    </label>
+                    <input
+                      onChange={handleSumAssured}
+                      type="text"
+                      id="success"
+                      value={suplimentary}
+                      disabled
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
+                  <div className="bg-white  align-items-center m-1 lg:mt-0">
+                    <label className="text-xs text-start w-16 mt-3 p-0">
+                      EXTRA_LOADING
+                    </label>
+                    <input
+                      type="text"
+                      id="success"
+                      value={extra_loading}
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
+                  <div className="bg-white  align-items-center m-1 lg:mt-0">
+                    <label className="text-xs text-center w-16 mt-3 p-0">
+                      MAJOR_DIEASES_RIDER
+                    </label>
+                    <input
+                      type="text"
+                      id="success"
+                      value={major_diseage}
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
+                  <div className="bg-white  align-items-center m-1 lg:mt-0">
+                    <label className="text-xs text-center w-16 mt-3 p-0">
+                      PREMIUM_WAIVER
+                    </label>
+
+                    <input
+                      type="text"
+                      id="success"
+                      value={prem_waiver}
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
+                  <div className="bg-white  align-items-center m-1 lg:mt-0">
+                    <label className="text-xs text-center w-16 mt-3 p-0">
+                      INPATIENT_RIDER
+                    </label>
+
+                    <input
+                      type="text"
+                      id="success"
+                      value={impatient_reader}
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
+                </div>
+
+              </div>
+              <div className="text-start mt-4 mb-2">
                 <div className="shadow border-2  m-0 rounded p-1">
                   {calcuType === "P" && (
                     <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                       <div className="w-full lg:w-full bg-white align-items-center m-1  lg:mt-0">
                         <select
-                          // onChange={handlePaymode}
+                          onChange={handlePaymode}
                           className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                         >
                           <>
                             <option>Select Premium</option>
 
                             {premiumList?.map((prem, i) => (
-                              <option key={i} value={prem?.prem_amt}>
+                              <option key={i} value={prem?.premium}>
                                 Premium Tk-{prem?.premium}
                               </option>
                             ))}
@@ -2192,7 +2559,7 @@ const Index = () => {
                           type="text"
                           id="success"
                           value={proposalInfo[0]?.sum_insure}
-                          disabled
+                          // disabled
                           class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       ) : (
@@ -2200,7 +2567,8 @@ const Index = () => {
                           onChange={handleSumAssured}
                           type="text"
                           id="success"
-                          value={sumAssured}
+                          // value={sumAssured}
+                          value={sumassurance[0] || sumAssured}
                           class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       )}
@@ -2247,10 +2615,11 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          value={basicPrem}
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          value={basicPrem || pmode}
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
-                      )}
+                      )
+                      }
                     </div>
 
                     <div className="bg-white  align-items-center m-1  lg:mt-0">
@@ -2280,22 +2649,26 @@ const Index = () => {
             </div>
 
             <div className="text-start px-2">
-              <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
-                <div className="text-start  mb-4 m-1">
-                  <div className="shadow border-2 h-[215px]  m-0 rounded p-0">
-                    <div class=" mb-0 flex grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
+              <div class="p-1 mb-0 flex grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+
+                <div className="text-start mb-4 m-1">
+                  <div className="shadow border-2 h-[215px] m-0 rounded p-0">
+                    <div className="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center p-2 lg:mx-auto lg:mt-0">
+                      <div className="bg-white flex align-items-center m-1 lg:mt-0">
                         <div className="flex items-center gap-2">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
+                          <input
+                            type="checkbox"
+                            id="promotion"
+                            // checked={isCheckboxChecked}
+                            onChange={handleResetSupplyment}
+                          />
+                          <label className="italic" htmlFor="promotion">
                             Clear Supplementary
-                          </Label>
+                          </label>
                         </div>
                       </div>
-                      <div className="flex bg-white align-items-center m-1  lg:mt-0">
-                        <label className="w-16 text-start mt-3 text-xs">
-                          SUPPL.
-                        </label>
+                      <div className="flex bg-white align-items-center m-1 lg:mt-0">
+                        <label className="w-16 text-start mt-3 text-xs">SUPPL.</label>
                         <select
                           onChange={handleSupply}
                           className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
@@ -2311,46 +2684,41 @@ const Index = () => {
                         </select>
                       </div>
 
-                      <div className="flex bg-white align-items-center m-1  lg:mt-1">
-                        <label className="w-16 text-start mt-3 text-xs">
-                          CLASS
-                        </label>
+                      <div className="flex bg-white align-items-center m-1 lg:mt-1">
+                        <label className="w-16 text-start mt-3 text-xs">CLASS</label>
                         <select
                           onChange={handleSuppliClass}
                           className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                         >
                           <>
                             <option>Select Suppli. Class</option>
-                            {SupplementaryList?.map((supp, i) => (
-                              <option key={i} value={supp?.class_id}>
-                                {supp?.class_name}
-                              </option>
-                            ))}
+                            {
+                              classList?.map((supp, i) => (
+                                <option key={i} value={supp?.class_id}>
+                                  {supp?.class_name}
+                                </option>
+                              ))}
                           </>
                         </select>
                       </div>
 
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <label className="text-xs text-start w-16 mt-3 p-0">
-                          RATE
-                        </label>
+                      <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                        <label className="text-xs text-start w-16 mt-3 p-0">RATE</label>
                         <input
                           type="text"
                           id="success"
-                          value={suppliment_rate}
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          value={suppliment_rate || 0}
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
 
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <label className="text-xs text-start w-16 mt-3 p-0">
-                          PREMIUM
-                        </label>
+                      <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                        <label className="text-xs text-start w-16 mt-3 p-0">PREMIUM</label>
                         <input
                           type="text"
-                          value={sPrem}
+                          value={sPrem || 0}
                           id="success"
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
                     </div>
@@ -2380,7 +2748,7 @@ const Index = () => {
                           type="text"
                           id="success"
                           disabled
-                          value={riderRate ? riderRate : "0"}
+                          // value={riderRate ? riderRate : "0"}
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
@@ -2421,7 +2789,7 @@ const Index = () => {
                           type="text"
                           id="success"
                           disabled
-                          value={premiumWaiver ? premiumWaiver : "0"}
+                          // value={premiumWaiver ? premiumWaiver : "0"}
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
@@ -2641,7 +3009,8 @@ const Index = () => {
                       <input
                         type="text"
                         id="success"
-                        value={totalAllPrem ? totalAllPrem : "0"}
+                        // value={totalAllPrem ? totalAllPrem : "0"}
+                        value={finalPremiumCalculation}
                         class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     </div>
