@@ -29,12 +29,13 @@ import swal from "sweetalert";
 const Index = () => {
   const [projectId, setProjectId] = useState("");
   const [gender, setGender] = useState("");
+  console.log(gender)
   const [maritalStatus, setMaritalStaus] = useState("");
   const [agentValue, setAgentValue] = useState("");
   const [proposalNo, setProposalNo] = useState("");
   const [chainlist, setChainList] = useState([]);
   const [proposalInfo, setProposalInfo] = useState([]);
-  console.log(proposalInfo)
+
   const [policyInfo, setPolicyInfo] = useState([]);
 
   const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
@@ -75,7 +76,6 @@ const Index = () => {
   const [rate, setRate] = useState();
   const [bankCode, setBankCode] = useState();
   const [suplimentary, setSuplimentary] = useState();
-  console.log(suplimentary)
   const [major_diseage, setMajordiseage] = useState();
   const [prem_waiver, setPremWaiver] = useState();
   const [impatient_reader, setImpatientReader] = useState();
@@ -1149,13 +1149,17 @@ const Index = () => {
   };
 
   //handler for reset 
+  const [sup, setSup] = useState()
+  const [mdr, setMDR] = useState();
+  const [waiverPrem, setWaiver] = useState();
+  const [ipdRider, setIPDRider] = useState();
   const { data: SupplementaryList, refetch: refetchClassList } = useGetSupplimentClassListQuery({ occup_id: occupation, supp_code: supplimentId });
   const { data: SupplementList, refetch: refetchSupplementList } = useGetSupplimentListQuery();
 
   const [supplementList, setSupplementList] = useState([]);
   const [classList, setClassList] = useState([]);
-  console.log(supplementList)
-  console.log(classList)
+  // console.log(supplementList)
+  // console.log(classList)
 
   useEffect(() => {
     setSupplementList(SupplementList);
@@ -1166,7 +1170,9 @@ const Index = () => {
   }, [SupplementaryList]);
 
   console.log(SupplementList, SupplementaryList, sPrem, suppliment_rate)
-  const handleResetSupplyment = () => {
+  const handleResetSupplyment = (e) => {
+    const values = e.target.value
+    setSup(values)
     setSupplementList([])
     setClassList([])
     setSuppPrem([])
@@ -1207,6 +1213,21 @@ const Index = () => {
     fetchData();
   }, [planName, occupation, supplimentId, supplimentClass, sumAssured, pmode]);
 
+  // Major Diseage Reader 
+  const handleMDRChange = (e) => {
+    const values = e.target.value;
+    setMDR(values)
+  }
+  // Waiver Premium 
+  const handleWaiverPremChange = (e) => {
+    const values = e.target.value;
+    setWaiver(values)
+  }
+  //IPD Rider 
+  const handleIPDRiderChange = (e) => {
+    const values = e.target.value;
+    setIPDRider(values)
+  }
   // Final Premium Calculation 
 
   const finalPremiumCalculation = (basicPrem || pmode) + sPrem
@@ -2506,7 +2527,7 @@ const Index = () => {
                     <input
                       type="text"
                       id="success"
-                      value={prem_waiver}
+                      value={prem_waiver === 'Y' ? 'YES' : prem_waiver === 'N' ? 'NO' : ''}
                       class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
@@ -2649,314 +2670,343 @@ const Index = () => {
             </div>
 
             <div className="text-start px-2">
-              <div class="p-1 mb-0 flex grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+              {
+                extra_loading === 'YES' &&
+                < >
+                  <div className="shadow-lg border m-1 rounded p-1">
+                    <h2 className="text-xs font-bold ml-2">EXTRA PREMIUM</h2>
 
+                    <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                        <label className="text-xs text-start w-80 mt-3 p-0">
+                          OE RATE & PREM
+                        </label>
+                        <input
+                          type="text"
+                          id="success"
+                          disabled
+                          value={oeRate ? oeRate : "0"}
+                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                        />
+                        <input
+                          type="text"
+                          id="success"
+                          disabled
+                          value={oePrem ? oePrem : "0"}
+                          class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
+                        />
+                      </div>
+
+                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                        <label className="text-xs text-start w-3/4 mt-3 p-0">
+                          H. RATE & PREM
+                        </label>
+                        <input
+                          type="text"
+                          id="success"
+                          disabled
+                          value={hosRate ? hosRate : 0}
+                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                        />
+                        <input
+                          type="text"
+                          id="success"
+                          disabled
+                          value={hosPrem ? hosPrem : 0}
+                          class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              }
+
+              <div class={`${suplimentary === 'NO' ? 'justify-center items-center' : 'p-1 mb-0 grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-centerlg:mx-auto lg:mt-1'}`}>
+
+                {
+                  suplimentary === 'YES' &&
+                  <>
+                    <div className="text-start mb-4 m-1">
+                      <div className="shadow border-2 m-0 rounded p-0">
+                        <div className="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center p-2 lg:mx-auto lg:mt-0">
+                          <div className="bg-white m-1 lg:mt-0 flex items-center justify-items-center">
+                            <label className="w-2/3 text-start text-sm">Do you want to Supp. Premium</label>
+                            <select
+                              className="form-input text-xs shadow border-[#E3F2FD] mt-0 w-1/3"
+                              onChange={handleResetSupplyment}
+                            >
+                              <option value='NO'>NO</option>
+                              <option value='YES'>YES</option>
+                            </select>
+                          </div>
+                          {
+                            sup === 'YES' &&
+                            <>
+                              <div className="flex bg-white align-items-center m-1 lg:mt-0">
+                                <label className="w-16 text-start mt-3 text-xs">SUPPL.</label>
+                                <select
+                                  onChange={handleSupply}
+                                  className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                                >
+                                  <>
+                                    <option>Select Suppli.</option>
+                                    {SupplementList?.map((suppl, i) => (
+                                      <option key={i} value={suppl?.supp_code}>
+                                        {suppl?.supp_name}
+                                      </option>
+                                    ))}
+                                  </>
+                                </select>
+                              </div>
+
+                              <div className="flex bg-white align-items-center m-1 lg:mt-1">
+                                <label className="w-16 text-start mt-3 text-xs">CLASS</label>
+                                <select
+                                  onChange={handleSuppliClass}
+                                  className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                                >
+                                  <>
+                                    <option>Select Suppli. Class</option>
+                                    {
+                                      classList?.map((supp, i) => (
+                                        <option key={i} value={supp?.class_id}>
+                                          {supp?.class_name}
+                                        </option>
+                                      ))}
+                                  </>
+                                </select>
+                              </div>
+
+                              <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                                <label className="text-xs text-start w-16 mt-3 p-0">RATE</label>
+                                <input
+                                  type="text"
+                                  id="success"
+                                  value={suppliment_rate || 0}
+                                  className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                />
+                              </div>
+
+                              <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                                <label className="text-xs text-start w-16 mt-3 p-0">PREMIUM</label>
+                                <input
+                                  type="text"
+                                  value={sPrem || 0}
+                                  id="success"
+                                  className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                />
+                              </div>
+                            </>
+                          }
+
+                        </div>
+                      </div>
+                    </div></>
+                }
                 <div className="text-start mb-4 m-1">
-                  <div className="shadow border-2 h-[215px] m-0 rounded p-0">
-                    <div className="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center p-2 lg:mx-auto lg:mt-0">
-                      <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            id="promotion"
-                            // checked={isCheckboxChecked}
-                            onChange={handleResetSupplyment}
-                          />
-                          <label className="italic" htmlFor="promotion">
-                            Clear Supplementary
-                          </label>
+                  {/* h-[215px] class e ay height ta chilo  */}
+                  {
+                    major_diseage === 'YES' &&
+                    <>
+                      <div className="shadow  border-2  m-0 rounded p-0">
+                        <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                          <div className="bg-white m-1 lg:mt-0 flex items-center justify-items-center">
+                            <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to MDR</label>
+                            <select
+                              className={`form-input text-xs shadow border-[#E3F2FD] mt-0 ${suplimentary === 'NO' ? 'w-3/4' : 'w-1/3'}`}
+                              onChange={handleMDRChange}
+                            //  onChange={handleCheckboxChange}
+                            >
+                              <option value='NO'>NO</option>
+                              <option value='YES'>YES</option>
+                            </select>
+                          </div>
+                          {
+                            mdr === 'YES' &&
+                            <>
+                              <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                                <label className="text-xs text-start w-24 mt-3 p-0">
+                                  RATE
+                                </label>
+                                <input
+                                  type="text"
+                                  id="success"
+                                  disabled
+                                  // value={riderRate ? riderRate : "0"}
+                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                />
+                              </div>
+
+                              <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                                <label className="text-xs text-start w-24 mt-3 p-0">
+                                  PREMIUM
+                                </label>
+                                <input
+                                  type="text"
+                                  id="success"
+                                  disabled
+                                  value={riderPrem ? riderPrem : "0"}
+                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                />
+                              </div>
+                            </>
+                          }
                         </div>
                       </div>
-                      <div className="flex bg-white align-items-center m-1 lg:mt-0">
-                        <label className="w-16 text-start mt-3 text-xs">SUPPL.</label>
-                        <select
-                          onChange={handleSupply}
-                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        >
-                          <>
-                            <option>Select Suppli.</option>
-                            {SupplementList?.map((suppl, i) => (
-                              <option key={i} value={suppl?.supp_code}>
-                                {suppl?.supp_name}
-                              </option>
-                            ))}
-                          </>
-                        </select>
-                      </div>
+                    </>
+                  }
+                  {
+                    prem_waiver === 'Y' &&
+                    <>
+                      <div className="shadow  border-2 m-1 rounded p-0">
+                        <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                          {/* onChange={handleCheckboxxChange} */}
+                          <div className="bg-white mt-1 lg:mt-0 flex items-center justify-items-center">
+                            <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to Waiver Prem</label>
+                            <select
+                              className={`form-input text-xs shadow border-[#E3F2FD] mt-0 ${suplimentary === 'NO' ? 'w-1/4' : 'w-1/3'}`}
+                              onChange={handleWaiverPremChange}
+                            //  onChange={handleCheckboxChange}
+                            >
+                              <option value='NO'>NO</option>
+                              <option value='YES'>YES</option>
+                            </select>
+                          </div>
 
-                      <div className="flex bg-white align-items-center m-1 lg:mt-1">
-                        <label className="w-16 text-start mt-3 text-xs">CLASS</label>
-                        <select
-                          onChange={handleSuppliClass}
-                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        >
-                          <>
-                            <option>Select Suppli. Class</option>
-                            {
-                              classList?.map((supp, i) => (
-                                <option key={i} value={supp?.class_id}>
-                                  {supp?.class_name}
-                                </option>
-                              ))}
-                          </>
-                        </select>
-                      </div>
-
-                      <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                        <label className="text-xs text-start w-16 mt-3 p-0">RATE</label>
-                        <input
-                          type="text"
-                          id="success"
-                          value={suppliment_rate || 0}
-                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                        />
-                      </div>
-
-                      <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                        <label className="text-xs text-start w-16 mt-3 p-0">PREMIUM</label>
-                        <input
-                          type="text"
-                          value={sPrem || 0}
-                          id="success"
-                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-start  mb-4 m-1">
-                  <div className="shadow h-[215px] border-2  m-0 rounded p-0">
-                    <div class=" mb-0 flex grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <div className="flex items-center gap-2">
-                          {/* Use the isChecked state for the checked attribute */}
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={handleCheckboxChange}
-                          />
-                          <Label className="italic" htmlFor="promotion">
-                            Clear Major Diaseas Rider
-                          </Label>
+                          {
+                            waiverPrem === 'YES' &&
+                            <>
+                              <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                                <label className="text-xs text-start w-48 mt-3 p-0">
+                                  WAIVER PREMIUM
+                                </label>
+                                <input
+                                  type="text"
+                                  id="success"
+                                  disabled
+                                  // value={premiumWaiver ? premiumWaiver : "0"}
+                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                />
+                              </div>
+                            </>
+                          }
                         </div>
-                      </div>
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <label className="text-xs text-start w-24 mt-3 p-0">
-                          RATE
-                        </label>
-                        <input
-                          type="text"
-                          id="success"
-                          disabled
-                          // value={riderRate ? riderRate : "0"}
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                        />
-                      </div>
-
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <label className="text-xs text-start w-24 mt-3 p-0">
-                          PREMIUM
-                        </label>
-                        <input
-                          type="text"
-                          id="success"
-                          disabled
-                          value={riderPrem ? riderPrem : "0"}
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                        />
-                      </div>
-                    </div>
-                    <div class=" mb-0 flex grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <div className="flex items-center gap-2">
-                          {/* Use the isChecked state for the checked attribute */}
-                          <input
-                            type="checkbox"
-                            checked={iChecked}
-                            onChange={handleCheckboxxChange}
-                          />
-                          <Label className="italic" htmlFor="waiver">
-                            Clear Waiver Premium
-                          </Label>
-                        </div>
-                      </div>
-
-                      <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                        <label className="text-xs text-start w-48 mt-3 p-0">
-                          WAIVER PREMIUM
-                        </label>
-                        <input
-                          type="text"
-                          id="success"
-                          disabled
-                          // value={premiumWaiver ? premiumWaiver : "0"}
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                      </div></>
+                  }
                 </div>
               </div>
 
-              <div className="text-start mb-4">
-                <div className="shadow-lg border m-1 rounded p-1">
-                  <h2 className="text-xs font-bold ml-2">
-                    IPD TREATEMENT RIDER
-                  </h2>
-                  <div className="bg-white flex justify-center m-1  lg:mt-0">
-                    <div className="flex items-center gap-2">
-                      <Checkbox id="promotion" />
-                      <Label className="italic" htmlFor="promotion">
-                        Clear IPD Rider
-                      </Label>
-                    </div>
-                  </div>
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="w-24 text-start mt-3 text-xs">
-                        PLAN PREM
-                      </label>
-                      <select
-                        onChange={handleIpdplan}
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                      >
+              {
+                impatient_reader === 'YES' &&
+                <>
+                  <div className="text-start mb-3">
+                    <div className="shadow-lg border m-1 rounded p-1">
+                      <h2 className="text-xs font-bold ml-2">IPD TREATMENT RIDER</h2>
+                      <div className="bg-white m-1 w-1/2 lg:mt-0 flex justify-evenly items-center">
+                        <label className="w-3/4 text-start text-sm">Do you want to IPD Rider</label>
+                        <select
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-0 w-2/4"
+                          onChange={handleIPDRiderChange}
+                        >
+                          <option value="NO">NO</option>
+                          <option value="YES">YES</option>
+                        </select>
+                      </div>
+                      {ipdRider === 'YES' && (
                         <>
-                          <option>SELECT PLAN PREM</option>
-                          {premPlanlist?.map((planList, i) => (
-                            <option key={i} value={planList?.plan_no}>
-                              {planList?.plan_name}
-                            </option>
-                          ))}
+                          <div className="mb-0 flex grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center p-1 lg:mx-auto lg:mt-0">
+                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                              <label className="w-24 text-start mt-3 text-xs">PLAN PREM</label>
+                              <select
+                                onChange={handleIpdplan}
+                                className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                              >
+                                <>
+                                  <option>SELECT PLAN PREM</option>
+                                  {premPlanlist?.map((planList, i) => (
+                                    <option key={i} value={planList?.plan_no}>
+                                      {planList?.plan_name}
+                                    </option>
+                                  ))}
+                                </>
+                              </select>
+                            </div>
+
+                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-48 mt-3 p-0">START FROM</label>
+
+                              <input
+                                type="text"
+                                id="success"
+                                value={risk_date}
+                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                              />
+                            </div>
+                          </div>
+                          <div className="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0 w-full justify-center align-items-center p-1 lg:mx-auto lg:mt-0">
+                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-32 mt-3 p-0">PREM RATE</label>
+
+                              <input
+                                type="text"
+                                id="success"
+                                value={IpdPremRate ? IpdPremRate : '0'}
+                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                              />
+                            </div>
+
+                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-24 mt-3 p-0">BENEFITS</label>
+                              <input
+                                type="text"
+                                id="success"
+                                value={0}
+                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                              />
+                            </div>
+
+                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-24 mt-3 p-0">END AT</label>
+
+                              <input
+                                type="text"
+                                id="success"
+                                value={endAtdateFormatted ? endAtdateFormatted : '-'}
+                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                              />
+                            </div>
+                          </div>
                         </>
-                      </select>
-                    </div>
-
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-48 mt-3 p-0">
-                        START FROM
-                      </label>
-
-                      <input
-                        type="text"
-                        id="success"
-                        value={risk_date}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
+                      )}
                     </div>
                   </div>
-                  <div class=" mb-0 flex grid grid-cols-3 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-32 mt-3 p-0">
-                        PREM RATE
-                      </label>
+                </>
+              }
 
-                      <input
-                        type="text"
-                        id="success"
-                        value={IpdPremRate ? IpdPremRate : "0"}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                    </div>
-
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-24 mt-3 p-0">
-                        BENIFITS
-                      </label>
-                      <input
-                        type="text"
-                        id="success"
-                        value={0}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                    </div>
-
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-24 mt-3 p-0">
-                        END AT
-                      </label>
-
-                      <input
-                        type="text"
-                        id="success"
-                        value={endAtdateFormatted ? endAtdateFormatted : "-"}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                    </div>
-                  </div>
+              <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                  <label className="text-xs text-start w-36 mt-3 p-0">
+                    EXT. PREM
+                  </label>
+                  <input
+                    type="text"
+                    id="success"
+                    class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
-              </div>
 
-              <div className="text-start mb-4">
-                <div className="shadow-lg border m-1 rounded p-1">
-                  <h2 className="text-xs font-bold ml-2">EXTRA PREMIUM</h2>
+                <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                  <label className="text-xs font-bold text-start w-32 mt-3 p-0">
+                    TOTAL EXTRA
+                  </label>
 
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-80 mt-3 p-0">
-                        OE RATE & PREM
-                      </label>
-                      <input
-                        type="text"
-                        id="success"
-                        disabled
-                        value={oeRate ? oeRate : "0"}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                      <input
-                        type="text"
-                        id="success"
-                        disabled
-                        value={oePrem ? oePrem : "0"}
-                        class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
-                      />
-                    </div>
-
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-3/4 mt-3 p-0">
-                        H. RATE & PREM
-                      </label>
-                      <input
-                        type="text"
-                        id="success"
-                        disabled
-                        value={hosRate ? hosRate : 0}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                      <input
-                        type="text"
-                        id="success"
-                        disabled
-                        value={hosPrem ? hosPrem : 0}
-                        class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
-                      />
-                    </div>
-                  </div>
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs text-start w-36 mt-3 p-0">
-                        EXT. PREM
-                      </label>
-                      <input
-                        type="text"
-                        id="success"
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                    </div>
-
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-xs font-bold text-start w-32 mt-3 p-0">
-                        TOTAL EXTRA
-                      </label>
-
-                      <input
-                        type="text"
-                        id="success"
-                        disabled
-                        value={extraTotalPrem ? extraTotalPrem : "0"}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                    </div>
-                  </div>
+                  <input
+                    type="text"
+                    id="success"
+                    disabled
+                    value={extraTotalPrem ? extraTotalPrem : "0"}
+                    class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
               </div>
               <div className="text-start mb-4">
