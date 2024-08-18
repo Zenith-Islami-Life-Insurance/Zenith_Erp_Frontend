@@ -29,7 +29,6 @@ import swal from "sweetalert";
 const Index = () => {
   const [projectId, setProjectId] = useState("");
   const [gender, setGender] = useState("");
-  console.log(gender)
   const [maritalStatus, setMaritalStaus] = useState("");
   const [agentValue, setAgentValue] = useState("");
   const [proposalNo, setProposalNo] = useState("");
@@ -60,6 +59,8 @@ const Index = () => {
   const [occupation, setOccupation] = useState();
   const [branch, setBranch] = useState();
   const [educationName, setEducation] = useState();
+  const [eduId, setEduId] = useState();
+  console.log(eduId);
   const [religion, setReligion] = useState();
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
@@ -97,7 +98,8 @@ const Index = () => {
   const [premPlanlist, setPremPlanlist] = useState([]);
   const [endAtDate, setEndatDate] = useState([]);
   const [ipdPremRate, setIpdPlanRate] = useState([]);
-  const [oePremRate, setOeRatePrem] = useState([""]);
+  const [premOccupRate, setPremOccupRate] = useState([""]);
+  console.log(premOccupRate)
   const [hospitalPremRate, setHospitalRatePrem] = useState([""]);
   const [premWaiver, setWaiverPrem] = useState([]);
   const [eduStatus, setEducationStatus] = useState();
@@ -141,16 +143,17 @@ const Index = () => {
   const IpdPremRate = ipdPremRate[0]?.ipd_prem_rate;
   const riderPrem = riderPremRate[0]?.prem;
   const riderRate = riderPremRate[0]?.rate;
-  const oEPremRate = oePremRate[0]?.oe_ratePrem;
+  // const oEPremRate = oePremRate[0]?.oe_ratePrem;
   const hosPremRate = hospitalPremRate[0]?.hos_ratePrem;
+  console.log(hosPremRate)
 
   const pol_i = policyInfo[0]?.policy_no;
   const pol_proposer = policyInfo[0]?.proposer;
   const pol_riskdate = policyInfo[0]?.risk_date;
   const pol_suminsure = policyInfo[0]?.sum_insure;
 
-  const [oeRate, oePrem] = oEPremRate ? oEPremRate.split("_") : "0";
-  const [hosRate, hosPrem] = hosPremRate ? hosPremRate.split("_") : "0";
+  // const [oeRate, oePrem] = oEPremRate ? oEPremRate.split("_") : "0";
+  // const [hosRate, hosPrem] = hosPremRate ? hosPremRate.split("_") : "0";
   const suppliment_rate = suppliRate[0]?.supp_rate;
   const premiumWaiver = premWaiver[0]?.waiver_prem;
 
@@ -279,6 +282,7 @@ const Index = () => {
       min_suminsured,
       max_suminsured,
     ] = value.split("-");
+    console.log(calcuType)
     setPlan(planId);
     setCalcuType(calcuType);
     setSuplimentary(suplimentary);
@@ -311,6 +315,10 @@ const Index = () => {
     setReligion(e.target.value);
   };
   const handleEducation = (e) => {
+    const values = e.target.value;
+    const [education_id, education_name] = values.split("-");
+    setEduId(education_id);
+    // console.log(education_name);
     setEducation(e.target.value);
   };
 
@@ -890,49 +898,35 @@ const Index = () => {
   }, [occupation, supplimentId, supplimentClass, paymentMode]);
   // get supplimentary rate
 
-  // get Occupation prem rate
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/api/oe-rate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${pmode}`
-        );
-        setOeRatePrem(response?.data);
-      } catch (error) {
-      } finally {
-      }
-    };
 
-    fetchData();
-  }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
-  // get Occupation prem rate
 
   // get Hospital prem rate
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/api/hospital-premrate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${pmode}`
-        );
-        setHospitalRatePrem(response?.data);
-      } catch (error) {
-      } finally {
-      }
-    };
+  // console.log(planName, occupation, gender, sumAssured, eduStatus, eduStatus, paymentMode)
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:5001/api/hospital-premrate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${paymentMode}`
+  //       );
+  //       setHospitalRatePrem(response?.data);
+  //     } catch (error) {
+  //     } finally {
+  //     }
+  //   };
 
-    fetchData();
-  }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
+  //   fetchData();
+  // }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
   //get Hospital prem rate
 
-  const extraTotalPrem =
-    parseInt(premiumWaiver, 0) +
-    parseInt(sPrem, 0) +
-    parseInt(oePrem, 0) +
-    parseInt(hosPrem, 0) +
-    parseInt(riderPrem, 0) +
-    parseInt(IpdPremRate, 0);
+  // const extraTotalPrem =
+  //   parseInt(premiumWaiver, 0) +
+  //   parseInt(sPrem, 0) +
+  //   parseInt(oePrem, 0) +
+  //   parseInt(hosPrem, 0) +
+  //   parseInt(riderPrem, 0) +
+  //   parseInt(IpdPremRate, 0);
 
-  const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
+  // const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
 
   const { data: branchList, isLoading, isError } = useGetBranchlistQuery();
   const { data: projectList, isLoadingg, isErrorr } = useGetProjectlistQuery();
@@ -944,10 +938,12 @@ const Index = () => {
   const { data: districtList } = useGetDistrictlisttQuery();
   const { data: birthPlaceList } = useGetDistrictlisttQuery();
   const { data: genderList } = useGetGenderQuery();
+
   const { data: locallityList } = useGetLocallityQuery();
   const { data: countryList } = useGetCountrylistQuery();
   const { data: occupationList } = useGetOccupationlistQuery();
   const { data: educationList } = useGetEducationListQuery();
+
   const { data: religionList } = useGetReligionListQuery();
   const { data: planList } = useGetPlanlistQuery(calcuAge);
   const { data: premiumList } = useGetPremiumListQuery();
@@ -1147,7 +1143,57 @@ const Index = () => {
       console.log('Error:', err);
     }
   };
+  const lastEdu = isEduDocChecked ? 'Y' : 'N';
+  console.log(planName, occupation, gender, sumAssured, eduId, 'Y', paymentMode)
+  //Extra Premium 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/hospital-prem/${planName}/${occupation}/${gender}/${sumAssured}/${eduId}/${lastEdu}/${paymentMode}`
+        );
+        setHospitalRatePrem(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
 
+    fetchData();
+  }, [planName, occupation, gender, sumAssured, eduId, paymentMode, lastEdu]);
+
+  // Hospital and Occapation rate
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/occupRate/${occupation}`
+        );
+        setPremOccupRate(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [occupation]);
+
+
+  // get Occupation prem rate
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:5001/api/oe-rate/${planName}/${occupation}/${gender}/${sumAssured}/${eduId}/'Y'/${paymentMode}`
+  //       );
+  //       setOeRatePrem(response?.data);
+  //     } catch (error) {
+  //     } finally {
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
+  // get Occupation prem rate
   //handler for reset 
   const [sup, setSup] = useState()
   const [mdr, setMDR] = useState();
@@ -1158,8 +1204,6 @@ const Index = () => {
 
   const [supplementList, setSupplementList] = useState([]);
   const [classList, setClassList] = useState([]);
-  // console.log(supplementList)
-  // console.log(classList)
 
   useEffect(() => {
     setSupplementList(SupplementList);
@@ -1169,7 +1213,6 @@ const Index = () => {
     setClassList(SupplementaryList);
   }, [SupplementaryList]);
 
-  console.log(SupplementList, SupplementaryList, sPrem, suppliment_rate)
   const handleResetSupplyment = (e) => {
     const values = e.target.value
     setSup(values)
@@ -1181,7 +1224,7 @@ const Index = () => {
   };
 
   // get supplimentary rate
-  console.log(occupation, supplimentId, supplimentClass, paymentMode)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1196,8 +1239,9 @@ const Index = () => {
 
     fetchData();
   }, [occupation, supplimentId, supplimentClass, paymentMode]);
+
   // get suppliment premium
-  console.log(planName, occupation, supplimentId, supplimentClass, sumAssured, paymentMode)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -2124,7 +2168,7 @@ const Index = () => {
                             className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                           >
                             {educationList?.map((education, i) => (
-                              <option key={i} value={education?.education_name} onChange={handleEducationName}>
+                              <option key={i} value={`${education?.education_id}-${education?.education_name}`} onChange={handleEducationName}>
                                 {education?.education_name}
                               </option>
                             ))}
@@ -2679,40 +2723,51 @@ const Index = () => {
                     <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
                       <div className="bg-white flex align-items-center m-1  lg:mt-0">
                         <label className="text-xs text-start w-80 mt-3 p-0">
-                          OE RATE & PREM
+                          OE PREM & RATE
                         </label>
                         <input
                           type="text"
                           id="success"
                           disabled
-                          value={oeRate ? oeRate : "0"}
+                          // value={oeRate ? oeRate : "0"}
+                          value={occupation !== '1' ? hosPremRate : 0}
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
                           type="text"
                           id="success"
                           disabled
-                          value={oePrem ? oePrem : "0"}
+                          value={occupation !== '1' ? premOccupRate?.occupationRate : 0}
                           class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
                         />
                       </div>
-
+                      {/* console.log(planName, occupation, gender, sumAssured, eduId, 'Y', paymentMode) */}
                       <div className="bg-white flex align-items-center m-1  lg:mt-0">
                         <label className="text-xs text-start w-3/4 mt-3 p-0">
-                          H. RATE & PREM
+                          H.PREM & RATE
                         </label>
                         <input
                           type="text"
                           id="success"
                           disabled
-                          value={hosRate ? hosRate : 0}
+                          // value={hosRate ? hosRate : 0}
+                          value={
+                            (gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId)
+                              ? hosPremRate
+                              : 0
+                          }
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
                           type="text"
                           id="success"
                           disabled
-                          value={hosPrem ? hosPrem : 0}
+                          // value={hosPrem ? hosPrem : 0}
+                          value={
+                            (gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId)
+                              ? premOccupRate?.occupationRate
+                              : 0
+                          }
                           class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
                         />
                       </div>
@@ -2805,8 +2860,47 @@ const Index = () => {
                 }
                 <div className="text-start mb-4 m-1">
                   {/* h-[215px] class e ay height ta chilo  */}
+
                   {
-                    major_diseage === 'YES' &&
+                    prem_waiver === 'Y' &&
+                    <>
+                      <div className="shadow  border-2 m-1 rounded p-0">
+                        <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                          {/* onChange={handleCheckboxxChange} */}
+                          <div className="bg-white mt-1 lg:mt-0 flex items-center justify-items-center">
+                            <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to Waiver Prem</label>
+                            <select
+                              className={`form-input text-xs shadow border-[#E3F2FD] mt-0 ${suplimentary === 'NO' ? 'w-1/4' : 'w-1/3'}`}
+                              onChange={handleWaiverPremChange}
+                            //  onChange={handleCheckboxChange}
+                            >
+                              <option value='NO'>NO</option>
+                              <option value='YES'>YES</option>
+                            </select>
+                          </div>
+
+                          {
+                            waiverPrem === 'YES' &&
+                            <>
+                              <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                                <label className="text-xs text-start w-48 mt-3 p-0">
+                                  WAIVER PREMIUM
+                                </label>
+                                <input
+                                  type="text"
+                                  id="success"
+                                  disabled
+                                  // value={premiumWaiver ? premiumWaiver : "0"}
+                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                />
+                              </div>
+                            </>
+                          }
+                        </div>
+                      </div></>
+                  }
+                  {
+                    major_diseage === 'YES' && ipdRider === 'NO' &&
                     <>
                       <div className="shadow  border-2  m-0 rounded p-0">
                         <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
@@ -2855,49 +2949,11 @@ const Index = () => {
                       </div>
                     </>
                   }
-                  {
-                    prem_waiver === 'Y' &&
-                    <>
-                      <div className="shadow  border-2 m-1 rounded p-0">
-                        <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          {/* onChange={handleCheckboxxChange} */}
-                          <div className="bg-white mt-1 lg:mt-0 flex items-center justify-items-center">
-                            <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to Waiver Prem</label>
-                            <select
-                              className={`form-input text-xs shadow border-[#E3F2FD] mt-0 ${suplimentary === 'NO' ? 'w-1/4' : 'w-1/3'}`}
-                              onChange={handleWaiverPremChange}
-                            //  onChange={handleCheckboxChange}
-                            >
-                              <option value='NO'>NO</option>
-                              <option value='YES'>YES</option>
-                            </select>
-                          </div>
-
-                          {
-                            waiverPrem === 'YES' &&
-                            <>
-                              <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                                <label className="text-xs text-start w-48 mt-3 p-0">
-                                  WAIVER PREMIUM
-                                </label>
-                                <input
-                                  type="text"
-                                  id="success"
-                                  disabled
-                                  // value={premiumWaiver ? premiumWaiver : "0"}
-                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                                />
-                              </div>
-                            </>
-                          }
-                        </div>
-                      </div></>
-                  }
                 </div>
               </div>
 
               {
-                impatient_reader === 'YES' &&
+                impatient_reader === 'YES' && mdr === 'NO' &&
                 <>
                   <div className="text-start mb-3">
                     <div className="shadow-lg border m-1 rounded p-1">
@@ -3004,7 +3060,7 @@ const Index = () => {
                     type="text"
                     id="success"
                     disabled
-                    value={extraTotalPrem ? extraTotalPrem : "0"}
+                    // value={extraTotalPrem ? extraTotalPrem : "0"}
                     class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                   />
                 </div>
