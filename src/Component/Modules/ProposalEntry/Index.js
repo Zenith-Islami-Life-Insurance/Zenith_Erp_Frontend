@@ -102,6 +102,9 @@ const Index = () => {
   console.log(premOccupRate)
   const [hospitalPremRate, setHospitalRatePrem] = useState([""]);
   const [premWaiver, setWaiverPrem] = useState([]);
+  const [mdrPremium, setMdrPremium] = useState([]);
+  const [mdrRate, setMdrRate] = useState([]);
+  console.log(mdrPremium, mdrRate)
   const [eduStatus, setEducationStatus] = useState();
   const [policyNo, setPolicyNo] = useState();
   const [marriage_date, setMarriageDate] = useState();
@@ -156,6 +159,7 @@ const Index = () => {
   // const [hosRate, hosPrem] = hosPremRate ? hosPremRate.split("_") : "0";
   const suppliment_rate = suppliRate[0]?.supp_rate;
   const premiumWaiver = premWaiver[0]?.waiver_prem;
+  console.log(premiumWaiver)
 
   const pRate = rate?.[0]?.toFixed(2);
   const pFactor = rate?.[1]?.toFixed(2);
@@ -215,10 +219,10 @@ const Index = () => {
   }, []);
   // -------------END-------------
   const comm_datee = formatAsMMDDYYYY(risk_date);
-
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
-
+  console.log(birth_date)
   const dob = formatAsMMDDYYYY(birth_date);
+  console.log(comm_datee, dob)
 
   const handleClearClick = () => {
     window.location.reload(); // Remove this line if present
@@ -864,21 +868,6 @@ const Index = () => {
   // get rider premium rate
 
   // get waiver premium
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5001/api/waiver-prem/${calcuAge}/${planName}/${basicPrem}`
-        );
-        setWaiverPrem(response?.data);
-      } catch (error) {
-      } finally {
-      }
-    };
-
-    fetchData();
-  }, [calcuAge, planName, basicPrem]);
-  // get waiver premium
 
   // get supplimentary rate
   console.log(occupation, supplimentId, supplimentClass, paymentMode)
@@ -1257,6 +1246,54 @@ const Index = () => {
     fetchData();
   }, [planName, occupation, supplimentId, supplimentClass, sumAssured, pmode]);
 
+
+  //get wwaiver Premium 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/waiver_premium/${calcuAge}/${[planName]}/${basicPrem || pmode}`
+        );
+        setWaiverPrem(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [planName, basicPrem, calcuAge, pmode]);
+  console.log(planName, selectTerm, dob, comm_datee, sumAssured, paymentMode)
+
+  //get MDR Premium 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/mdr-prem/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${paymentMode}/PREM`
+        );
+        setMdrPremium(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [planName, selectTerm, dob, comm_datee, sumAssured, paymentMode]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/mdr-prem/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${paymentMode}/RATE`
+        );
+        setMdrRate(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [planName, selectTerm, dob, comm_datee, sumAssured, paymentMode]);
+
   // Major Diseage Reader 
   const handleMDRChange = (e) => {
     const values = e.target.value;
@@ -1265,6 +1302,10 @@ const Index = () => {
   // Waiver Premium 
   const handleWaiverPremChange = (e) => {
     const values = e.target.value;
+    if (values === 'NO') {
+      setWaiverPrem([])
+      setPaymode(0)
+    }
     setWaiver(values)
   }
   //IPD Rider 
@@ -2764,7 +2805,7 @@ const Index = () => {
                           disabled
                           // value={hosPrem ? hosPrem : 0}
                           value={
-                            (gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId)
+                            ((gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId)) && hosPremRate !== 0
                               ? premOccupRate?.occupationRate
                               : 0
                           }
@@ -2890,7 +2931,7 @@ const Index = () => {
                                   type="text"
                                   id="success"
                                   disabled
-                                  // value={premiumWaiver ? premiumWaiver : "0"}
+                                  value={premiumWaiver || 0}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -2900,7 +2941,7 @@ const Index = () => {
                       </div></>
                   }
                   {
-                    major_diseage === 'YES' && ipdRider === 'NO' &&
+                    major_diseage === 'YES' &&
                     <>
                       <div className="shadow  border-2  m-0 rounded p-0">
                         <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
@@ -2927,6 +2968,7 @@ const Index = () => {
                                   id="success"
                                   disabled
                                   // value={riderRate ? riderRate : "0"}
+                                  value={mdrRate[0]?.mdr_prem.toFixed(2) || 0}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -2939,7 +2981,7 @@ const Index = () => {
                                   type="text"
                                   id="success"
                                   disabled
-                                  value={riderPrem ? riderPrem : "0"}
+                                  value={mdrPremium[0]?.mdr_prem || 0}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -2953,7 +2995,7 @@ const Index = () => {
               </div>
 
               {
-                impatient_reader === 'YES' && mdr === 'NO' &&
+                impatient_reader === 'YES' &&
                 <>
                   <div className="text-start mb-3">
                     <div className="shadow-lg border m-1 rounded p-1">
