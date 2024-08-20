@@ -70,7 +70,7 @@ const Index = () => {
   const [termList, setTermList] = useState([""]);
   const [calAge, setCalage] = useState();
   const [pmode, setPaymode] = useState(0);
-  const [paymentMode, setPaymentMode] = useState('4');
+  const [paymentMode, setPaymentMode] = useState('1');
   const [t_installment, setInstallment] = useState();
   const [selectTerm, setTerm] = useState();
   const [calcuType, setCalcuType] = useState();
@@ -104,7 +104,9 @@ const Index = () => {
   const [premWaiver, setWaiverPrem] = useState([]);
   const [mdrPremium, setMdrPremium] = useState([]);
   const [mdrRate, setMdrRate] = useState([]);
-  console.log(mdrPremium, mdrRate)
+  // console.log(mdrPremium, mdrRate)
+  const [ipdPlans, setIpdPlans] = useState([]);
+  console.log(ipdPlans)
   const [eduStatus, setEducationStatus] = useState();
   const [policyNo, setPolicyNo] = useState();
   const [marriage_date, setMarriageDate] = useState();
@@ -113,6 +115,10 @@ const Index = () => {
   const [proposalFirstPage, setProposalFristPage] = useState('');
 
   const [ipdPlanNo, setIpdplanNo] = useState();
+  const [ipdPlanName, setIpdPlanName] = useState();
+  const [ipdEndDate, setIpdEndDate] = useState();
+  const [ipdStartDate, setIpdStartDate] = useState();
+  const [ipdBenefit, setIpdBenefit] = useState(0);
   const [isChecked, setIsChecked] = useState(true);
   const [riderPremRate, setRiderPremRate] = useState([]);
 
@@ -234,7 +240,10 @@ const Index = () => {
   };
 
   const handleIpdplan = (e) => {
-    setIpdplanNo(e.target.value);
+    const values = e.target.value;
+    const [plan_no, yly_max_benefit] = values.split("-");
+    setIpdplanNo(plan_no);
+    setIpdBenefit(yly_max_benefit);
   };
 
   const handleSumAssured = (e) => {
@@ -833,12 +842,13 @@ const Index = () => {
   }, [planName, sumAssured, basicPrem, pmode, sumassurance[0], pFactor, paymentMode]);
   // get sum at risk
 
-  // get idp premium rate
+  // get idp premium
+  // SELECT POLICY_MANAGEMENT.IPD_PREM_CALC_NEW(: PLAN_NO,: TXT_DOB,: RISKADATE,: TXT_INSTMODE,: TXT_TABLE) XX FROM SYS.DUAL;
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/ipd-prem-rate/${ipdPlanNo}/${dob}/${comm_datee}/${pmode}/${planName}`
+          `http://localhost:5001/api/ipd-prem-rate/${ipdPlanNo}/${dob}/${comm_datee}/${paymentMode}/${planName}`
         );
         setIpdPlanRate(response?.data);
       } catch (error) {
@@ -847,7 +857,7 @@ const Index = () => {
     };
 
     fetchData();
-  }, [ipdPlanNo, dob, comm_datee, pmode, planName]);
+  }, [ipdPlanNo, dob, comm_datee, paymentMode, planName, sumAssured]);
   // get idp premium rate
 
   // get rider premium rate
@@ -906,16 +916,6 @@ const Index = () => {
   //   fetchData();
   // }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
   //get Hospital prem rate
-
-  // const extraTotalPrem =
-  //   parseInt(premiumWaiver, 0) +
-  //   parseInt(sPrem, 0) +
-  //   parseInt(oePrem, 0) +
-  //   parseInt(hosPrem, 0) +
-  //   parseInt(riderPrem, 0) +
-  //   parseInt(IpdPremRate, 0);
-
-  // const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
 
   const { data: branchList, isLoading, isError } = useGetBranchlistQuery();
   const { data: projectList, isLoadingg, isErrorr } = useGetProjectlistQuery();
@@ -1279,6 +1279,7 @@ const Index = () => {
 
     fetchData();
   }, [planName, selectTerm, dob, comm_datee, sumAssured, paymentMode]);
+  //get MDR Rate
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1293,26 +1294,63 @@ const Index = () => {
 
     fetchData();
   }, [planName, selectTerm, dob, comm_datee, sumAssured, paymentMode]);
+  // /get plan name for Ipd Rider
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/ipd-plan/${comm_datee}/${sumAssured}`
+        );
+        setIpdPlans(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [comm_datee, sumAssured]);
 
   // Major Diseage Reader 
   const handleMDRChange = (e) => {
     const values = e.target.value;
     setMDR(values)
   }
+
   // Waiver Premium 
   const handleWaiverPremChange = (e) => {
     const values = e.target.value;
     if (values === 'NO') {
-      setWaiverPrem([])
-      setPaymode(0)
+      setWaiverPrem(0)
+      // setPaymode(0)
     }
     setWaiver(values)
   }
   //IPD Rider 
   const handleIPDRiderChange = (e) => {
-    const values = e.target.value;
-    setIPDRider(values)
+    setIPDRider(e.target.value)
+    if (e.target.value === "YES") {
+      const selectedPlan = ipdPlans[0]; // Or find by specific criteria
+      const { start_from, end_to, plan_no } = selectedPlan;
+      setIpdPlanName(plan_no);
+      setIpdEndDate(end_to);
+      setIpdStartDate(start_from);
+    } else {
+      setIpdPlanRate(0)
+      setIpdBenefit(0)
+    }
   }
+
+  // const extraTotalPrem =
+  //   parseInt(premiumWaiver, 0) +
+  //   parseInt(sPrem, 0) +
+  //   parseInt(oePrem, 0) +
+  //   parseInt(hosPrem, 0) +
+  //   parseInt(riderPrem, 0) +
+  //   parseInt(IpdPremRate, 0);
+  console.log((hosPremRate || 0), (sPrem || 0), (premiumWaiver || 0), (mdrPremium[0]?.mdr_prem || 0), (IpdPremRate || 0))
+  const extraTotal = (hosPremRate || 0) + (sPrem || 0) + (mdrPremium[0]?.mdr_prem || 0) + (premiumWaiver || 0) + (IpdPremRate || 0)
+  console.log(extraTotal)
+  // const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
   // Final Premium Calculation 
 
   const finalPremiumCalculation = (basicPrem || pmode) + sPrem
@@ -2759,7 +2797,7 @@ const Index = () => {
                 extra_loading === 'YES' &&
                 < >
                   <div className="shadow-lg border m-1 rounded p-1">
-                    <h2 className="text-xs font-bold ml-2">EXTRA PREMIUM</h2>
+                    <h2 className="text-xs font-bold ml-2">LOADING EXTRA</h2>
 
                     <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
                       <div className="bg-white flex align-items-center m-1  lg:mt-0">
@@ -2999,7 +3037,7 @@ const Index = () => {
                 <>
                   <div className="text-start mb-3">
                     <div className="shadow-lg border m-1 rounded p-1">
-                      <h2 className="text-xs font-bold ml-2">IPD TREATMENT RIDER</h2>
+                      <h2 className="text-xs font-bold ml-2 py-2">IPD TREATMENT RIDER</h2>
                       <div className="bg-white m-1 w-1/2 lg:mt-0 flex justify-evenly items-center">
                         <label className="w-3/4 text-start text-sm">Do you want to IPD Rider</label>
                         <select
@@ -3012,65 +3050,57 @@ const Index = () => {
                       </div>
                       {ipdRider === 'YES' && (
                         <>
-                          <div className="mb-0 flex grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center p-1 lg:mx-auto lg:mt-0">
-                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                              <label className="w-24 text-start mt-3 text-xs">PLAN PREM</label>
+                          <div className="mb-0 flex grid grid-cols-2 gap-1 w-full justify-center align-items-center p-1 lg:mx-auto">
+                            <div className="bg-white flex items-center m-1 lg:mt-0">
+                              <label className="w-24 text-start text-xs mr-2">PLAN PREM</label>
                               <select
                                 onChange={handleIpdplan}
-                                className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                                className="form-input text-sm shadow border-[#E3F2FD] w-full"
                               >
-                                <>
-                                  <option>SELECT PLAN PREM</option>
-                                  {premPlanlist?.map((planList, i) => (
-                                    <option key={i} value={planList?.plan_no}>
-                                      {planList?.plan_name}
-                                    </option>
-                                  ))}
-                                </>
+                                <option>SELECT PLAN PREM</option>
+                                {ipdPlans?.map((item, i) => (
+                                  <option key={item?.plan_no} value={`${item?.plan_no}-${item?.yly_max_benefit}`}>
+                                    {item?.plan_name}
+                                  </option>
+                                ))}
                               </select>
                             </div>
-
-                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                              <label className="text-xs text-start w-48 mt-3 p-0">START FROM</label>
-
+                            <div className="bg-white flex items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-32 mr-2">PREMIUM</label>
+                              <input
+                                type="text"
+                                id="success"
+                                value={IpdPremRate || 0}
+                                className="form-input text-xs shadow border-[#E3F2FD] w-full"
+                              />
+                            </div>
+                          </div>
+                          <div className="mb-0 flex grid grid-cols-3 gap-1 w-full justify-center items-center p-1 lg:mx-auto">
+                            <div className="bg-white flex items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-24 mr-2">BENEFITS</label>
+                              <input
+                                type="text"
+                                id="success"
+                                value={ipdBenefit || 0}
+                                className="form-input text-xs shadow border-[#E3F2FD] w-full"
+                              />
+                            </div>
+                            <div className="bg-white flex items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-48 mr-2">START FROM</label>
                               <input
                                 type="text"
                                 id="success"
                                 value={risk_date}
-                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                className="form-input text-xs shadow border-[#E3F2FD] w-full"
                               />
                             </div>
-                          </div>
-                          <div className="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0 w-full justify-center align-items-center p-1 lg:mx-auto lg:mt-0">
-                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                              <label className="text-xs text-start w-32 mt-3 p-0">PREM RATE</label>
-
-                              <input
-                                type="text"
-                                id="success"
-                                value={IpdPremRate ? IpdPremRate : '0'}
-                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                              />
-                            </div>
-
-                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                              <label className="text-xs text-start w-24 mt-3 p-0">BENEFITS</label>
-                              <input
-                                type="text"
-                                id="success"
-                                value={0}
-                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                              />
-                            </div>
-
-                            <div className="bg-white flex align-items-center m-1 lg:mt-0">
-                              <label className="text-xs text-start w-24 mt-3 p-0">END AT</label>
-
+                            <div className="bg-white flex items-center m-1 lg:mt-0">
+                              <label className="text-xs text-start w-24 mr-2">END AT</label>
                               <input
                                 type="text"
                                 id="success"
                                 value={endAtdateFormatted ? endAtdateFormatted : '-'}
-                                className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                className="form-input text-xs shadow border-[#E3F2FD] w-full"
                               />
                             </div>
                           </div>
@@ -3079,111 +3109,41 @@ const Index = () => {
                     </div>
                   </div>
                 </>
+
               }
 
-              <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                  <label className="text-xs text-start w-36 mt-3 p-0">
-                    EXT. PREM
-                  </label>
-                  <input
-                    type="text"
-                    id="success"
-                    class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                  />
-                </div>
-
-                <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                  <label className="text-xs font-bold text-start w-32 mt-3 p-0">
+              <div className="bg-white flex flex-col items-center justify-center mx-auto lg:mt-0 w-full">
+                <div className="flex items-center gap-4 w-full">
+                  <label className="text-sm font-bold text-start p-0 w-1/4">
                     TOTAL EXTRA
                   </label>
-
                   <input
                     type="text"
                     id="success"
                     disabled
                     // value={extraTotalPrem ? extraTotalPrem : "0"}
-                    class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                    value={extraTotal || 0}
+
+                    className="form-input text-sm shadow border-[#E3F2FD] w-3/4"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 w-full mt-4">
+                  <label className="text-sm font-bold text-start p-0 w-1/4">
+                    TOTAL PREMIUM
+                  </label>
+                  <input
+                    type="text"
+                    id="success"
+                    value={finalPremiumCalculation}
+                    className="form-input text-sm shadow border-[#E3F2FD] w-3/4"
                   />
                 </div>
               </div>
-              <div className="text-start mb-4">
-                <div className="shadow-lg border m-1 rounded p-1">
-                  <h2 className="text-xs font-bold ml-2">
-                    OPTION & POLICY STATUS
-                  </h2>
 
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                    <div className=" flex gap-2">
-                      <div className="flex items-center gap-2">
-                        <Radio
-                          id="uk"
-                          name="countries"
-                          value="1"
-                        // Check the radio button if policyType is '1'
-                        />
-                        <Label htmlFor="uk">A</Label>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        <Radio id="uk" name="countries" value="10" />
-                        <Label htmlFor="uk">B</Label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Radio id="uk" name="countries" value="13" />
-                        <Label htmlFor="uk">C</Label>
-                      </div>
-                    </div>
-                    <div className=" flex gap-2">
-                      <div className="flex items-center gap-2">
-                        <Radio
-                          id="ukS"
-                          name="CS"
-                          value="1"
-                        // Check the radio button if policyType is '1'
-                        />
-                        <Label htmlFor="ukS">STANDARD</Label>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        <Radio id="ukS" name="CS" value="10" />
-                        <Label htmlFor="ukS">SUBSTANDARD</Label>
-                      </div>
-                    </div>
-                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                      <label className="text-sm font-bold text-start ml-5 w-48 mt-3 p-0">
-                        TOTAL PREM.
-                      </label>
-                      <input
-                        type="text"
-                        id="success"
-                        // value={totalAllPrem ? totalAllPrem : "0"}
-                        value={finalPremiumCalculation}
-                        class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-                      />
-                    </div>
-                  </div>
 
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
-                    <div className=" flex gap-2">
-                      <div className="flex items-center gap-2">
-                        <Radio
-                          id="ukS"
-                          name="CS"
-                          value="1"
-                        // Check the radio button if policyType is '1'
-                        />
-                        <Label htmlFor="ukS">MEDICAL</Label>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Radio id="ukS" name="CS" value="10" />
-                        <Label htmlFor="ukS">NON MEDICAL</Label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div className="text-center">
@@ -4449,6 +4409,74 @@ const Index = () => {
                         </option>
                       ))}
                     </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Option And Policy status , its move from premium info Tab(2nd page) */}
+              <div className="text-start mb-4">
+                <div className="shadow-lg border m-1 rounded p-1">
+                  <h2 className="text-xs font-bold ml-2">
+                    OPTION & POLICY STATUS
+                  </h2>
+
+                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                    <div className=" flex gap-2">
+                      <div className="flex items-center gap-2">
+                        <Radio
+                          id="uk"
+                          name="countries"
+                          value="1"
+                        // Check the radio button if policyType is '1'
+                        />
+                        <Label htmlFor="uk">A</Label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Radio id="uk" name="countries" value="10" />
+                        <Label htmlFor="uk">B</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Radio id="uk" name="countries" value="13" />
+                        <Label htmlFor="uk">C</Label>
+                      </div>
+                    </div>
+                    <div className=" flex gap-2">
+                      <div className="flex items-center gap-2">
+                        <Radio
+                          id="ukS"
+                          name="CS"
+                          value="1"
+                        // Check the radio button if policyType is '1'
+                        />
+                        <Label htmlFor="ukS">STANDARD</Label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Radio id="ukS" name="CS" value="10" />
+                        <Label htmlFor="ukS">SUBSTANDARD</Label>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                    <div className=" flex gap-2">
+                      <div className="flex items-center gap-2">
+                        <Radio
+                          id="ukS"
+                          name="CS"
+                          value="1"
+                        // Check the radio button if policyType is '1'
+                        />
+                        <Label htmlFor="ukS">MEDICAL</Label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Radio id="ukS" name="CS" value="10" />
+                        <Label htmlFor="ukS">NON MEDICAL</Label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
