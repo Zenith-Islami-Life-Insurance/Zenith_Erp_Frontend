@@ -60,7 +60,6 @@ const Index = () => {
   const [branch, setBranch] = useState();
   const [educationName, setEducation] = useState();
   const [eduId, setEduId] = useState();
-  console.log(eduId);
   const [religion, setReligion] = useState();
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
@@ -99,14 +98,14 @@ const Index = () => {
   const [endAtDate, setEndatDate] = useState([]);
   const [ipdPremRate, setIpdPlanRate] = useState([]);
   const [premOccupRate, setPremOccupRate] = useState([""]);
-  console.log(premOccupRate)
   const [hospitalPremRate, setHospitalRatePrem] = useState([""]);
+  const [waiverPrem, setWaiver] = useState('NO');
   const [premWaiver, setWaiverPrem] = useState([]);
   const [mdrPremium, setMdrPremium] = useState([]);
+
   const [mdrRate, setMdrRate] = useState([]);
   // console.log(mdrPremium, mdrRate)
   const [ipdPlans, setIpdPlans] = useState([]);
-  console.log(ipdPlans)
   const [eduStatus, setEducationStatus] = useState();
   const [policyNo, setPolicyNo] = useState();
   const [marriage_date, setMarriageDate] = useState();
@@ -115,6 +114,7 @@ const Index = () => {
   const [proposalFirstPage, setProposalFristPage] = useState('');
 
   const [ipdPlanNo, setIpdplanNo] = useState();
+  console.log(ipdPlanNo)
   const [ipdPlanName, setIpdPlanName] = useState();
   const [ipdEndDate, setIpdEndDate] = useState();
   const [ipdStartDate, setIpdStartDate] = useState();
@@ -122,50 +122,23 @@ const Index = () => {
   const [isChecked, setIsChecked] = useState(true);
   const [riderPremRate, setRiderPremRate] = useState([]);
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-    // Set the riderPremRate based on the checkbox state
-    if (isChecked === false) {
-      setRiderPremRate(0);
-    }
-  };
-
   const [iChecked, setIChecked] = useState(true);
   const [suppliRate, setSuppliRate] = useState([]);
-  console.log(suppliRate)
-  const handleCheckboxxChange = () => {
-    setIChecked(!iChecked);
-    // Set the riderPremRate based on the checkbox state
-    if (!iChecked) {
-      setSuppliRate(0);
-    }
-  };
 
   const [birth_dateE, setBirthDateE] = useState();
 
-  const totalInstallment = t_installment?.total_install[0];
   // console.log(totalInstallment);
   const calcuAge = calAge?.age[0];
   const sPrem = Math.ceil(suppPremium[0]?.premium);
   const basicPrem = basicPremium[0]?.basic_premium;
   const sumAtRisk = sumAtrisk[0]?.sum_at_risk;
-  const IpdPremRate = ipdPremRate[0]?.ipd_prem_rate;
-  const riderPrem = riderPremRate[0]?.prem;
-  const riderRate = riderPremRate[0]?.rate;
-  // const oEPremRate = oePremRate[0]?.oe_ratePrem;
-  const hosPremRate = hospitalPremRate[0]?.hos_ratePrem;
-  console.log(hosPremRate)
 
-  const pol_i = policyInfo[0]?.policy_no;
+  const hosPremRate = hospitalPremRate[0]?.hos_ratePrem;
   const pol_proposer = policyInfo[0]?.proposer;
   const pol_riskdate = policyInfo[0]?.risk_date;
   const pol_suminsure = policyInfo[0]?.sum_insure;
 
-  // const [oeRate, oePrem] = oEPremRate ? oEPremRate.split("_") : "0";
-  // const [hosRate, hosPrem] = hosPremRate ? hosPremRate.split("_") : "0";
   const suppliment_rate = suppliRate[0]?.supp_rate;
-  const premiumWaiver = premWaiver[0]?.waiver_prem;
-  console.log(premiumWaiver)
 
   const pRate = rate?.[0]?.toFixed(2);
   const pFactor = rate?.[1]?.toFixed(2);
@@ -226,9 +199,8 @@ const Index = () => {
   // -------------END-------------
   const comm_datee = formatAsMMDDYYYY(risk_date);
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
-  console.log(birth_date)
   const dob = formatAsMMDDYYYY(birth_date);
-  console.log(comm_datee, dob)
+
 
   const handleClearClick = () => {
     window.location.reload(); // Remove this line if present
@@ -1185,9 +1157,8 @@ const Index = () => {
   // get Occupation prem rate
   //handler for reset 
   const [sup, setSup] = useState()
-  const [mdr, setMDR] = useState();
-  const [waiverPrem, setWaiver] = useState();
-  const [ipdRider, setIPDRider] = useState();
+  const [mdr, setMDR] = useState('NO');
+  const [ipdRider, setIPDRider] = useState('NO');
   const { data: SupplementaryList, refetch: refetchClassList } = useGetSupplimentClassListQuery({ occup_id: occupation, supp_code: supplimentId });
   const { data: SupplementList, refetch: refetchSupplementList } = useGetSupplimentListQuery();
 
@@ -1291,7 +1262,6 @@ const Index = () => {
       } finally {
       }
     };
-
     fetchData();
   }, [planName, selectTerm, dob, comm_datee, sumAssured, paymentMode]);
   // /get plan name for Ipd Rider
@@ -1315,45 +1285,87 @@ const Index = () => {
     const values = e.target.value;
     setMDR(values)
   }
+  const [mdrPrem, setMDRPr] = useState(0)
+  const [mdrRatee, setMDRRatee] = useState(0)
+  useEffect(() => {
+    if (mdr === 'NO') {
+      setMDRPr(0);
+      setMDRRatee(0);
+    } else {
+      setMDRPr(mdrPremium[0]?.mdr_prem);
+      setMDRRatee(mdrRate[0]?.mdr_prem.toFixed(2));
+    }
+  }, [mdr])
+
+  //ata holo when plan change korbe tokon jate major diseage er amount na dore thake tai otao NO kore deya.
+  useEffect(() => {
+    if (major_diseage === 'NO') {
+      setMDR('NO');
+    }
+  }, [major_diseage, planName]);
+  //End Ipd Rider 
 
   // Waiver Premium 
+  const [premiumWaiver, setPremW] = useState(0)
   const handleWaiverPremChange = (e) => {
     const values = e.target.value;
-    if (values === 'NO') {
-      setWaiverPrem(0)
-      // setPaymode(0)
-    }
     setWaiver(values)
   }
+  useEffect(() => {
+    if (waiverPrem === 'NO') {
+      setPremW(0);
+    } else {
+      setPremW(premWaiver[0]?.waiver_prem);
+    }
+  }, [waiverPrem])
+
+  // ata holo when plan change korbe tokon jate waiver premium er amount na dore thake tai otao NO kore deya.
+  useEffect(() => {
+    if (prem_waiver === 'N') {
+      setWaiver('NO');
+    }
+  }, [prem_waiver, planName]);
+
   //IPD Rider 
+
   const handleIPDRiderChange = (e) => {
     setIPDRider(e.target.value)
-    if (e.target.value === "YES") {
-      const selectedPlan = ipdPlans[0]; // Or find by specific criteria
+  }
+
+
+  const [ipdPrem, setIpdPrem] = useState(0)
+  // const [mdrRatee, setMDRRatee] = useState(0)
+  useEffect(() => {
+    if (ipdRider === 'NO') {
+      setIpdPrem(0);
+      setIpdBenefit(0);
+      setIpdplanNo();
+    } else if (ipdPremRate.length > 0 && ipdPlans.length > 0) {
+      setIpdPrem(ipdPremRate[0]?.ipd_prem_rate);
+
+      const selectedPlan = ipdPlans.find(plan => plan.plan_no === ipdPlanNo) || ipdPlans[0];
       const { start_from, end_to, plan_no } = selectedPlan;
+
       setIpdPlanName(plan_no);
       setIpdEndDate(end_to);
       setIpdStartDate(start_from);
-    } else {
-      setIpdPlanRate(0)
-      setIpdBenefit(0)
+      // setMDRRatee(mdrRate[0]?.mdr_prem.toFixed(2));
     }
-  }
+  }, [ipdRider, ipdPlanNo, ipdPremRate, ipdPlans]);
 
-  // const extraTotalPrem =
-  //   parseInt(premiumWaiver, 0) +
-  //   parseInt(sPrem, 0) +
-  //   parseInt(oePrem, 0) +
-  //   parseInt(hosPrem, 0) +
-  //   parseInt(riderPrem, 0) +
-  //   parseInt(IpdPremRate, 0);
-  console.log((hosPremRate || 0), (sPrem || 0), (premiumWaiver || 0), (mdrPremium[0]?.mdr_prem || 0), (IpdPremRate || 0))
-  const extraTotal = (hosPremRate || 0) + (sPrem || 0) + (mdrPremium[0]?.mdr_prem || 0) + (premiumWaiver || 0) + (IpdPremRate || 0)
+  useEffect(() => {
+    if (impatient_reader === 'NO') {
+      setIPDRider('NO');
+    }
+  }, [impatient_reader, planName]);
+  //End Ipd Rider 
+  console.log((hosPremRate || 0), (sPrem || 0), (premiumWaiver || 0), (mdrPrem || 0), (ipdPrem || 0))
+  const extraTotal = (hosPremRate || 0) + (sPrem || 0) + (mdrPrem || 0) + (premiumWaiver || 0) + (ipdPrem || 0)
   console.log(extraTotal)
   // const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
   // Final Premium Calculation 
 
-  const finalPremiumCalculation = (basicPrem || pmode) + sPrem
+  const finalPremiumCalculation = (basicPrem || pmode) + extraTotal;
   return (
     <div>
       <Navbar />
@@ -2945,13 +2957,12 @@ const Index = () => {
                     <>
                       <div className="shadow  border-2 m-1 rounded p-0">
                         <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          {/* onChange={handleCheckboxxChange} */}
+
                           <div className="bg-white mt-1 lg:mt-0 flex items-center justify-items-center">
                             <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to Waiver Prem</label>
                             <select
                               className={`form-input text-xs shadow border-[#E3F2FD] mt-0 ${suplimentary === 'NO' ? 'w-1/4' : 'w-1/3'}`}
                               onChange={handleWaiverPremChange}
-                            //  onChange={handleCheckboxChange}
                             >
                               <option value='NO'>NO</option>
                               <option value='YES'>YES</option>
@@ -3005,8 +3016,7 @@ const Index = () => {
                                   type="text"
                                   id="success"
                                   disabled
-                                  // value={riderRate ? riderRate : "0"}
-                                  value={mdrRate[0]?.mdr_prem.toFixed(2) || 0}
+                                  value={mdrRatee}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -3019,7 +3029,7 @@ const Index = () => {
                                   type="text"
                                   id="success"
                                   disabled
-                                  value={mdrPremium[0]?.mdr_prem || 0}
+                                  value={mdrPrem}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -3070,7 +3080,7 @@ const Index = () => {
                               <input
                                 type="text"
                                 id="success"
-                                value={IpdPremRate || 0}
+                                value={ipdPrem}
                                 className="form-input text-xs shadow border-[#E3F2FD] w-full"
                               />
                             </div>
@@ -3135,7 +3145,7 @@ const Index = () => {
                   <input
                     type="text"
                     id="success"
-                    value={finalPremiumCalculation}
+                    value={finalPremiumCalculation || 0}
                     className="form-input text-sm shadow border-[#E3F2FD] w-3/4"
                   />
                 </div>
