@@ -102,7 +102,9 @@ const Index = () => {
   const [waiverPrem, setWaiver] = useState('NO');
   const [premWaiver, setWaiverPrem] = useState([]);
   const [mdrPremium, setMdrPremium] = useState([]);
-
+  const [medicalStatus, setMedicalStatus] = useState();
+  const [maturityDate, setMaturityDate] = useState();
+  console.log(maturityDate);
   const [mdrRate, setMdrRate] = useState([]);
   // console.log(mdrPremium, mdrRate)
   const [ipdPlans, setIpdPlans] = useState([]);
@@ -114,7 +116,6 @@ const Index = () => {
   const [proposalFirstPage, setProposalFristPage] = useState('');
 
   const [ipdPlanNo, setIpdplanNo] = useState();
-  console.log(ipdPlanNo)
   const [ipdPlanName, setIpdPlanName] = useState();
   const [ipdEndDate, setIpdEndDate] = useState();
   const [ipdStartDate, setIpdStartDate] = useState();
@@ -287,7 +288,7 @@ const Index = () => {
     setSuppliRate([])
     setSuppliClass()
   };
-  console.log(sPrem)
+
   const handleCountry = (e) => {
     setCountry(e.target.value);
   };
@@ -658,8 +659,8 @@ const Index = () => {
   };
   const [childAge, setChildAge] = useState();
   const childFinalAge = childAge?.age[0]
-  console.log(childFinalAge)
   const cDob = formatAsMMDDYYYY(childDob)
+  console.log(comm_datee)
   // get child age
   useEffect(() => {
     const fetchChildAge = async () => {
@@ -1105,7 +1106,58 @@ const Index = () => {
     }
   };
   const lastEdu = isEduDocChecked ? 'Y' : 'N';
-  console.log(planName, occupation, gender, sumAssured, eduId, 'Y', paymentMode)
+
+  //Medical Status Check
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Encode the proposal number to handle special characters like '/'
+        const encodedProposalNo = encodeURIComponent(proposalNo);
+        console.log(encodedProposalNo);
+
+        const response = await axios.get(
+          `http://localhost:5001/api/medical-status/${encodedProposalNo}`
+        );
+
+        // If the request is successful, update the state with the fetched data
+        setMedicalStatus(response?.data);
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          // If a 404 error occurs, set the state to the "No medical status found" message
+          setMedicalStatus("NO");
+        } else {
+          // Handle other errors here if necessary
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [proposalNo]);
+
+  // get Maturity date
+  console.log(comm_datee, selectTerm)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/maturity-date/${comm_datee}/${selectTerm}`
+        );
+        // Format the date
+        const formattedDate = new Date(response?.data?.maturity_date).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+        setMaturityDate(formattedDate);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [comm_datee, selectTerm]);
+
+
   //Extra Premium 
   useEffect(() => {
     const fetchData = async () => {
@@ -1160,6 +1212,7 @@ const Index = () => {
   const [mdr, setMDR] = useState('NO');
   const [ipdRider, setIPDRider] = useState('NO');
   const { data: SupplementaryList, refetch: refetchClassList } = useGetSupplimentClassListQuery({ occup_id: occupation, supp_code: supplimentId });
+  console.log(SupplementaryList)
   const { data: SupplementList, refetch: refetchSupplementList } = useGetSupplimentListQuery();
 
   const [supplementList, setSupplementList] = useState([]);
@@ -1250,6 +1303,7 @@ const Index = () => {
 
     fetchData();
   }, [planName, selectTerm, dob, comm_datee, sumAssured, paymentMode]);
+
   //get MDR Rate
   useEffect(() => {
     const fetchData = async () => {
@@ -1359,7 +1413,8 @@ const Index = () => {
     }
   }, [impatient_reader, planName]);
   //End Ipd Rider 
-  console.log((hosPremRate || 0), (sPrem || 0), (premiumWaiver || 0), (mdrPrem || 0), (ipdPrem || 0))
+
+  // console.log((hosPremRate || 0), (sPrem || 0), (premiumWaiver || 0), (mdrPrem || 0), (ipdPrem || 0))
   const extraTotal = (hosPremRate || 0) + (sPrem || 0) + (mdrPrem || 0) + (premiumWaiver || 0) + (ipdPrem || 0)
   console.log(extraTotal)
   // const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
@@ -2532,37 +2587,52 @@ const Index = () => {
                     )}
                   </div>
                 </div>
-                <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  {proposalInfo[0]?.instmode ? (
-                    <div className="text-start px-2">
-                      <label className="text-start text-xs">PAYMENT MODE</label>
-                      <input
-                        type="text"
-                        id="success"
-                        value={proposalInfo[0]?.instmode}
-                        disabled
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePaymentMode}
-                      />
-                    </div>
-                  ) : (
-                    <div className=" bg-white align-items-center m-1  lg:mt-0">
-                      <label className="text-start text-xs">PAYMENT MODE</label>
-                      <select
-                        onChange={handlePaymentMode}
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                      >
-                        <>
-                          <option>Select Mode</option>
-                          {modeList?.map((mode, i) => (
-                            <option key={i} value={mode?.mode_code}>
-                              {mode?.mode_code}-{mode?.mode_name}
-                            </option>
-                          ))}
-                        </>
-                      </select>
-                    </div>
-                  )}
+                <div class=" mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                  <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    {proposalInfo[0]?.instmode ? (
+                      <div className="text-start px-2">
+                        <label className="text-start text-xs">PAYMENT MODE</label>
+                        <input
+                          type="text"
+                          id="success"
+                          value={proposalInfo[0]?.instmode}
+                          disabled
+                          class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          onChange={handlePaymentMode}
+                        />
+                      </div>
+                    ) : (
+                      <div className=" bg-white align-items-center m-1  lg:mt-0">
+                        <label className="text-start text-xs">PAYMENT MODE</label>
+                        <select
+                          onChange={handlePaymentMode}
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                        >
+                          <>
+                            <option>Select Mode</option>
+                            {modeList?.map((mode, i) => (
+                              <option key={i} value={mode?.mode_code}>
+                                {mode?.mode_code}-{mode?.mode_name}
+                              </option>
+                            ))}
+                          </>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                  <div className="bg-white  align-items-center m-1  lg:mt-0">
+                    <label className="text-xs text-center w-36 mt-3 p-0">
+                      MATURITY DATE
+                    </label>
+                    <input
+                      type="text"
+                      id="success"
+                      // value={proposalInfo[0]?.sumatrisk}
+                      value={maturityDate}
+                      disabled
+                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    />
+                  </div>
                 </div>
                 {/* //total installment and age admitted postponded by Sir  */}
 
@@ -2990,7 +3060,7 @@ const Index = () => {
                       </div></>
                   }
                   {
-                    major_diseage === 'YES' &&
+                    major_diseage === 'YES' && ipdRider === 'NO' &&
                     <>
                       <div className="shadow  border-2  m-0 rounded p-0">
                         <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
@@ -3043,7 +3113,7 @@ const Index = () => {
               </div>
 
               {
-                impatient_reader === 'YES' &&
+                impatient_reader === 'YES' && mdr === 'NO' &&
                 <>
                   <div className="text-start mb-3">
                     <div className="shadow-lg border m-1 rounded p-1">
