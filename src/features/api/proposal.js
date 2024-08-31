@@ -55,6 +55,12 @@ const proposal = apiSlice.injectEndpoints({
       }),
       providesTags: ["proposal_head"],
     }),
+    getOptions: builder.query({
+      query: (table_id) => ({
+        url: `/option/${table_id}`,
+      }),
+      providesTags: ["proposal_head"],
+    }),
 
     getOccupationlist: builder.query({
       query: () => ({
@@ -167,6 +173,7 @@ export const {
   useGetPremiumListQuery,
   useGetModelistQuery,
   useGetPlanlistQuery,
+  useGetOptionsQuery,
   useCreateProposalEntryMutation,
   useGetEducationListQuery,
   useGetReligionListQuery,

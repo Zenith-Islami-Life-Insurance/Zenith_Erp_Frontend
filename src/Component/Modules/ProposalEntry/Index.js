@@ -22,6 +22,7 @@ import {
   useGetSupplimentListQuery,
   useGetThanalistQuery,
   useGetallTypeListQuery,
+  useGetOptionsQuery,
 } from "../../../features/api/proposal";
 import axios from "axios";
 import swal from "sweetalert";
@@ -39,6 +40,7 @@ const Index = () => {
 
   const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
   const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
+  // const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
   const [resident, setResident] = useState();
   const [district, setDistrict] = useState();
   const [thana, setThana] = useState();
@@ -56,6 +58,8 @@ const Index = () => {
   const [mobile, setMobile] = useState();
   const [nid, setNID] = useState();
   const [age, setAge] = useState();
+  const [jAge, setJAge] = useState('');
+  console.log(jAge)
   const [occupation, setOccupation] = useState();
   const [branch, setBranch] = useState();
   const [educationName, setEducation] = useState();
@@ -65,9 +69,13 @@ const Index = () => {
   const [newProposalNo, setNewProposalNo] = useState();
   const [commencementDate, setUpdateCommDate] = useState();
   const [planName, setPlan] = useState();
+  const [optionId, setOption] = useState('A');
+  const [deathCoverage, setDeathCoverage] = useState('N');
+  console.log(optionId, deathCoverage)
   const [premage, setPremAge] = useState();
   const [termList, setTermList] = useState([""]);
   const [calAge, setCalage] = useState();
+  const [jcalAge, setJointAge] = useState();
   const [pmode, setPaymode] = useState(0);
   const [paymentMode, setPaymentMode] = useState('1');
   const [t_installment, setInstallment] = useState();
@@ -104,7 +112,6 @@ const Index = () => {
   const [mdrPremium, setMdrPremium] = useState([]);
   const [medicalStatus, setMedicalStatus] = useState();
   const [maturityDate, setMaturityDate] = useState();
-  console.log(maturityDate);
   const [mdrRate, setMdrRate] = useState([]);
   // console.log(mdrPremium, mdrRate)
   const [ipdPlans, setIpdPlans] = useState([]);
@@ -130,6 +137,7 @@ const Index = () => {
 
   // console.log(totalInstallment);
   const calcuAge = calAge?.age[0];
+  const jointAge = jcalAge?.age[0];
   const sPrem = Math.ceil(suppPremium[0]?.premium);
   const basicPrem = basicPremium[0]?.basic_premium;
   const sumAtRisk = sumAtrisk[0]?.sum_at_risk;
@@ -201,6 +209,7 @@ const Index = () => {
   const comm_datee = formatAsMMDDYYYY(risk_date);
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
   const dob = formatAsMMDDYYYY(birth_date);
+  const jDob = formatAsMMDDYYYY(jAge);
 
 
   const handleClearClick = () => {
@@ -287,6 +296,17 @@ const Index = () => {
     setSuppPrem([])
     setSuppliRate([])
     setSuppliClass()
+  };
+  const handleOption = (e) => {
+    setOption(e.target.value)
+  };
+  const handleDeathCoverae = (e) => {
+    const values = e.target.value;
+    if (values === 'YES') {
+      setDeathCoverage('Y')
+    } else if (values === 'NO') {
+      setDeathCoverage('N')
+    }
   };
 
   const handleCountry = (e) => {
@@ -653,6 +673,22 @@ const Index = () => {
     fetchData();
   }, [comm_datee, birth_dateE, dob]);
 
+  // get joint policy age
+  useEffect(() => {
+    const fetchData = async () => {
+      const abc = `http://localhost:5001/api/get-age/${comm_datee}/${birth_dateE ? birth_dateE : jDob
+        }`;
+      try {
+        const response = await axios.get(abc);
+        setJointAge(response?.data);
+      } catch (error) {
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, [comm_datee, birth_dateE, jDob]);
+
   const [childDob, setChildDob] = useState(() => new Date().toISOString().split('T')[0]);
   const handleChildBirthChange = (e) => {
     setChildDob(e.target.value);
@@ -763,7 +799,7 @@ const Index = () => {
   //get suppliment premium
 
   // get sum assurance
-  console.log(planName, selectTerm, calcuAge, +pmode)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -784,7 +820,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${paymentMode}/${sumAssured}/A/${0}/Y`
+          `http://localhost:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${paymentMode}/${sumAssured}/${optionId}/${0}/${deathCoverage}`
         );
         setBasicPrem(response?.data);
       } catch (error) {
@@ -908,6 +944,7 @@ const Index = () => {
 
   const { data: religionList } = useGetReligionListQuery();
   const { data: planList } = useGetPlanlistQuery(calcuAge);
+  const { data: options } = useGetOptionsQuery(planName);
   const { data: premiumList } = useGetPremiumListQuery();
 
   const { data: TypeList } = useGetallTypeListQuery();
@@ -2500,14 +2537,14 @@ const Index = () => {
                 {planName === '19' && (
                   <div className="text-start">
                     <div className="shadow-lg border m-2 rounded p-2">
-                      <label className="text-sm p-2">JOINT LIFE POLICY</label>
+                      <label className="text-sm p-2">JOINT LIFE PROPOSER</label>
                       <div className="mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
                         <div className="bg-white align-items-center m-1 lg:mt-0">
                           <input
                             type="text"
                             id="success"
                             className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                            placeholder="NAME"
+                            placeholder="JNAME"
                           />
                         </div>
                       </div>
@@ -2518,19 +2555,56 @@ const Index = () => {
                             id="success"
                             className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             placeholder="DOB"
+                            onChange={(e) => setJAge(e.target.value)}
                           />
                         </div>
 
                         <div className="bg-white align-items-center m-1 lg:mt-0">
                           <input
-                            type="date"
+                            type="text"
                             id="success"
                             className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                            placeholder="AGE"
-                            onChange={setAge}
+                            placeholder="JAGE"
+                            value={jointAge}
                           />
                         </div>
                       </div>
+                    </div>
+                  </div>
+                )}
+                {(planName === '22' || planName === '23') && (
+                  <div class="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                    <div className="text-start px-2">
+                      <label className="text-start text-xs">SELECT AN OPTION</label>
+                      <select
+                        onChange={handleOption}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      >
+                        <>
+                          <option>Select an option</option>
+                          {options?.map((item, i) => (
+                            <option
+                              key={i}
+                              value={item?.options}
+                            >
+                              {item?.description}
+                            </option>
+                          ))}
+                        </>
+                      </select>
+                    </div>
+                    <div className="text-start px-2">
+                      <label className="text-start text-xs">DEATH COVERAGE</label>
+                      <select
+                        onChange={handleDeathCoverae}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      >
+                        <>
+                          <option>Select</option>
+                          <option>YES</option>
+                          <option>NO</option>
+                        </>
+                      </select>
                     </div>
                   </div>
                 )}
@@ -2587,7 +2661,7 @@ const Index = () => {
                     )}
                   </div>
                 </div>
-                <div class=" mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                <div class="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                   <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                     {proposalInfo[0]?.instmode ? (
                       <div className="text-start px-2">
