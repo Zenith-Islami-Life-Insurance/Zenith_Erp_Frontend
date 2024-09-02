@@ -67,11 +67,11 @@ const Index = () => {
   const [religion, setReligion] = useState();
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
+  console.log(newProposalNo)
   const [commencementDate, setUpdateCommDate] = useState();
   const [planName, setPlan] = useState();
   const [optionId, setOption] = useState('A');
   const [deathCoverage, setDeathCoverage] = useState('N');
-  console.log(optionId, deathCoverage)
   const [premage, setPremAge] = useState();
   const [termList, setTermList] = useState([""]);
   const [calAge, setCalage] = useState();
@@ -96,6 +96,7 @@ const Index = () => {
   const [minSumInsure, setMinSumInsure] = useState();
   const [supplimentId, setSuppli] = useState();
   const [supplimentClass, setSuppliClass] = useState('Select Suppli. Class');
+  console.log(supplimentClass);
   const [sumAssured, setSumassured] = useState();
   const [suppPremium, setSuppPrem] = useState([]);
   const [basicPremium, setBasicPrem] = useState([]);
@@ -112,6 +113,7 @@ const Index = () => {
   const [mdrPremium, setMdrPremium] = useState([]);
   const [medicalStatus, setMedicalStatus] = useState();
   const [maturityDate, setMaturityDate] = useState();
+  console.log(maturityDate)
   const [mdrRate, setMdrRate] = useState([]);
   // console.log(mdrPremium, mdrRate)
   const [ipdPlans, setIpdPlans] = useState([]);
@@ -134,6 +136,13 @@ const Index = () => {
   const [suppliRate, setSuppliRate] = useState([]);
 
   const [birth_dateE, setBirthDateE] = useState();
+  const [oePrem, setOEPrem] = useState()
+
+  const [oeRate, setOERate] = useState();
+  const [hPrem, setHPrem] = useState();
+  const [hRate, setHRate] = useState();
+
+
 
   // console.log(totalInstallment);
   const calcuAge = calAge?.age[0];
@@ -195,6 +204,19 @@ const Index = () => {
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
+  const formatAsMMDDYYYYSlash = (dateString) => {
+    const dateObj = new Date(dateString);
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
+    const day = String(dateObj.getDate()).padStart(2, "0"); // Add leading zero if needed
+    const year = dateObj.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+  const formatAsMMDYbySlash = (yyyymmdd) => {
+    const year = yyyymmdd.substring(0, 4);
+    const month = yyyymmdd.substring(4, 6);
+    const day = yyyymmdd.substring(6, 8);
+    return `${month}/${day}/${year}`;  // Convert to MM/DD/YYYY
+  };
 
   // current date (date: 7/7/2024)---Start ----
   const [currentDates, setCurrentDate] = useState('');
@@ -210,6 +232,7 @@ const Index = () => {
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
   const dob = formatAsMMDDYYYY(birth_date);
   const jDob = formatAsMMDDYYYY(jAge);
+  console.log(jDob)
 
 
   const handleClearClick = () => {
@@ -907,24 +930,15 @@ const Index = () => {
   // get supplimentary rate
 
 
+  useEffect(() => {
+    setOEPrem(occupation !== '1' ? hosPremRate : 0);
+    setOERate(occupation !== '1' ? premOccupRate?.occupationRate : 0);
 
-  // get Hospital prem rate
-  // console.log(planName, occupation, gender, sumAssured, eduStatus, eduStatus, paymentMode)
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:5001/api/hospital-premrate/${planName}/${occupation}/${gender}/${sumAssured}/${eduStatus}/${eduStatus}/${paymentMode}`
-  //       );
-  //       setHospitalRatePrem(response?.data);
-  //     } catch (error) {
-  //     } finally {
-  //     }
-  //   };
+    const isEligibleForHPrem = (gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId);
 
-  //   fetchData();
-  // }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
-  //get Hospital prem rate
+    setHPrem(isEligibleForHPrem ? hosPremRate : 0);
+    setHRate(isEligibleForHPrem && hosPremRate !== 0 ? premOccupRate?.occupationRate : 0);
+  }, [occupation, hosPremRate, premOccupRate, gender, eduId]);
 
   const { data: branchList, isLoading, isError } = useGetBranchlistQuery();
   const { data: projectList, isLoadingg, isErrorr } = useGetProjectlistQuery();
@@ -1007,7 +1021,7 @@ const Index = () => {
           MOBILE: mobile,
           LOCALITY: resident || "",
           N_ID_NUMBER: nid,
-          DOB: "1998-02-02", // Example date in YYYY-MM-DD format
+          DOB: dob,
           AGE: age,
           SEX: gender,
           OCCUPATION: occupation,
@@ -1063,64 +1077,7 @@ const Index = () => {
   };
 
 
-  // const saveProposal = async () => {
-  //   const pDate = formatAsMMDDYYYY(proposal_date) ? formatAsMMDDYYYY(proposal_date) : "";
-  //   try {
-  //     const response = await fetch("http://localhost:5001/api/proposal-entry", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         PROPOSAL_N: newProposalNo?.proposal_no[0] ? newProposalNo?.proposal_no[0] : "",
-  //         PROPOSAL_D: pDate,
-  //         RISKDATE: formatAsMMDDYYYY(commencementDate?.comm_date[0]) ? formatAsMMDDYYYY(commencementDate?.comm_date[0]) : "",
-  //         PROPOSER: proposerName,
-  //         POL_ENTRY_STATUS: policytype,
-  //         FATHERS_NAME: fatherName,
-  //         FATHERHUSB: fatherName,
-  //         MOTHERS_NAME: motherName,
-  //         ADDRESS1: address,
-  //         POST_CODE_CUR: "12",
-  //         POST_CODE_PER: "13",
-  //         CITY: district,
-  //         MOBILE: mobile,
-  //         LOCALITY: resident ? resident : "",
-  //         N_ID_NUMBER: nid,
-  //         DOB: "19980202",
-  //         AGE: age,
-  //         SEX: gender,
-  //         OCCUPATION: occupation,
-  //         AGENT_ID: agentValue,
-  //         BRANCH_ID: branch ? branch : "",
-  //         USERID: "650",
-  //         LAST_EDUCATION: educationName,
-  //         RELIGION: religion,
-  //         MARITAL_STATUS: maritalStatus,
-  //         MARRIAGE_DATE: formatAsMMDDYYYY(marriage_date),
-  //         LOCALITY_COUNTRY: country,
-  //         SPOUSE: "",
-  //         PD_CODE: projectId,
-  //         LAST_EDU_DOCUMENT: isEduDocChecked ? 'Y' : 'N',
-  //       }),
-  //     });
 
-  //     const data = await response.json();
-  //     console.log(data);
-
-  //     if (data === "Proposal Entry Successfully") {
-  //       setProposalFristPage('ok')
-  //       swal({
-  //         title: "Proposal Entry Successfully",
-  //         icon: "success",
-  //       });
-  //     } else {
-  //       console.error("Error saving proposal:", data?.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error saving proposal:", error.message);
-  //   }
-  // };
   // 2nd page update proposal
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -1458,6 +1415,145 @@ const Index = () => {
   // Final Premium Calculation 
 
   const finalPremiumCalculation = (basicPrem || pmode) + extraTotal;
+  console.log(formatAsMMDDYYYY(maturityDate))
+  console.log(formatAsMMDDYYYYSlash(maturityDate))
+  console.log(oePrem, oeRate, hPrem, hRate)
+  console.log(newProposalNo?.proposal_no[0], planName, dob, ipdPrem, calcuAge)
+  // const handleupdatePremInfo = async () => {
+  //   try {
+  // Step 1: Delete the record
+  // const deleteResponse = await axios.delete(`http://localhost:5001/api/ipdRider/delete/B023000000007%2f24`);
+  // console.log('Record deleted successfully:', deleteResponse.data);
+
+  //     // Step 2: Insert new data
+  // const insertData = {
+  //   // REFNO: newProposalNo?.proposal_no[0],
+  //   REFNO: 'B023000000013/24',
+  //   PLAN_NO: planName,
+  //   AGE: calcuAge,
+  //   PREM_RATE: ipdPrem,
+  //   // DOB: formatAsMMDYbySlash(dob),
+  //   DOB: "5/17/1996",
+  //   CURRENT_AGE: 30,
+  //   // START_FROM: formatAsMMDYbySlash(comm_datee),
+  //   START_FROM: "5/17/2024",
+  //   // END_AT: formatAsMMDDYYYYSlash(endAtDate[0]?.endAtDate)
+  //   END_AT: "5/17/2034"
+  // };
+  //     console.log(insertData)
+  //     const insertResponse = await axios.post('http://localhost:5001/api/ipdRider', insertData);
+  //     console.log('Data inserted successfully:', insertResponse.data);
+
+  //     // Step 3: Update the record
+  //     const updateData = {
+  //       PLAN_OPTION: "Option A",
+  //       DEATH_COVERAGE: "Yes",
+  //       JNAME: "John Doe",
+  //       JDOB: "07/15/2002",
+  //       JAGE: 20
+  //       // Add other fields as needed
+  //     };
+
+  //     // const updateResponse = await axios.put('http://localhost:3000/api/update-proposal-dummy/12345', updateData);
+  //     // console.log('Proposal dummy updated successfully:', updateResponse.data);
+
+  //     // Notify the user of success
+  //   } catch (error) {
+  //     console.error('Error during submit:', error);
+  //     alert('An error occurred: ' + error.message);
+  //   }
+  // }
+
+  const handleUpdatePremInfo = async () => {
+    try {
+      const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0]);
+
+      // Insert data
+      const insertData = {
+        REFNO: newProposalNo?.proposal_no[0],
+        PLAN_NO: planName,
+        AGE: calcuAge,
+        PREM_RATE: ipdPrem,
+        DOB: formatAsMMDYbySlash(dob),
+        CURRENT_AGE: 30,
+        START_FROM: formatAsMMDYbySlash(comm_datee),
+        END_AT: formatAsMMDDYYYYSlash(endAtDate[0]?.endAtDate),
+      };
+
+      // Update data
+      const updateData = {
+        PLAN_OPTION: optionId,
+        DEATH_COVERAGE: deathCoverage,
+        JNAME: 'Saifur Rahman',
+        JAGE: jointAge,
+        MATURITY: '5/17/2045',
+        CAGE: 2,
+        CNAME: 'Anahita',
+        TABLE_ID: planName,
+        TERM: selectTerm,
+        INSTMODE: paymentMode,
+        SUM_INSURE: sumassurance[0] || sumAssured,
+        PREMIUM: basicPrem || pmode,
+        SUMATRISK: sumAtRisk,
+        OERATE: oeRate,
+        OEPREM: oePrem,
+        HOSPREMIUM: hPrem,
+        HOSRATE: hRate,
+        ACCCODE: supplimentId,
+        CLASS: supplimentClass,
+        ACCRATE: suppliment_rate,
+        ACCPREM: sPrem,
+        WAIVER_OF_PREMIUM: premiumWaiver,
+        MAJOR_DIS_RATE: mdrRatee,
+        MAJOR_DIS_RIDER: mdrPrem,
+        IPD_RIDER: ipdPrem,
+        TOTAL_PREM: finalPremiumCalculation,
+      };
+
+      // Sanitize updateData by removing empty or null fields
+      const sanitizedUpdateData = {};
+      Object.keys(updateData).forEach((key) => {
+        if (updateData[key] !== undefined && updateData[key] !== null && updateData[key] !== '') {
+          sanitizedUpdateData[key] = updateData[key];
+        }
+      });
+
+      // Logging for debugging
+      console.log('Sanitized Update Data:', sanitizedUpdateData);
+
+      // First, delete existing records
+      await axios.delete(`http://localhost:5001/api/ipdRider/delete/${encodedProposalNo}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: { REFNO: insertData.REFNO },
+      });
+
+      // Then, insert new records
+      await axios.post('http://localhost:5001/api/ipdRider', [insertData], {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Finally, update records
+      const response = await axios.put(
+        `http://localhost:5001/api/update-proposal-dummy/${encodedProposalNo}`,
+        sanitizedUpdateData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      console.log('Data updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error during request:', error);
+    }
+  };
+
+
   return (
     <div>
       <Navbar />
@@ -2961,6 +3057,7 @@ const Index = () => {
                           OE PREM & RATE
                         </label>
                         <input
+                          onChange={(e) => setOEPrem(e.target.value)}
                           type="text"
                           id="success"
                           disabled
@@ -2969,6 +3066,7 @@ const Index = () => {
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
+                          onChange={(e) => setOERate(e.target.value)}
                           type="text"
                           id="success"
                           disabled
@@ -2982,6 +3080,7 @@ const Index = () => {
                           H.PREM & RATE
                         </label>
                         <input
+                          onChange={(e) => setHPrem(e.target.value)}
                           type="text"
                           id="success"
                           disabled
@@ -2994,6 +3093,7 @@ const Index = () => {
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
+                          onChange={(e) => setHRate(e.target.value)}
                           type="text"
                           id="success"
                           disabled
@@ -3302,11 +3402,11 @@ const Index = () => {
           </div>
           <div className="text-center">
             <button
-              onClick={handleUpdate}
+              onClick={handleUpdatePremInfo}
               type="submit"
               class="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
-              SUBMIT
+              UPDATE
             </button>
           </div>
         </div>)
