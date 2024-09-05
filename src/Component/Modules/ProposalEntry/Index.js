@@ -39,6 +39,7 @@ const Index = () => {
   const [policyInfo, setPolicyInfo] = useState([]);
 
   const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
+  console.log(proposalInfo[0]?.proposal_date)
   const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
   // const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
   const [resident, setResident] = useState();
@@ -48,18 +49,20 @@ const Index = () => {
   const [pdistrict, setPDistrict] = useState();
   const [pthana, setPThana] = useState();
   const [ppostOffice, setPPostoffice] = useState();
-  const [policytype, setPolicyType] = useState(1);
+  const [policytype, setPolicyType] = useState('1');
   const [risk_date, setRiskdate] = useState();
   const [proposerName, setProposer] = useState();
   const [fatherName, setFather] = useState();
-  const [husbandName, setHusband] = useState();
+  const [spouseName, setSpouse] = useState();
   const [motherName, setMother] = useState();
   const [address, setAddress] = useState();
   const [mobile, setMobile] = useState();
   const [nid, setNID] = useState();
   const [age, setAge] = useState();
   const [jAge, setJAge] = useState('');
-  console.log(jAge)
+  // const [planDetails, setPlanDetails] = useState([]);
+  // console.log(planDetails)
+
   const [occupation, setOccupation] = useState();
   const [branch, setBranch] = useState();
   const [educationName, setEducation] = useState();
@@ -67,8 +70,9 @@ const Index = () => {
   const [religion, setReligion] = useState();
   const [country, setCountry] = useState();
   const [newProposalNo, setNewProposalNo] = useState();
-  console.log(newProposalNo)
-  const [commencementDate, setUpdateCommDate] = useState();
+
+  const [commencementDate, setUpdateCommDate] = useState()
+  console.log(commencementDate)
   const [planName, setPlan] = useState();
   const [optionId, setOption] = useState('A');
   const [deathCoverage, setDeathCoverage] = useState('N');
@@ -202,8 +206,9 @@ const Index = () => {
     const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
     const day = String(dateObj.getDate()).padStart(2, "0"); // Add leading zero if needed
     const year = dateObj.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${day}/${month}/${year}`;
   };
+
   const formatAsMMDDYYYYSlash = (dateString) => {
     const dateObj = new Date(dateString);
     const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
@@ -320,6 +325,15 @@ const Index = () => {
     setSuppliRate([])
     setSuppliClass()
   };
+  useEffect(() => {
+    if (proposalInfo[0]?.sPrem > 0) {
+      setSuplimentary('YES')
+    }
+    if (proposalInfo[0]?.premiumWaiver > 0) {
+      setPremWaiver('Y')
+    }
+  }, [proposalInfo[0]?.sPrem], proposalInfo[0]?.premiumWaiver)
+
   const handleOption = (e) => {
     setOption(e.target.value)
   };
@@ -442,14 +456,14 @@ const Index = () => {
     }
   }, [proposalInfo]);
 
-  const handleHusband = (e) => {
+  const handleSpouse = (e) => {
     const updatedValue = e.target.value.toUpperCase();
-    setHusband(updatedValue);
+    setSpouse(updatedValue);
   };
 
   useEffect(() => {
     if (proposalInfo[0]?.fatherhusb) {
-      setHusband(proposalInfo[0]?.fatherhusb);
+      setSpouse(proposalInfo[0]?.fatherhusb);
     }
   }, [proposalInfo]);
 
@@ -508,6 +522,7 @@ const Index = () => {
   //   setProposalDate(''); // Reset proposal date
   //   setRiskDate(''); // Reset risk date
   // };
+  console.log(proposalInfo[0]?.plan_desc)
 
   const handleproposalDateChange = (event) => {
     const newProposalDate = event.target.value;
@@ -561,6 +576,7 @@ const Index = () => {
   }, [proposalInfo]);
 
   const proposer = proposalInfo[0]?.proposer;
+  console.log(proposalInfo[0])
   // get proposal informations
   const handleProposalNo = (e) => {
     const newValue = e.target.value;
@@ -753,11 +769,12 @@ const Index = () => {
 
 
   // get term-list
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/term-list/${planName}/${calcuAge}`
+          `http://localhost:5001/api/term-list/${planName}/${calcuAge || proposalInfo[0]?.age}`
         );
         setTermList(response?.data);
       } catch (error) {
@@ -766,7 +783,7 @@ const Index = () => {
     };
 
     fetchData();
-  }, [planName, calcuAge]);
+  }, [planName, calcuAge, proposalInfo[0]?.age]);
   // get chainlist
 
   // get new proposal Number
@@ -787,6 +804,10 @@ const Index = () => {
   //get new proposal Number
 
   // get commencement date
+  console.log(currentDate)
+  console.log(policytype)
+  const commenceDate = formatAsMMDDYYYYy(commencementDate?.comm_date[0])
+  console.log(commenceDate)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -955,9 +976,8 @@ const Index = () => {
   const { data: countryList } = useGetCountrylistQuery();
   const { data: occupationList } = useGetOccupationlistQuery();
   const { data: educationList } = useGetEducationListQuery();
-
   const { data: religionList } = useGetReligionListQuery();
-  const { data: planList } = useGetPlanlistQuery(calcuAge);
+  const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
   const { data: options } = useGetOptionsQuery(planName);
   const { data: premiumList } = useGetPremiumListQuery();
 
@@ -994,6 +1014,7 @@ const Index = () => {
   ];
   // console.log(newProposalNo)
   // Enter proposal Entry
+  console.log(newProposalNo?.proposal_no[0])
   const saveProposal = async () => {
     const pDate = formatAsMMDDYYYY(proposal_date);
     const riskDate = formatAsMMDDYYYY(commencementDate?.comm_date[0]);
@@ -1022,7 +1043,7 @@ const Index = () => {
           LOCALITY: resident || "",
           N_ID_NUMBER: nid,
           DOB: dob,
-          AGE: age,
+          AGE: calcuAge,
           SEX: gender,
           OCCUPATION: occupation,
           AGENT_ID: agentValue,
@@ -1033,7 +1054,7 @@ const Index = () => {
           MARITAL_STATUS: maritalStatus,
           MARRIAGE_DATE: marriageDate,
           LOCALITY_COUNTRY: country,
-          SPOUSE: "",
+          SPOUSE: spouseName,
           PD_CODE: projectId,
           LAST_EDU_DOCUMENT: isEduDocChecked ? 'Y' : 'N',
         }),
@@ -1042,7 +1063,7 @@ const Index = () => {
       const data = await response.json();
       console.log(data);
 
-      if (data === "Proposal Entry Successfully") {
+      if (data.message === "Proposal Entry Successfully") {
         const secondResponse = await fetch("http://localhost:5001/api/proposal-entry-address", {
           method: "POST",
           headers: {
@@ -1063,6 +1084,7 @@ const Index = () => {
           setProposalFristPage('ok');
           swal({
             title: "Proposal Entry Successfully",
+            text: `Your proposal number: ${data.proposalNumber}`,
             icon: "success",
           });
         } else {
@@ -1075,6 +1097,7 @@ const Index = () => {
       console.error("Error saving proposal:", error.message);
     }
   };
+
 
 
 
@@ -1553,7 +1576,7 @@ const Index = () => {
     }
   };
 
-
+  console.log(proposalInfo[0])
   return (
     <div>
       <Navbar />
@@ -1720,7 +1743,7 @@ const Index = () => {
                 <input
                   type="text"
                   id="success"
-                  value={proposal_date}
+                  value={proposal_date || commenceDate}
                   className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                   onChange={handleproposalDateChange}
                 />
@@ -1728,8 +1751,7 @@ const Index = () => {
                 <input
                   type="date"
                   id="success"
-                  // value={proposal_date}
-                  value={formatAsMMDDYYYYy(policytype === '1' ? commencementDate?.comm_date[0] : proposal_date)}
+                  value={commenceDate}
                   className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                   onChange={handleproposalDateChange}
                 />
@@ -1751,7 +1773,7 @@ const Index = () => {
                   id="success"
                   className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                   // value={risk_date}
-                  value={formatAsMMDDYYYYy(policytype === '1' ? commencementDate?.comm_date[0] : risk_date)}
+                  value={policytype === '1' ? commenceDate : risk_date}
                   onChange={handleriskDateChange}
                 />
               )}
@@ -1855,24 +1877,24 @@ const Index = () => {
                   <div className="bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-start text-xs">SPOUSE</label>
 
-                    {proposalInfo[0]?.fatherhusb ? (
+                    {proposalInfo[0]?.spouse ? (
                       <input
                         type="text"
                         id="success"
                         value={
-                          proposalInfo[0]?.fatherhusb
-                            ? proposalInfo[0]?.fatherhusb
-                            : ""
+                          proposalInfo[0]?.spouse
+                          || ""
                         }
                         class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                        onChange={handleHusband}
+                        onChange={handleSpouse}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
                         class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                        onChange={handleHusband}
+                        value={spouseName}
+                        onChange={handleSpouse}
                       />
                     )}
                   </div>
@@ -2365,7 +2387,7 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          value={calcuAge}
+                          value={calcuAge || proposalInfo[0]?.age}
                           onChange={handleAge}
                           disabled
                           class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
@@ -2441,17 +2463,25 @@ const Index = () => {
                           <label className="w-32 text-center  mt-3 font-bold text-xs">
                             EDUCATION
                           </label>
-
-                          <select
-                            onChange={handleEducation}
-                            className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                          >
-                            {educationList?.map((education, i) => (
-                              <option key={i} value={`${education?.education_id}-${education?.education_name}`} onChange={handleEducationName}>
-                                {education?.education_name}
-                              </option>
-                            ))}
-                          </select>
+                          {
+                            proposalInfo[0]?.edu ?
+                              <input
+                                type="text"
+                                id="success"
+                                value={proposalInfo[0]?.edu || ''}
+                                className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                              /> :
+                              <select
+                                onChange={handleEducation}
+                                className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                              >
+                                {educationList?.map((education, i) => (
+                                  <option key={i} value={`${education?.education_id}-${education?.education_name}`} onChange={handleEducationName}>
+                                    {education?.education_name}
+                                  </option>
+                                ))}
+                              </select>
+                          }
                         </div>
                         <div className="flex items-center gap-x-2.5">
                           <Checkbox
@@ -2577,9 +2607,7 @@ const Index = () => {
                         value={proposalInfo[0]?.plan_desc}
                         disabled
                         class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePlan}
-
-
+                      // onChange={(e) => setPlanDetails([{ ...proposalInfo[0], plan_desc: e.target.value }])}
                       />
                     </div>
                   ) : (
