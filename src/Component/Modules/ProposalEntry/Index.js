@@ -145,6 +145,7 @@ const Index = () => {
   const [oeRate, setOERate] = useState();
   const [hPrem, setHPrem] = useState();
   const [hRate, setHRate] = useState();
+  console.log(hPrem, oePrem)
 
 
 
@@ -332,8 +333,20 @@ const Index = () => {
     if (proposalInfo[0]?.premiumWaiver > 0) {
       setPremWaiver('Y')
     }
-  }, [proposalInfo[0]?.sPrem], proposalInfo[0]?.premiumWaiver)
-
+    if (proposalInfo[0]?.premiumWaiver > 0) {
+      setPremWaiver('Y')
+    }
+    if (proposalInfo[0]?.oePrem > 0 || proposalInfo[0]?.hPrem > 0) {
+      setExtraLoading('YES')
+    }
+    if (proposalInfo[0]?.mdrPrem > 0) {
+      setMajordiseage('YES')
+    }
+    if (proposalInfo[0]?.ipdPrem > 0) {
+      setImpatientReader('YES')
+    }
+  }, [proposalInfo[0]?.sPrem, proposalInfo[0]?.premiumWaiver, proposalInfo[0]?.hPrem, proposalInfo[0]?.oePrem, proposalInfo[0]?.mdrPrem, proposalInfo[0]?.ipdPrem])
+  console.log(proposalInfo[0]?.mdrPrem, proposalInfo[0]?.ipdPrem)
   const handleOption = (e) => {
     setOption(e.target.value)
   };
@@ -965,7 +978,6 @@ const Index = () => {
   const { data: projectList, isLoadingg, isErrorr } = useGetProjectlistQuery();
   const { data: agentList } = useGetAgentlistQuery(projectId);
   const { data: modeList } = useGetModelistQuery(planName);
-  console.log(modeList);
   const { data: bankList } = useGetBankListQuery();
   const { data: bankbranchList } = useGetBankbranchlistQuery(bankCode);
   const { data: districtList } = useGetDistrictlisttQuery();
@@ -1004,12 +1016,12 @@ const Index = () => {
       title: "PREMIUM INFO",
     },
     {
-      code: "PRBM",
-      title: "PRBM NOMINEE",
+      code: "FAMILY",
+      title: "FAMILY HISTORY",
     },
     {
-      code: "OTHERS",
-      title: "OTHERS INFO",
+      code: "MEDICAL",
+      title: "MEDICAL INFO",
     },
   ];
   // console.log(newProposalNo)
@@ -1174,7 +1186,7 @@ const Index = () => {
     fetchData();
   }, [comm_datee, selectTerm]);
 
-
+  // console.log(planName, occupation, gender, sumAssured, eduId, lastEdu, paymentMode)
   //Extra Premium 
   useEffect(() => {
     const fetchData = async () => {
@@ -1433,59 +1445,12 @@ const Index = () => {
 
   // console.log((hosPremRate || 0), (sPrem || 0), (premiumWaiver || 0), (mdrPrem || 0), (ipdPrem || 0))
   const extraTotal = (hosPremRate || 0) + (sPrem || 0) + (mdrPrem || 0) + (premiumWaiver || 0) + (ipdPrem || 0)
-  console.log(extraTotal)
+
   // const totalAllPrem = parseInt(extraTotalPrem, 0) + parseInt(basicPrem, 0);
   // Final Premium Calculation 
 
   const finalPremiumCalculation = (basicPrem || pmode) + extraTotal;
-  console.log(formatAsMMDDYYYY(maturityDate))
-  console.log(formatAsMMDDYYYYSlash(maturityDate))
-  console.log(oePrem, oeRate, hPrem, hRate)
-  console.log(newProposalNo?.proposal_no[0], planName, dob, ipdPrem, calcuAge)
-  // const handleupdatePremInfo = async () => {
-  //   try {
-  // Step 1: Delete the record
-  // const deleteResponse = await axios.delete(`http://localhost:5001/api/ipdRider/delete/B023000000007%2f24`);
-  // console.log('Record deleted successfully:', deleteResponse.data);
 
-  //     // Step 2: Insert new data
-  // const insertData = {
-  //   // REFNO: newProposalNo?.proposal_no[0],
-  //   REFNO: 'B023000000013/24',
-  //   PLAN_NO: planName,
-  //   AGE: calcuAge,
-  //   PREM_RATE: ipdPrem,
-  //   // DOB: formatAsMMDYbySlash(dob),
-  //   DOB: "5/17/1996",
-  //   CURRENT_AGE: 30,
-  //   // START_FROM: formatAsMMDYbySlash(comm_datee),
-  //   START_FROM: "5/17/2024",
-  //   // END_AT: formatAsMMDDYYYYSlash(endAtDate[0]?.endAtDate)
-  //   END_AT: "5/17/2034"
-  // };
-  //     console.log(insertData)
-  //     const insertResponse = await axios.post('http://localhost:5001/api/ipdRider', insertData);
-  //     console.log('Data inserted successfully:', insertResponse.data);
-
-  //     // Step 3: Update the record
-  //     const updateData = {
-  //       PLAN_OPTION: "Option A",
-  //       DEATH_COVERAGE: "Yes",
-  //       JNAME: "John Doe",
-  //       JDOB: "07/15/2002",
-  //       JAGE: 20
-  //       // Add other fields as needed
-  //     };
-
-  //     // const updateResponse = await axios.put('http://localhost:3000/api/update-proposal-dummy/12345', updateData);
-  //     // console.log('Proposal dummy updated successfully:', updateResponse.data);
-
-  //     // Notify the user of success
-  //   } catch (error) {
-  //     console.error('Error during submit:', error);
-  //     alert('An error occurred: ' + error.message);
-  //   }
-  // }
 
   const handleUpdatePremInfo = async () => {
     try {
@@ -1576,7 +1541,89 @@ const Index = () => {
     }
   };
 
-  console.log(proposalInfo[0])
+  //3rd page 
+  // Initialize state with 7 rows
+  const initialRows = Array(7).fill({
+    relation: "",
+    healthStatus: "",
+    age: "",
+    ageAtDeath: "",
+    causeOfDeath: "",
+    durationOfDisease: "",
+    deathYear: "",
+  });
+
+  const [rows, setRows] = useState(initialRows);
+
+  const handleInputChange = (index, field, value) => {
+    setRows((prevRows) => {
+      const updatedRows = prevRows.map((row, i) => {
+        if (i === index) {
+          const updatedRow = { ...row, [field]: value };
+
+          if (field === "healthStatus") {
+            // If healthStatus changes to "Late", clear age and disable certain fields
+            if (value === "Late") {
+              updatedRow.age = "";
+            }
+            if (value === "Good" || value === "Sick") {
+              updatedRow.ageAtDeath = "";
+              updatedRow.deathYear = "";
+              updatedRow.causeOfDeath = "";
+              updatedRow.durationOfDisease = "";
+            }
+          }
+
+          return updatedRow;
+        }
+        return row;
+      });
+
+      return updatedRows;
+    });
+  };
+
+  const addRow = () => {
+    setRows((prevRows) => [
+      ...prevRows,
+      {
+        relation: "",
+        healthStatus: "",
+        age: "",
+        ageAtDeath: "",
+        causeOfDeath: "",
+        durationOfDisease: "",
+        deathYear: "",
+      },
+    ]);
+  };
+
+  const deleteRow = (index) => {
+    setRows((prevRows) => prevRows.filter((_, i) => i !== index));
+  };
+
+  const isRowFilled = (row) => {
+    if (row.healthStatus === "Late") {
+      // When healthStatus is "Late", age should be empty and other fields should be filled
+      return (
+        !row.age && // Ensure age is empty
+        row.ageAtDeath &&
+        row.causeOfDeath &&
+        row.durationOfDisease &&
+        row.deathYear
+      );
+    } else if (row.healthStatus === "Good" || row.healthStatus === "Sick") {
+      // When healthStatus is "Good" or "Sick", only age should be required
+      return row.age;
+    } else {
+      // For other statuses, handle as per your requirement (could be similar to "Good" or "Sick")
+      return row.age;
+    }
+  };
+
+  const allRowsFilled = rows.every((row) => isRowFilled(row));
+
+
   return (
     <div>
       <Navbar />
@@ -3089,8 +3136,8 @@ const Index = () => {
                           type="text"
                           id="success"
                           disabled
-                          // value={oeRate ? oeRate : "0"}
-                          value={occupation !== '1' ? hosPremRate : 0}
+                          // value={occupation !== '1' ? hosPremRate : 0}
+                          value={proposalInfo[0]?.oePrem || oePrem}
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
@@ -3113,11 +3160,12 @@ const Index = () => {
                           id="success"
                           disabled
                           // value={hosRate ? hosRate : 0}
-                          value={
-                            (gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId)
-                              ? hosPremRate
-                              : 0
-                          }
+                          // value={
+                          //   (gender === '2' && occupation === '1') || [1, 2, 3].includes(eduId)
+                          //     ? hosPremRate
+                          //     : 0
+                          // }
+                          value={proposalInfo[0]?.hPrem || hPrem}
                           class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
@@ -3209,7 +3257,7 @@ const Index = () => {
                                 <label className="text-xs text-start w-16 mt-3 p-0">PREMIUM</label>
                                 <input
                                   type="text"
-                                  value={sPrem || 0}
+                                  value={sPrem || proposalInfo[0]?.sPrem || 0}
                                   id="success"
                                   className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
@@ -3252,7 +3300,7 @@ const Index = () => {
                                   type="text"
                                   id="success"
                                   disabled
-                                  value={premiumWaiver || 0}
+                                  value={premiumWaiver || proposalInfo[0]?.premiumWaiver || 0}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -3301,7 +3349,7 @@ const Index = () => {
                                   type="text"
                                   id="success"
                                   disabled
-                                  value={mdrPrem}
+                                  value={mdrPrem || proposalInfo[0]?.mdrPrem}
                                   class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
@@ -3352,7 +3400,7 @@ const Index = () => {
                               <input
                                 type="text"
                                 id="success"
-                                value={ipdPrem}
+                                value={ipdPrem || proposalInfo[0]?.ipdPrem}
                                 className="form-input text-xs shadow border-[#E3F2FD] w-full"
                               />
                             </div>
@@ -3421,10 +3469,53 @@ const Index = () => {
                     className="form-input text-sm shadow border-[#E3F2FD] w-3/4"
                   />
                 </div>
+                <div className="shadow border-2 h-100 rounded p-1 mt-2 mb-3">
+                  <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
+                    BANK INFORMATION
+                  </h2>
+                  <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                      <label className="text-center mt-3  text-sm  w-32">
+                        Account No
+                      </label>
+                      <input
+                        type="text"
+                        id="success"
+                        class="form-input text-sm p-2 shadow border-[#E3F2FD] mt-1 w-full"
+                      />
+                    </div>
+                  </div>
+                  <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className="text-start flex px-2">
+                      <label className="text-center mt-3  text-sm  w-20">
+                        BANK
+                      </label>
+                      <select
+                        onChange={handleBankCode}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      >
+                        {bankList?.map((bank, i) => (
+                          <option key={i} value={bank?.bank_code}>
+                            {bank?.bank_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="text-start flex px-2">
+                      <label className="text-center mt-3  text-sm  w-48">
+                        BANK BRANCH
+                      </label>
+                      <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
+                        {bankbranchList?.map((branch, i) => (
+                          <option key={i} value={branch?.routing_no}>
+                            {branch?.branch_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-
-
 
             </div>
           </div>
@@ -3440,9 +3531,10 @@ const Index = () => {
         </div>)
         : selectedTopbarItem === "P" ? <div className="my-2 text-center text-lg text-red-600">Please fill up the proposal info form</div> : ''
       }
-      {selectedTopbarItem === "PRBM" && (
+      {selectedTopbarItem === "FAMILY" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
-          <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+          {/* postponded by sir 9/8/2024 */}
+          {/* <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="  text-start px-2 mb-3">
               <div class="h-[150px] p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                 <div className="text-start bg-gray mb-4 m-1">
@@ -3504,7 +3596,7 @@ const Index = () => {
                           type="submit"
                           class="rounded text-end btn-sm focus:outline-none text-dark bg-green-100 hover:bg-green-100 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 ml-2 mb-2 dark:bg-green-100 dark:hover:bg-green-100 dark:focus:ring-green-800"
                         >
-                          PRBM ENTRY
+                          FAMILY ENTRY
                         </button>
                       </div>
                     </div>
@@ -3512,553 +3604,171 @@ const Index = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
-            <div className="overflow-x-auto px-4">
-              <Table className="border bordered">
-                <Table.Head>
-                  <Table.HeadCell>RELATION</Table.HeadCell>
-                  <Table.HeadCell>QTY</Table.HeadCell>
-                  <Table.HeadCell>PRESENT HEALTH STATUS</Table.HeadCell>
-                  <Table.HeadCell>AGE</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y">
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Father
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Mother
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Brother
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Sister
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      SPOUSE
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Son
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      Daughter
-                    </Table.Cell>
-                    <div className="w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                    <Table.Cell>
-                      <div className="flex">
-                        <div className="flex items-center gap-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Good
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1  ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Sick
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-1 ml-1">
-                          <Checkbox id="promotion" />
-                          <Label className="italic" htmlFor="promotion">
-                            Late
-                          </Label>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                    <div className="pr-1 justify-right w-16">
-                      <input
-                        type="text"
-                        id="success"
-                        class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
-                      />
-                    </div>
-                  </Table.Row>
-                </Table.Body>
-              </Table>
+          {/* ====medical  and family members part start==== */}
+          <div className="p-1 mb-0 grid grid-cols-1 rounded px-4 mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full">
+                <div className="overflow-hidden">
+                  <div
+                    className={`relative ${rows.length > 7 ? 'max-h-96 overflow-y-auto' : 'max-h-full'}`}
+                    style={{ maxHeight: '32rem' }}  // Adjust height as needed
+                  >
+                    <table className="min-w-full table-fixed border border-gray-200">
+                      <thead className="sticky top-0 ">
+                        <tr>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/6 bg-gray-50">RELATION</th>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/6 bg-gray-50">PRESENT HEALTH STATUS</th>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/12 bg-gray-50">AGE</th>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/12 bg-gray-200">AGE AT DEATH</th>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/6 bg-gray-200">CAUSE OF DEATH</th>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/6 bg-gray-200">DURATION OF DISEASE</th>
+                          <th className="border-r border-gray-300 px-4 py-2 w-1/6 bg-gray-200">DEATH YEAR</th>
+                          <th className="border px-4 py-2 w-1/12 bg-gray-200">ACTION</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.map((row, index) => (
+                          <tr key={index}>
+                            <td className="border-r border-gray-300 px-4 py-2">
+                              <select
+                                value={row.relation}
+                                onChange={(e) =>
+                                  handleInputChange(index, "relation", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={index > 0 && !isRowFilled(rows[index - 1])}
+                              >
+                                <option value="">Select</option>
+                                <option value="Father">Father</option>
+                                <option value="Mother">Mother</option>
+                                <option value="Brother">Brother</option>
+                                <option value="Sister">Sister</option>
+                                <option value="Spouse">Spouse</option>
+                                <option value="Son">Son</option>
+                                <option value="Daughter">Daughter</option>
+                              </select>
+                            </td>
+                            <td className="border-r border-gray-300 px-4 py-2">
+                              <select
+                                value={row.healthStatus}
+                                onChange={(e) =>
+                                  handleInputChange(index, "healthStatus", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={index > 0 && !isRowFilled(rows[index - 1])}
+                              >
+                                <option value="">Select</option>
+                                <option value="Good">Good</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Late">Late</option>
+                              </select>
+                            </td>
+                            <td className="border-r border-gray-300 px-4 py-2">
+                              <input
+                                type="number"
+                                value={row.age}
+                                min={16}
+                                max={99}
+                                onChange={(e) =>
+                                  handleInputChange(index, "age", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={
+                                  row.healthStatus === "Late" ||
+                                  (index > 0 && !isRowFilled(rows[index - 1]))
+                                }
+                              />
+                            </td>
+                            <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
+                              <input
+                                type="text"
+                                value={row.ageAtDeath}
+                                onChange={(e) =>
+                                  handleInputChange(index, "ageAtDeath", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={
+                                  row.healthStatus !== "Late" ||
+                                  (index > 0 && !isRowFilled(rows[index - 1]))
+                                }
+                              />
+                            </td>
+                            <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
+                              <input
+                                type="text"
+                                value={row.causeOfDeath}
+                                onChange={(e) =>
+                                  handleInputChange(index, "causeOfDeath", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={
+                                  row.healthStatus !== "Late" ||
+                                  (index > 0 && !isRowFilled(rows[index - 1]))
+                                }
+                              />
+                            </td>
+                            <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
+                              <input
+                                type="text"
+                                value={row.durationOfDisease}
+                                onChange={(e) =>
+                                  handleInputChange(index, "durationOfDisease", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={
+                                  row.healthStatus !== "Late" ||
+                                  (index > 0 && !isRowFilled(rows[index - 1]))
+                                }
+                              />
+                            </td>
+                            <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
+                              <input
+                                type="text"
+                                value={row.deathYear}
+                                onChange={(e) =>
+                                  handleInputChange(index, "deathYear", e.target.value)
+                                }
+                                className="w-full border-gray-300 rounded"
+                                disabled={
+                                  row.healthStatus !== "Late" ||
+                                  (index > 0 && !isRowFilled(rows[index - 1]))
+                                }
+                              />
+                            </td>
+                            <td className="border px-2 py-1 bg-gray-100">
+                              <button
+                                onClick={() => deleteRow(index)}
+                                className="bg-red-500 text-white px-2 py-1 rounded"
+                              >
+                                X
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="overflow-x-auto px-4">
-              <Table className="border bordered">
-                <Table.Head>
-                  <Table.HeadCell>AGE AT DEATH</Table.HeadCell>
-                  <Table.HeadCell>CAUSE OF DEATH</Table.HeadCell>
-                  <Table.HeadCell>DURATION OF DEASEAS</Table.HeadCell>
-                  <Table.HeadCell>DEATH OF YEAR</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y">
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="py-1">
-                      <div className="w-24 ">
-                        <input
-                          type="text"
-                          id="success"
-                          class=" form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell className="py-1">
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell className="py-1">
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell className="py-1">
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8 form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="pr-1 justify-right w-24">
-                        <input
-                          type="text"
-                          id="success"
-                          class="h-8  form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                </Table.Body>
-              </Table>
+            <div className="flex justify-end mt-1">
+              <button
+                onClick={addRow}
+                className={`px-4 py-1 rounded text-white ${allRowsFilled ? 'bg-green-500' : 'bg-green-200'}`}
+                disabled={!allRowsFilled}
+              >
+                add+
+              </button>
             </div>
           </div>
-          <div class=" mb-0 flex rounded p-2 mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center   lg:mx-auto lg:mt-2">
+
+          {/* ====medical  and family members part end==== */}
+
+          {/* postponded by Sir 9/8/2024 */}
+          {/* <div class=" mb-0 flex rounded p-2 mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center   lg:mx-auto lg:mt-2">
             <div class="flex border items-center shadow p-2 mb-0">
               <input
                 id="default-checkbox"
@@ -4087,7 +3797,7 @@ const Index = () => {
                 MINORITY
               </label>
             </div>
-          </div>
+          </div> */}
           <div class=" mb-0 flex grid grid-cols-2 rounded lg:px-80    mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
             <div className="bg-white flex align-items-center m-1  lg:mt-0">
               <label className="text-xs text-center w-48 mt-3 p-0">
@@ -4123,7 +3833,7 @@ const Index = () => {
         </div>
       )}
 
-      {selectedTopbarItem === "OTHERS" && (
+      {selectedTopbarItem === "MEDICAL" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
           <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-4 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="col-span-2">
@@ -4644,53 +4354,6 @@ const Index = () => {
                       id="success"
                       class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
                     />
-                  </div>
-                </div>
-              </div>
-
-              <div className="shadow border-2 h-100 rounded p-1 mt-2 mb-3">
-                <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
-                  BANK INFORMATION
-                </h2>
-                <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                    <label className="text-center mt-3  text-sm  w-32">
-                      Account No
-                    </label>
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-sm p-2 shadow border-[#E3F2FD] mt-1 w-full"
-                    />
-                  </div>
-                </div>
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="text-start flex px-2">
-                    <label className="text-center mt-3  text-sm  w-20">
-                      BANK
-                    </label>
-                    <select
-                      onChange={handleBankCode}
-                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                    >
-                      {bankList?.map((bank, i) => (
-                        <option key={i} value={bank?.bank_code}>
-                          {bank?.bank_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="text-start flex px-2">
-                    <label className="text-center mt-3  text-sm  w-48">
-                      BANK BRANCH
-                    </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                      {bankbranchList?.map((branch, i) => (
-                        <option key={i} value={branch?.routing_no}>
-                          {branch?.branch_name}
-                        </option>
-                      ))}
-                    </select>
                   </div>
                 </div>
               </div>
