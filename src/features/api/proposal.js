@@ -131,6 +131,12 @@ const proposal = apiSlice.injectEndpoints({
       }),
       providesTags: ["proposal_head"],
     }),
+    getPreviousSumassurance: builder.query({
+      query: (proposalNo) => ({
+        url: `/previous-sumassurance/${proposalNo}`,
+      }),
+      providesTags: ["proposal_head"],
+    }),
     getBankbranchlist: builder.query({
       query: (BANK_CODE) => ({
         url: `/branch-list/${BANK_CODE}`,
@@ -187,4 +193,5 @@ export const {
   useGetAgentlistQuery,
   useGetDistrictlisttQuery,
   useGetPostofficelistQuery,
+  useGetPreviousSumassuranceQuery
 } = proposal;

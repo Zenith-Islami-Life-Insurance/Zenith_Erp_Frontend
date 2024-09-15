@@ -23,6 +23,7 @@ import {
   useGetThanalistQuery,
   useGetallTypeListQuery,
   useGetOptionsQuery,
+  useGetPreviousSumassuranceQuery,
 } from "../../../features/api/proposal";
 import axios from "axios";
 import swal from "sweetalert";
@@ -30,6 +31,7 @@ import swal from "sweetalert";
 const Index = () => {
   const [projectId, setProjectId] = useState("");
   const [gender, setGender] = useState("");
+  console.log(gender)
   const [maritalStatus, setMaritalStaus] = useState("");
   const [agentValue, setAgentValue] = useState("");
   const [proposalNo, setProposalNo] = useState("");
@@ -145,8 +147,7 @@ const Index = () => {
   const [oeRate, setOERate] = useState();
   const [hPrem, setHPrem] = useState();
   const [hRate, setHRate] = useState();
-  console.log(hPrem, oePrem)
-
+  const [previousPolicyNo, setPreviousPolicyNo] = useState();
 
 
   // console.log(totalInstallment);
@@ -817,8 +818,7 @@ const Index = () => {
   //get new proposal Number
 
   // get commencement date
-  console.log(currentDate)
-  console.log(policytype)
+
   const commenceDate = formatAsMMDDYYYYy(commencementDate?.comm_date[0])
   console.log(commenceDate)
   useEffect(() => {
@@ -974,8 +974,8 @@ const Index = () => {
     setHRate(isEligibleForHPrem && hosPremRate !== 0 ? premOccupRate?.occupationRate : 0);
   }, [occupation, hosPremRate, premOccupRate, gender, eduId]);
 
-  const { data: branchList, isLoading, isError } = useGetBranchlistQuery();
-  const { data: projectList, isLoadingg, isErrorr } = useGetProjectlistQuery();
+  const { data: branchList } = useGetBranchlistQuery();
+  const { data: projectList } = useGetProjectlistQuery();
   const { data: agentList } = useGetAgentlistQuery(projectId);
   const { data: modeList } = useGetModelistQuery(planName);
   const { data: bankList } = useGetBankListQuery();
@@ -992,6 +992,7 @@ const Index = () => {
   const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
   const { data: options } = useGetOptionsQuery(planName);
   const { data: premiumList } = useGetPremiumListQuery();
+  const { data: previousSumAssurance, error, isLoading } = useGetPreviousSumassuranceQuery(previousPolicyNo);
 
   const { data: TypeList } = useGetallTypeListQuery();
   const { data: thanaList } = useGetThanalistQuery(
@@ -1623,6 +1624,285 @@ const Index = () => {
 
   const allRowsFilled = rows.every((row) => isRowFilled(row));
 
+  // Medical Info 4thpage
+  const [healthInfo, setHealthInfo] = useState({
+    fullyHealthy: "",
+    admitHospital: "",
+    surgeryRecord: "",
+    diseasesList: "",
+    addictionInfo: "",
+    proposalDecline: "",
+    currentMedication: "",
+    disabilityInfo: "",
+    infectionsDiseases: "",
+    otherRisk: "",
+  });
+
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    setHealthInfo((prevState) => ({
+      ...prevState,
+      [name]: value.toUpperCase() === 'YES' ? 'Y' : 'N',
+    }));
+  };
+
+  const [checkboxState, setCheckboxState] = useState({
+    SD: "N",
+    CR: "N",
+    FMR: "N",
+    SGPT: "N",
+    SGOT: "N",
+    PUR: "N",
+    ESR: "N",
+    CBC: "N",
+    BILIRUBIN: "N",
+    ECG: "N",
+    "GAMMA GT": "N",
+    GTT: "N",
+    COLESTOROL: "N",
+    "OTHER TEST": "N",
+    FBS: "N",
+    "URIC ACID": "N",
+    "X RAY": "N",
+  });
+
+  const handleCheckboxChange = (event) => {
+    const { id } = event.target;
+    setCheckboxState((prevState) => ({
+      ...prevState,
+      [id]: prevState[id] === "Y" ? "N" : "Y",
+    }));
+  };
+  //Armed Force Info
+  const [armedForceInfo, setArmedForceInfo] = useState({
+    designation: 'YES',
+    category: 'GOOD',
+  });
+
+  const handleArmedForceChange = (e) => {
+    const { name, value } = e.target;
+
+    setArmedForceInfo((prevState) => ({
+      ...prevState,
+      [name]: name === 'designation' ? (value === 'YES' ? 'Y' : 'N') : value,  // Only change designation to Y/N
+    }));
+  };
+
+  console.log(armedForceInfo.category)
+
+  //physical measurement
+  const [formValues, setFormValues] = useState({
+    heightType: 'INCH',
+    height: '',
+    weightType: 'KILOGRAM',
+    weight: '',
+    chestOnbreatType: 'INCH',
+    chestOnbreat: '',
+    chestBreatlessType: 'INCH',
+    chestBreatless: '',
+    stomachType: 'INCH',
+    stomach: ''
+  });
+
+  const handlePhysicalInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value.toUpperCase()
+    });
+  };
+  console.log(formValues.chestOnbreatType, formValues.chestOnbreat)
+
+  // ==========Start previous policy to sumAssurance========
+
+  const initialRowsForPolicy = Array(3).fill().map(() => ({
+    policyNo: '',
+    sumAssured: ''
+  }));
+
+  const [policyRows, setPolicyRows] = useState(initialRowsForPolicy);
+  const [totalSumAssured, setTotalSumAssured] = useState(0);
+  const [policyIndex, setPolicyIndex] = useState(null);
+  const [policy1, setPolicy1] = useState(0);
+  const [policy2, setPolicy2] = useState(0);
+  const [policy3, setPolicy3] = useState(0);
+  const [policy4, setPolicy4] = useState(0);
+  const [policy5, setPolicy5] = useState(0);
+  // Add more as needed
+
+  // Extract values based on the rows
+  useEffect(() => {
+    if (policyRows.length > 0) {
+      setPolicy1(policyRows[0]?.sumAssured || 0);
+      setPolicy2(policyRows[1]?.sumAssured || 0);
+      setPolicy3(policyRows[2]?.sumAssured || 0);
+      setPolicy4(policyRows[3]?.sumAssured || 0);
+      setPolicy5(policyRows[4]?.sumAssured || 0);
+
+      // Add more as needed for additional policies
+    }
+  }, [policyRows]);
+
+
+  // Handle input changes
+  useEffect(() => {
+    if (previousSumAssurance && policyIndex !== null) {
+      const updatedRows = [...policyRows];
+      updatedRows[policyIndex] = {
+        ...updatedRows[policyIndex],
+        sumAssured: previousSumAssurance.sumAssurance, // Assuming sumAssurance is the correct field from your API
+      };
+      setPolicyRows(updatedRows);
+    }
+  }, [previousSumAssurance, policyIndex]); // Run effect when previousSumAssurance or policyIndex changes
+
+  // Handle input changes for policy rows
+  const handlePolicyInputChange = (index, field, value) => {
+    if (field === 'policyNo') {
+      setPreviousPolicyNo(value); // Set the policy number to fetch sumAssured from DB
+      setPolicyIndex(index); // Keep track of which row is being updated
+    }
+
+    // Update the specific row based on input changes
+    const updatedRows = [...policyRows];
+    updatedRows[index] = {
+      ...updatedRows[index],
+      [field]: value, // Update the field (either policyNo or sumAssured)
+    };
+    setPolicyRows(updatedRows);
+    // Recalculate total sum assured
+    const total = updatedRows?.reduce((acc, row) => {
+      return acc + (parseFloat(row.sumAssured) || 0); // Convert sumAssured to number
+    }, 0);
+    setTotalSumAssured(total);
+  };
+
+  // Add a new policy row
+  const addPolicyRow = () => {
+    setPolicyRows([...policyRows, { policyNo: '', sumAssured: '' }]);
+  };
+
+  // Handle row deletion
+  const deletePolicyRow = (index) => {
+    const updatedRows = policyRows.filter((_, i) => i !== index);
+    setPolicyRows(updatedRows);
+
+    // Recalculate total sum assured after row deletion
+    const total = updatedRows.reduce((acc, row) => {
+      return acc + (parseFloat(row.sumAssured) || 0);
+    }, 0);
+    setTotalSumAssured(total);
+  };
+
+  // Check if the first three rows are filled to enable the "add+" button
+  const isAddButtonEnabled = () => {
+    return policyRows.slice(0, 3).every(row => row.policyNo && row.sumAssured);
+  };
+  // ==========End previous policy to sumAssurance ========
+  //Update Medical Information
+  const updateMedicalInfo = async () => {
+    const medicalInfo = {
+      FULLY_HEALTHY: healthInfo.fullyHealthy,
+      ADMIT_HOSPITAL: healthInfo.admitHospital,
+      SURGERY_RECORD: healthInfo.surgeryRecord,
+      DISEASE_LIST: healthInfo.diseasesList,
+      ADDICTION_INFO: healthInfo.addictionInfo,
+      PROPOSAL_DECLINE: healthInfo.proposalDecline,
+      CURRENT_MEDICATION: healthInfo.currentMedication,
+      DISABILITY_INFO: healthInfo.disabilityInfo,
+      INFECTIOUS_DISEASE: healthInfo.infectionsDiseases,
+      OTHER_RISK: healthInfo.otherRisk,
+      ARMED_FORCE_DSGN: armedForceInfo.designation,
+      "ARMED_HEALTH": armedForceInfo.category,
+      "HIGHT_TYPE": "N",
+      "IDENTIFICATION": "N",
+      "PREGNANT_INFO": "N",
+      "DELIVERY_PROCESS": "N",
+      "EXP_DELIVERY_DT": "5/17/2052",
+      "FEMALE_DISEASE": "N",
+      "LAST_DELIVERY_DT": "5/17/2045",
+      "LAST_MENSTRUAL_DT": "5/17/2045",
+      "PROPOSER_VAL": "Y",
+      "PLAN_VAL": "Y",
+      "TERM_VAL": "Y",
+      "SUM_INS_VAL": "Y",
+      "SUMATRISK_VAL": "Y",
+      "RESEDENT_VAL": "Y",
+      "MEDICAL_HIST_VAL": "Y",
+      "AGE_VAL": "Y",
+      "SEX_VAL": "Y",
+      "OCCUP_VAL": "Y",
+      "INSTMODE_VAL": "Y",
+      "PREMIUM_VAL": "Y",
+      "MEDICAL_VAL": "Y",
+      "FEMALE_M_VAL": "Y",
+      "EDU_VAL": "Y",
+      "FAMILY_HIST_VAL": "Y",
+      "REMARKS": "N",
+      "UNW_RESULT": "N",
+      "UNW_USER": "N",
+      "SPECIAL_UNW_APPROVAL": "N",
+      "INDATE": "5/17/2025",
+      "OTHER_RISK_DETAILS": "N",
+      "FMR": checkboxState.FMR,
+      "PUR": checkboxState.PUR,
+      "CBC": checkboxState.CBC,
+      "ESR": checkboxState.ESR,
+      "ECG": checkboxState.ECG,
+      "FBS": checkboxState.FBS,
+      "GTT": checkboxState.GTT,
+      "X_RAY": checkboxState["X RAY"],
+      // "HIV": checkboxState.H,
+      "SGOT": checkboxState.SGOT,
+      "SGPT": checkboxState.SGPT,
+      "GAMMA_GT": checkboxState["GAMMA GT"],
+      "BILIRUBIN": checkboxState.BILIRUBIN,
+      "CHOLESTEROL": checkboxState.COLESTOROL,
+      // "TRIGLYCERIDES": checkboxState,
+      "URIC_ACID": checkboxState["URIC ACID"],
+      "OTHER_TEST": checkboxState["OTHER TEST"],
+      "OTHER_TEST_DETAILS": "N",
+      "DATE_VAL": "N",
+      "UNW_RESULT_DT": "5/17/2045",
+      "ADDRESS_VAL": "N",
+      "FA_PD_BR_VAL": "N",
+      "PR_AMT_VAL": "N",
+      "NOMINEE_VAL": "N",
+      "SUP_PREM_VAL": "N",
+      "EXTRA_PREM_VAL": "N",
+      "COMENT": "N",
+      "TOTAL_PREM_VAL": "N",
+      "SD": checkboxState.SD,
+      "CR": checkboxState.CR,
+      "INCOME_SOURCE": "N",
+      "INCOME_CERTIFICATE": "N",
+      "APC_PIC_NAME": "N",
+      "PROPOSER_PIC_NAME": "N",
+      "PROPOSER_SIGN_NAME": "N"
+    }
+    // const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0]);
+    // Sanitize updateData by removing empty or null fields
+    const sanitizedUpdateData = {};
+    Object.keys(medicalInfo).forEach((key) => {
+      if (medicalInfo[key] !== undefined && medicalInfo[key] !== null && medicalInfo[key] !== '') {
+        sanitizedUpdateData[key] = medicalInfo[key];
+      }
+    });
+    try {
+      const response = await axios.put(`http://localhost:5001/api/medical-info/B023000000015%2f24`, sanitizedUpdateData);
+
+      if (response.status === 200) {
+        console.log('Medical info updated successfully');
+        alert('Medical info updated successfully');
+      } else {
+        console.log('No rows updated');
+        alert('No rows updated');
+      }
+    } catch (error) {
+      console.error('Error updating medical info:', error);
+      alert('Error updating medical info');
+    }
+  };
 
   return (
     <div>
@@ -3319,7 +3599,6 @@ const Index = () => {
                             <select
                               className={`form-input text-xs shadow border-[#E3F2FD] mt-0 ${suplimentary === 'NO' ? 'w-3/4' : 'w-1/3'}`}
                               onChange={handleMDRChange}
-                            //  onChange={handleCheckboxChange}
                             >
                               <option value='NO'>NO</option>
                               <option value='YES'>YES</option>
@@ -3671,9 +3950,22 @@ const Index = () => {
                                 value={row.age}
                                 min={16}
                                 max={99}
-                                onChange={(e) =>
-                                  handleInputChange(index, "age", e.target.value)
-                                }
+                                onChange={(e) => {
+                                  // Get the input value and parse it to an integer
+                                  let value = parseInt(e.target.value, 10);
+                                  // Check if the value is a valid number before processing
+                                  if (!isNaN(value)) {
+                                    // Enforce the min/max constraints
+                                    if (value < 16) {
+                                      value = 16;
+                                    } else if (value > 99) {
+                                      value = 99;
+                                    }
+
+                                    // Update the value using handleInputChange
+                                    handleInputChange(index, "age", value);
+                                  }
+                                }}
                                 className="w-full border-gray-300 rounded"
                                 disabled={
                                   row.healthStatus === "Late" ||
@@ -3681,6 +3973,7 @@ const Index = () => {
                                 }
                               />
                             </td>
+
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
@@ -3838,380 +4131,290 @@ const Index = () => {
           <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-4 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="col-span-2">
               <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
-                <div className="text-start col-span-1  px-2">
+                <div className="text-start col-span-1 px-2">
                   <div className="shadow border-2 h-100 rounded p-1 mt-2 mb-3">
-                    <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
+                    <h2 className="text-center font-bold text-success p-1 rounded text-xs text-dark">
                       HEALTH INFORMATION
                     </h2>
 
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    {/* Fully Healthy */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Fully Healthy
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Fully Healthy</label>
+                        <select
+                          name="fullyHealthy"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.fullyHealthy}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Admit Hospital */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Admit Hospital
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Admit Hospital</label>
+                        <select
+                          name="admitHospital"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.admitHospital}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Surgery Record */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Surgery Record
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Surgery Record</label>
+                        <select
+                          name="surgeryRecord"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.surgeryRecord}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Diseases List */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Diseases List
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Diseases List</label>
+                        <select
+                          name="diseasesList"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.diseasesList}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Addiction Info */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Addiction Info
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Addiction Info</label>
+                        <select
+                          name="addictionInfo"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.addictionInfo}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Proposal Decline */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Proposal Decline
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Proposal Decline</label>
+                        <select
+                          name="proposalDecline"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.proposalDecline}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Current Medication */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Current Madication
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Current Medication</label>
+                        <select
+                          name="currentMedication"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.currentMedication}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Disability Info */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Disability info
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Disability Info</label>
+                        <select
+                          name="disabilityInfo"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.disabilityInfo}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Infections Diseases */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Infections Diaseases
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Infections Diseases</label>
+                        <select
+                          name="infectionsDiseases"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.infectionsDiseases}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
-                    <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                    {/* Other Risk */}
+                    <div className="p-1 mb-0 flex grid grid-cols-1 rounded lg:grid-cols-1 w-full">
                       <div className="text-start flex px-2">
-                        <label className="text-center mt-2  text-sm  w-60">
-                          Other Risk
-                        </label>
-                        <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                          <>
-                            <option>Yes</option>
-                            <option>No</option>
-                          </>
+                        <label className="text-center mt-2 text-sm w-60">Other Risk</label>
+                        <select
+                          name="otherRisk"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={healthInfo.otherRisk}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="YES">Yes</option>
+                          <option value="NO">No</option>
                         </select>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                <div className=" text-start px-2 mb-3">
-                  <div class="  p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                <div className="text-start px-2 mb-3">
+                  <div className="p-1 mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-1">
                     <div className="text-start bg-gray mb-4 m-1">
-                      <div className="h-[500px]  shadow border-2   m-0 rounded p-0">
-                        <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
+                      <div className="h-[500px] shadow border-2 m-0 rounded p-0">
+                        <h2 className="text-center font-bold text-success p-1 rounded text-xs text-dark">
                           DIAGNOSTIC TEST
                         </h2>
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1">
-                            <Checkbox id="promotion" />
-                            <Label className="italic pr-3" htmlFor="promotion">
-                              SD
-                            </Label>{" "}
-                          </div>
-
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              CR
-                            </Label>
-                          </div>
-                        </div>
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              FMR
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              SGPT
-                            </Label>
-                          </div>
-                        </div>
-
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1 ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              SGOT
-                            </Label>
-                          </div>
-
-                          <div className="flex items-center gap-1">
-                            <Checkbox id="promotion" />
-                            <Label className="italic pr-3" htmlFor="promotion">
-                              PUR
-                            </Label>{" "}
-                          </div>
-                        </div>
-
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1">
-                            <Checkbox id="promotion" />
-                            <Label className="italic pr-3" htmlFor="promotion">
-                              ESR
-                            </Label>{" "}
-                          </div>
-
-                          <div className="flex items-center gap-1">
-                            <Checkbox id="promotion" />
-                            <Label className="italic pr-3" htmlFor="promotion">
-                              PUR
-                            </Label>{" "}
-                          </div>
-                        </div>
-
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              CBC
-                            </Label>
-                          </div>
-
-                          <div className="flex items-center gap-1">
-                            <Checkbox id="promotion" />
-                            <Label className="italic pr-3" htmlFor="promotion">
-                              PUR
-                            </Label>{" "}
-                          </div>
-                        </div>
-
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              BILIRUBIN
-                            </Label>
-                          </div>
-
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              ECG
-                            </Label>
-                          </div>
-                        </div>
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1 ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              GAMMA GT
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Checkbox id="promotion" />
-                            <Label className="italic pr-3" htmlFor="promotion">
-                              ESR
-                            </Label>{" "}
-                          </div>
-                        </div>
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic w-60" htmlFor="promotion">
-                              GTT
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-1 ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic w-60" htmlFor="promotion">
-                              COLESTOROL
-                            </Label>
-                          </div>
-                        </div>
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1 ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              OTHER TEST
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-1 ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic w-60" htmlFor="promotion">
-                              FBS
-                            </Label>
-                          </div>
-                        </div>
-                        <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                          <div className="flex items-center gap-1 ">
-                            <Checkbox id="promotion" />{" "}
-                            <Label className="italic" htmlFor="promotion">
-                              URIC ACID
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-1  ">
-                            <Checkbox id="promotion" />
-                            <Label className="italic" htmlFor="promotion">
-                              X RAY
-                            </Label>
-                          </div>
+                        {/* Wrapping checkboxes in a two-column grid */}
+                        <div className="grid grid-cols-2 gap-4 p-2">
+                          {Object.keys(checkboxState).map((testName, index) => (
+                            <div
+                              key={testName}
+                              className="mb-0 flex items-center gap-1 justify-start"
+                            >
+                              <Checkbox
+                                id={testName}
+                                checked={checkboxState[testName] === "Y"}
+                                onChange={handleCheckboxChange}
+                              />
+                              <Label className="italic pr-3" htmlFor={testName}>
+                                {testName}
+                              </Label>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class=" p-1 mb-0 flex col-span-2 grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
-                  <div className="text-start bg-gray mb-4 m-1">
-                    <div className="shadow border-2   m-0 rounded p-0">
-                      <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
-                        ONLY FOR WOMEN
-                      </h2>
-                      <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-                        <div className="text-start flex px-1">
-                          <label className="text-center mt-2  text-sm  w-48">
-                            Pregnant Info
-                          </label>
-                          <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                            <>
-                              <option>Yes</option>
-                              <option>No</option>
-                            </>
-                          </select>
-                        </div>
-                        <div className="text-start flex px-1 mt-2">
-                          <label className="text-center mt-2  text-sm  w-48">
-                            Delivery Process
-                          </label>
-                          <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                            <>
-                              <option>Yes</option>
-                              <option>No</option>
-                            </>
-                          </select>
-                        </div>
-                        <div className="text-start flex px-1 mt-2">
-                          <label className="text-center mt-2  text-sm  w-48">
-                            Female Diaseas
-                          </label>
-                          <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                            <>
-                              <option>Yes</option>
-                              <option>No</option>
-                            </>
-                          </select>
-                        </div>
 
-                        <div className="bg-white  flex align-items-center m-1  lg:mt-0">
-                          <label className="w-48 mt-4 text-sm">
-                            Exp Delivery Date
-                          </label>
-                          <input
-                            type="date"
-                            id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                          />
-                        </div>
-                        <div className="bg-white  flex align-items-center m-1  lg:mt-0">
-                          <label className="w-48 mt-4 text-sm">
-                            Last Delivery Date
-                          </label>
-                          <input
-                            type="date"
-                            id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                          />
-                        </div>
-                        <div className="bg-white  flex align-items-center m-1  lg:mt-0">
-                          <label className="w-48 mt-4 text-sm">
-                            Last Menstrual Date
-                          </label>
-                          <input
-                            type="text"
-                            id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                          />
+                {
+                  gender === '2' && <div class=" p-1 mb-0 flex col-span-2 grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                    <div className="text-start bg-gray mb-4 m-1">
+                      <div className="shadow border-2   m-0 rounded p-0">
+                        <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
+                          ONLY FOR WOMEN
+                        </h2>
+                        <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                          <div className="text-start flex px-1">
+                            <label className="text-center mt-2  text-sm  w-48">
+                              Pregnant Info
+                            </label>
+                            <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
+                              <>
+                                <option>Yes</option>
+                                <option>No</option>
+                              </>
+                            </select>
+                          </div>
+                          <div className="text-start flex px-1 mt-2">
+                            <label className="text-center mt-2  text-sm  w-48">
+                              Delivery Process
+                            </label>
+                            <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
+                              <>
+                                <option>Yes</option>
+                                <option>No</option>
+                              </>
+                            </select>
+                          </div>
+                          <div className="text-start flex px-1 mt-2">
+                            <label className="text-center mt-2  text-sm  w-48">
+                              Female Diaseas
+                            </label>
+                            <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
+                              <>
+                                <option>Yes</option>
+                                <option>No</option>
+                              </>
+                            </select>
+                          </div>
+
+                          <div className="bg-white  flex align-items-center m-1  lg:mt-0">
+                            <label className="w-48 mt-4 text-sm">
+                              Exp Delivery Date
+                            </label>
+                            <input
+                              type="date"
+                              id="success"
+                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            />
+                          </div>
+                          <div className="bg-white  flex align-items-center m-1  lg:mt-0">
+                            <label className="w-48 mt-4 text-sm">
+                              Last Delivery Date
+                            </label>
+                            <input
+                              type="date"
+                              id="success"
+                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            />
+                          </div>
+                          <div className="bg-white  flex align-items-center m-1  lg:mt-0">
+                            <label className="w-48 mt-4 text-sm">
+                              Last Menstrual Date
+                            </label>
+                            <input
+                              type="text"
+                              id="success"
+                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                }
               </div>
             </div>
             <div className="text-start col-span-2  px-2 lg:mt-2">
@@ -4224,10 +4427,15 @@ const Index = () => {
                     <label className="text-xs text-center w-48 mt-3 p-0">
                       ARMED FORCE DESG
                     </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
+                    <select
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      name="designation"
+                      value={armedForceInfo.designation}
+                      onChange={handleArmedForceChange}
+                    >
                       <>
-                        <option>Yes</option>
-                        <option>No</option>
+                        <option>YES</option>
+                        <option>NO</option>
                       </>
                     </select>
                   </div>
@@ -4235,10 +4443,15 @@ const Index = () => {
                     <label className="text-center mt-2  text-sm  w-60">
                       Health Category
                     </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
+                    <select
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      name="category"
+                      value={armedForceInfo.category}
+                      onChange={handleArmedForceChange}
+                    >
                       <>
-                        <option>Yes</option>
-                        <option>No</option>
+                        <option>GOOD</option>
+                        <option>SICK</option>
                       </>
                     </select>
                   </div>
@@ -4246,115 +4459,123 @@ const Index = () => {
               </div>
 
               <div className="shadow border-2 h-100 rounded p-1 mt-2 mb-3">
-                <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
+                <h2 className="text-center font-bold text-success p-1 rounded text-xs text-dark">
                   PHYSICAL MEASUREMENTS
                 </h2>
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                {/* Height Type */}
+                <div className="p-1 mb-2 flex grid grid-cols-2 rounded lg:grid-cols-2 gap-0 w-full justify-center align-items-center">
                   <div className="text-start flex px-2">
-                    <label className="text-center mt-2  text-sm  w-60">
-                      Hight type
-                    </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                      <>
-                        <option>Foot</option>
-                        <option>Meter</option>
-                      </>
+                    <label className="text-center mt-2 text-sm w-60">Height Type</label>
+                    <select
+                      name="heightType"
+                      value={formValues.heightType}
+                      onChange={handlePhysicalInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>INCH</option>
+                      <option>CENTIMETER</option>
                     </select>
                   </div>
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
-                    />
-
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 ml-2 w-full"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="height"
+                    value={formValues.height}
+                    onChange={handlePhysicalInputChange}
+                    className="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
 
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                {/* Weight Type */}
+                <div className="p-1 mb-2 flex grid grid-cols-2 rounded lg:grid-cols-2 gap-0 w-full justify-center align-items-center">
                   <div className="text-start flex px-2">
-                    <label className="text-center mt-2  text-sm  w-60">
-                      Weight type
-                    </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                      <>
-                        <option>Kilogram</option>
-                        <option>Pund</option>
-                      </>
+                    <label className="text-center mt-2 text-sm w-60">Weight Type</label>
+                    <select
+                      name="weightType"
+                      value={formValues.weightType}
+                      onChange={handlePhysicalInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>KILOGRAM</option>
+                      <option>PUND</option>
                     </select>
                   </div>
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="weight"
+                    value={formValues.weight}
+                    onChange={handlePhysicalInputChange}
+                    className="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                {/* Chest Onbreat Type */}
+                <div className="p-1 mb-2 flex grid grid-cols-2 rounded lg:grid-cols-2 gap-0 w-full justify-center align-items-center">
                   <div className="text-start flex px-2">
-                    <label className="text-center mt-2  text-sm  w-60">
-                      Chest Onbreat Type
-                    </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                      <>
-                        <option>Inch</option>
-                        <option>Centimeter</option>
-                      </>
+                    <label className="text-center mt-2 text-sm w-60">Chest Onbreat Type</label>
+                    <select
+                      name="chestOnbreatType"
+                      value={formValues.chestOnbreatType}
+                      onChange={handlePhysicalInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>INCH</option>
+                      <option>CENTIMETER</option>
                     </select>
                   </div>
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="chestOnbreat"
+                    value={formValues.chestOnbreat}
+                    onChange={handlePhysicalInputChange}
+                    className="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                {/* Chest Breatless Type */}
+                <div className="p-1 mb-2 flex grid grid-cols-2 rounded lg:grid-cols-2 gap-0 w-full justify-center align-items-center">
                   <div className="text-start flex px-2">
-                    <label className="text-center mt-2  text-sm  w-60">
-                      Chest Breatless Type
-                    </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                      <>
-                        <option>Inch</option>
-                        <option>Centimeter</option>
-                      </>
+                    <label className="text-center mt-2 text-sm w-60">Chest Breatless Type</label>
+                    <select
+                      name="chestBreatlessType"
+                      value={formValues.chestBreatlessType}
+                      onChange={handlePhysicalInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>INCH</option>
+                      <option>CENTIMETER</option>
                     </select>
                   </div>
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="chestBreatless"
+                    value={formValues.chestBreatless}
+                    onChange={handlePhysicalInputChange}
+                    className="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+
+                {/* Stomach Type */}
+                <div className="p-1 mb-2 flex grid grid-cols-2 rounded lg:grid-cols-2 gap-0 w-full justify-center align-items-center">
                   <div className="text-start flex px-2">
-                    <label className="text-center mt-2  text-sm  w-60">
-                      Stomach Type
-                    </label>
-                    <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                      <>
-                        <option>Inch</option>
-                        <option>Centimeter</option>
-                      </>
+                    <label className="text-center mt-2 text-sm w-60">Stomach Type</label>
+                    <select
+                      name="stomachType"
+                      value={formValues.stomachType}
+                      onChange={handlePhysicalInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>INCH</option>
+                      <option>CENTIMETER</option>
                     </select>
                   </div>
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="stomach"
+                    value={formValues.stomach}
+                    onChange={handlePhysicalInputChange}
+                    className="form-input text-xs p-1 shadow border-[#E3F2FD] mt-1 w-full"
+                  />
                 </div>
               </div>
 
@@ -4426,11 +4647,11 @@ const Index = () => {
                 </div>
               </div>
               {/* previous policy entry */}
-              <div className="shadow border-2 h-100 rounded p-1 mt-2 mb-3">
+              <div className="p-1 mb-0 grid grid-cols-1 rounded px-4 mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
                 <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
                   PREVIOUS POLICY NO
                 </h2>
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                {/* <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="text-start col-span-2  flex px-2">
                     <label className=" text-center mt-3  text-sm  w-20">
                       Policy 1
@@ -4467,158 +4688,83 @@ const Index = () => {
                       CLEAR
                     </button>
                   </div>
-                </div>
-                {/* 
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="text-start col-span-2  flex px-2">
-                    <label className=" text-center mt-3  text-sm  w-20">
-                      Policy 2
-                    </label>
-                    <div className="bg-white w-full  mt-2  lg:mt-0">
-                      <input
-                        type="number"
-                        id="success"
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePolicyNo}
-                        placeholder="Enter Policy No"
-                      />
-                    </div>
-                  </div>
-                  <div className="bg-white col-span-3 flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input h-10 text-sm p-2 shadow border-[#E3F2FD] mt-0 w-full"
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <button
-                      onClick={handleClearPolicydata}
-                      type="submit"
-                      class="focus:outline-none rounded  btn-sm  text-xs lg:text-md  mt-0   w-24 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-3 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                      CLEAR
-                    </button>
-                  </div>
-                </div>
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="text-start col-span-2  flex px-2">
-                    <label className=" text-center mt-3  text-sm  w-20">
-                      Policy 3
-                    </label>
-                    <div className="bg-white w-full  mt-2  lg:mt-0">
-                      <input
-                        type="number"
-                        id="success"
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePolicyNo}
-                        placeholder="Enter Policy No"
-                      />
-                    </div>
-                  </div>
-                  <div className="bg-white col-span-3 flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input h-10 text-sm p-2 shadow border-[#E3F2FD] mt-0 w-full"
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <button
-                      onClick={handleClearPolicydata}
-                      type="submit"
-                      class="focus:outline-none rounded  btn-sm  text-xs lg:text-md  mt-0   w-24 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-3 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                      CLEAR
-                    </button>
-                  </div>
-                </div>
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="text-start col-span-2  flex px-2">
-                    <label className=" text-center mt-3  text-sm  w-20">
-                      Policy 4
-                    </label>
-                    <div className="bg-white w-full  mt-2  lg:mt-0">
-                      <input
-                        type="number"
-                        id="success"
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePolicyNo}
-                        placeholder="Enter Policy No"
-                      />
-                    </div>
-                  </div>
-                  <div className="bg-white col-span-3 flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input h-10 text-sm p-2 shadow border-[#E3F2FD] mt-0 w-full"
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <button
-                      onClick={handleClearPolicydata}
-                      type="submit"
-                      class="focus:outline-none rounded  btn-sm  text-xs lg:text-md  mt-0   w-24 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-3 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                      CLEAR
-                    </button>
-                  </div>
-                </div>
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="text-start col-span-2  flex px-2">
-                    <label className=" text-center mt-3  text-sm  w-20">
-                      Policy 5
-                    </label>
-                    <div className="bg-white w-full  mt-2  lg:mt-0">
-                      <input
-                        type="number"
-                        id="success"
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        onChange={handlePolicyNo}
-                        placeholder="Enter Policy No"
-                      />
-                    </div>
-                  </div>
-                  <div className="bg-white col-span-3 flex align-items-center m-1  lg:mt-0">
-                    <input
-                      type="text"
-                      id="success"
-                      class="form-input h-10 text-sm p-2 shadow border-[#E3F2FD] mt-0 w-full"
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <button
-                      onClick={handleClearPolicydata}
-                      type="submit"
-                      class="focus:outline-none rounded  btn-sm  text-xs lg:text-md  mt-0   w-24 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-3 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                      CLEAR
-                    </button>
-                  </div>
                 </div> */}
 
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  <div className="text-end">
-                    <label className="text-center font-bold  mt-3  text-sm  w-20">
-                      Total:
-                    </label>
-                  </div>
+                <div className="overflow-x-auto">
+                  <div className="inline-block min-w-full">
+                    <div className="overflow-hidden">
+                      <div
+                        className={`relative ${policyRows.length > 3 ? 'max-h-96 overflow-y-auto' : 'max-h-full'}`}
+                        style={{ maxHeight: '12rem' }} // Adjust height as needed
+                      >
+                        <table className="min-w-full table-fixed border border-gray-200">
+                          <thead className="sticky top-0">
+                            <tr>
+                              <th className="border-r border-gray-300 px-4 py-2 w-2/3 bg-gray-50 text-xs">POLICY NO</th>
+                              <th className="border-r border-gray-300 px-4 py-2 w-2/3 bg-gray-50 text-xs">SUM ASSURED</th>
+                              <th className="px-2 py-1 w-1/6 bg-gray-50 text-xs">ACTION</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {policyRows.map((row, index) => (
+                              <tr key={index}>
+                                <td className="border-r border-gray-300 px-2 py-1">
+                                  <input
+                                    type="text"
+                                    value={row.policyNo}
+                                    onChange={(e) => handlePolicyInputChange(index, 'policyNo', e.target.value)}
+                                    className="w-full border-gray-300 rounded"
+                                  />
+                                </td>
+                                <td className="border-r border-gray-300 px-2 py-1">
+                                  <input
+                                    type="number"
+                                    readOnly
+                                    value={row.sumAssured || ''} // Ensure it's tied to the individual row's sumAssured
+                                    onChange={(e) => handlePolicyInputChange(index, 'sumAssured', e.target.value)}
+                                    className="w-full border-gray-300 rounded"
+                                  />
+                                </td>
+                                <td className="px-2 py-1 text-center">
+                                  <button onClick={() => deletePolicyRow(index)} className="text-center bg-red-500 text-white px-2 py-1 rounded">X</button>
+                                </td>
+                              </tr>
 
-                  <div className="bg-white flex align-items-center m-1  lg:mt-0">
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between mt-1">
+                  <button
+                    onClick={addPolicyRow}
+                    className={`bg-green-500 text-white px-1 py-0 rounded ${!isAddButtonEnabled() ? 'opacity-30 cursor-not-allowed' : ''}`}
+                    disabled={!isAddButtonEnabled()}
+                  >
+                    add+
+                  </button>
+                  <div className="flex items-center">
+                    <label className="mr-2">Total Sum Assured:</label>
                     <input
-                      type="text"
-                      id="success"
-                      class="form-input h-10 text-sm p-2 shadow border-[#E3F2FD] mt-0 w-full"
+                      type="number"
+                      value={totalSumAssured}
+                      readOnly
+                      className="border-gray-400 rounded p-1 w-40 text-right"
                     />
                   </div>
                 </div>
+
+
               </div>
             </div>
           </div>
 
           <div className="text-center mt-2 mb-2">
             <button
+              onClick={updateMedicalInfo}
               type="submit"
               className="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
@@ -4659,8 +4805,9 @@ const Index = () => {
             </button>
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 
