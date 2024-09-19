@@ -24,9 +24,12 @@ import {
   useGetallTypeListQuery,
   useGetOptionsQuery,
   useGetPreviousSumassuranceQuery,
+  useGetAllNomineeQuery,
 } from "../../../features/api/proposal";
 import axios from "axios";
 import swal from "sweetalert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const Index = () => {
   const [projectId, setProjectId] = useState("");
@@ -74,7 +77,6 @@ const Index = () => {
   const [newProposalNo, setNewProposalNo] = useState();
 
   const [commencementDate, setUpdateCommDate] = useState()
-  console.log(commencementDate)
   const [planName, setPlan] = useState();
   const [optionId, setOption] = useState('A');
   const [deathCoverage, setDeathCoverage] = useState('N');
@@ -148,6 +150,7 @@ const Index = () => {
   const [hPrem, setHPrem] = useState();
   const [hRate, setHRate] = useState();
   const [previousPolicyNo, setPreviousPolicyNo] = useState();
+  const [nomineeAge, setNomineeAge] = useState()
 
 
   // console.log(totalInstallment);
@@ -239,7 +242,7 @@ const Index = () => {
   const endAtdateFormatted = formatAsMMDDYYYYy(endAtDate[0]?.endAtDate);
   const dob = formatAsMMDDYYYY(birth_date);
   const jDob = formatAsMMDDYYYY(jAge);
-  console.log(jDob)
+
 
 
   const handleClearClick = () => {
@@ -710,6 +713,9 @@ const Index = () => {
 
   // get rate calculation
 
+  console.log(dob)
+  console.log(birth_dateE)
+  console.log(comm_datee)
   // get age
   useEffect(() => {
     const fetchData = async () => {
@@ -725,7 +731,6 @@ const Index = () => {
 
     fetchData();
   }, [comm_datee, birth_dateE, dob]);
-
   // get joint policy age
   useEffect(() => {
     const fetchData = async () => {
@@ -993,6 +998,39 @@ const Index = () => {
   const { data: options } = useGetOptionsQuery(planName);
   const { data: premiumList } = useGetPremiumListQuery();
   const { data: previousSumAssurance, error, isLoading } = useGetPreviousSumassuranceQuery(previousPolicyNo);
+  // console.log(proposalNo)
+  // const { data: nomineeList } = useGetAllNomineeQuery(proposalNo)
+  const [nomineeList, setNomines] = useState([])
+  console.log(nomineeList?.data)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Log the proposal number for debugging
+        // console.log("Proposal Number:", proposalNo);
+
+        const response = await axios.get(
+          `http://localhost:5001/api/nominee/B023000000015%2f24`
+        );
+
+        console.log("API Response:", response);
+
+        // Check if data exists before setting state
+        if (response && response?.data) {
+          setNomines(response?.data);
+        } else {
+          console.error("No data in the response");
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setMedicalStatus("NO");
+        } else {
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [proposalNo]);
 
   const { data: TypeList } = useGetallTypeListQuery();
   const { data: thanaList } = useGetThanalistQuery(
@@ -1024,10 +1062,15 @@ const Index = () => {
       code: "MEDICAL",
       title: "MEDICAL INFO",
     },
+    {
+      code: "N",
+      title: "NOMINEE",
+    },
   ];
-  // console.log(newProposalNo)
+
   // Enter proposal Entry
   console.log(newProposalNo?.proposal_no[0])
+  console.log(proposalNo)
   const saveProposal = async () => {
     const pDate = formatAsMMDDYYYY(proposal_date);
     const riskDate = formatAsMMDDYYYY(commencementDate?.comm_date[0]);
@@ -1642,7 +1685,7 @@ const Index = () => {
     const { name, value } = e.target;
     setHealthInfo((prevState) => ({
       ...prevState,
-      [name]: value.toUpperCase() === 'YES' ? 'Y' : 'N',
+      [name]: value.toUpperCase(),
     }));
   };
 
@@ -1684,11 +1727,11 @@ const Index = () => {
 
     setArmedForceInfo((prevState) => ({
       ...prevState,
-      [name]: name === 'designation' ? (value === 'YES' ? 'Y' : 'N') : value,  // Only change designation to Y/N
+      [name]: value,  // Update the value based on the input
     }));
   };
 
-  console.log(armedForceInfo.category)
+  console.log(armedForceInfo.designation)
 
   //physical measurement
   const [formValues, setFormValues] = useState({
@@ -1723,27 +1766,42 @@ const Index = () => {
   const [policyRows, setPolicyRows] = useState(initialRowsForPolicy);
   const [totalSumAssured, setTotalSumAssured] = useState(0);
   const [policyIndex, setPolicyIndex] = useState(null);
-  const [policy1, setPolicy1] = useState(0);
-  const [policy2, setPolicy2] = useState(0);
-  const [policy3, setPolicy3] = useState(0);
-  const [policy4, setPolicy4] = useState(0);
-  const [policy5, setPolicy5] = useState(0);
+  const [policy1, setPolicy1] = useState({ policyNo: '', sumAssured: 0 });
+  const [policy2, setPolicy2] = useState({ policyNo: '', sumAssured: 0 });
+  const [policy3, setPolicy3] = useState({ policyNo: '', sumAssured: 0 });
+  const [policy4, setPolicy4] = useState({ policyNo: '', sumAssured: 0 });
+  const [policy5, setPolicy5] = useState({ policyNo: '', sumAssured: 0 });
+
   // Add more as needed
 
   // Extract values based on the rows
   useEffect(() => {
     if (policyRows.length > 0) {
-      setPolicy1(policyRows[0]?.sumAssured || 0);
-      setPolicy2(policyRows[1]?.sumAssured || 0);
-      setPolicy3(policyRows[2]?.sumAssured || 0);
-      setPolicy4(policyRows[3]?.sumAssured || 0);
-      setPolicy5(policyRows[4]?.sumAssured || 0);
+      setPolicy1({
+        policyNo: policyRows[0]?.policyNo || '',
+        sumAssured: policyRows[0]?.sumAssured || 0,
+      });
+      setPolicy2({
+        policyNo: policyRows[1]?.policyNo || '',
+        sumAssured: policyRows[1]?.sumAssured || 0,
+      });
+      setPolicy3({
+        policyNo: policyRows[2]?.policyNo || '',
+        sumAssured: policyRows[2]?.sumAssured || 0,
+      });
+      setPolicy4({
+        policyNo: policyRows[3]?.policyNo || '',
+        sumAssured: policyRows[3]?.sumAssured || 0,
+      });
+      setPolicy5({
+        policyNo: policyRows[4]?.policyNo || '',
+        sumAssured: policyRows[4]?.sumAssured || 0,
+      });
 
       // Add more as needed for additional policies
     }
   }, [policyRows]);
-
-
+  console.log(policy1, policy2, policy3, policy4, policy5);
   // Handle input changes
   useEffect(() => {
     if (previousSumAssurance && policyIndex !== null) {
@@ -1799,51 +1857,36 @@ const Index = () => {
     return policyRows.slice(0, 3).every(row => row.policyNo && row.sumAssured);
   };
   // ==========End previous policy to sumAssurance ========
+
+
   //Update Medical Information
+
   const updateMedicalInfo = async () => {
     const medicalInfo = {
-      FULLY_HEALTHY: healthInfo.fullyHealthy,
-      ADMIT_HOSPITAL: healthInfo.admitHospital,
-      SURGERY_RECORD: healthInfo.surgeryRecord,
-      DISEASE_LIST: healthInfo.diseasesList,
-      ADDICTION_INFO: healthInfo.addictionInfo,
-      PROPOSAL_DECLINE: healthInfo.proposalDecline,
-      CURRENT_MEDICATION: healthInfo.currentMedication,
-      DISABILITY_INFO: healthInfo.disabilityInfo,
-      INFECTIOUS_DISEASE: healthInfo.infectionsDiseases,
-      OTHER_RISK: healthInfo.otherRisk,
-      ARMED_FORCE_DSGN: armedForceInfo.designation,
-      "ARMED_HEALTH": armedForceInfo.category,
-      "HIGHT_TYPE": "N",
-      "IDENTIFICATION": "N",
-      "PREGNANT_INFO": "N",
-      "DELIVERY_PROCESS": "N",
-      "EXP_DELIVERY_DT": "5/17/2052",
-      "FEMALE_DISEASE": "N",
-      "LAST_DELIVERY_DT": "5/17/2045",
-      "LAST_MENSTRUAL_DT": "5/17/2045",
-      "PROPOSER_VAL": "Y",
-      "PLAN_VAL": "Y",
-      "TERM_VAL": "Y",
-      "SUM_INS_VAL": "Y",
-      "SUMATRISK_VAL": "Y",
-      "RESEDENT_VAL": "Y",
-      "MEDICAL_HIST_VAL": "Y",
-      "AGE_VAL": "Y",
-      "SEX_VAL": "Y",
-      "OCCUP_VAL": "Y",
-      "INSTMODE_VAL": "Y",
-      "PREMIUM_VAL": "Y",
-      "MEDICAL_VAL": "Y",
-      "FEMALE_M_VAL": "Y",
-      "EDU_VAL": "Y",
-      "FAMILY_HIST_VAL": "Y",
-      "REMARKS": "N",
-      "UNW_RESULT": "N",
-      "UNW_USER": "N",
-      "SPECIAL_UNW_APPROVAL": "N",
-      "INDATE": "5/17/2025",
-      "OTHER_RISK_DETAILS": "N",
+      FULLY_HEALTHY: healthInfo.fullyHealthy === 'YES' ? 'Y' : 'N',
+      ADMIT_HOSPITAL: healthInfo.admitHospital === 'YES' ? 'Y' : 'N',
+      SURGERY_RECORD: healthInfo.surgeryRecord === 'YES' ? 'Y' : 'N',
+      DISEASE_LIST: healthInfo.diseasesList === 'YES' ? 'Y' : 'N',
+      ADDICTION_INFO: healthInfo.addictionInfo === 'YES' ? 'Y' : 'N',
+      PROPOSAL_DECLINE: healthInfo.proposalDecline === 'YES' ? 'Y' : 'N',
+      CURRENT_MEDICATION: healthInfo.currentMedication === 'YES' ? 'Y' : 'N',
+      DISABILITY_INFO: healthInfo.disabilityInfo === 'YES' ? 'Y' : 'N',
+      INFECTIOUS_DISEASE: healthInfo.infectionsDiseases === 'YES' ? 'Y' : 'N',
+      OTHER_RISK: healthInfo.otherRisk === 'YES' ? 'Y' : 'N',
+      ARMED_FORCE_DSGN: armedForceInfo.designation === 'YES' ? 'Y' : 'N',
+      ARMED_HEALTH: armedForceInfo.category,
+      HIGHT_TYPE: formValues.heightType,
+      WEIGHT_TYPE: formValues.weightType,
+      WEIGHT: formValues.weight,
+      HIGHT_1: formValues.height,
+      CHEST_ONBREAT_TYPE: formValues.chestOnbreatType,
+      CHEST_ONBREAT: formValues.chestOnbreat,
+      CHEST_BREATLESS_TYPE: formValues.chestBreatlessType,
+      CHEST_BREATLESS: formValues.chestBreatless,
+      STOMACH_MEASURE_TYPE: formValues.stomachType,
+      STOMACH_MEASURE: formValues.stomach,
+      "SD": checkboxState.SD,
+      "CR": checkboxState.CR,
       "FMR": checkboxState.FMR,
       "PUR": checkboxState.PUR,
       "CBC": checkboxState.CBC,
@@ -1852,35 +1895,18 @@ const Index = () => {
       "FBS": checkboxState.FBS,
       "GTT": checkboxState.GTT,
       "X_RAY": checkboxState["X RAY"],
-      // "HIV": checkboxState.H,
       "SGOT": checkboxState.SGOT,
       "SGPT": checkboxState.SGPT,
       "GAMMA_GT": checkboxState["GAMMA GT"],
       "BILIRUBIN": checkboxState.BILIRUBIN,
       "CHOLESTEROL": checkboxState.COLESTOROL,
-      // "TRIGLYCERIDES": checkboxState,
       "URIC_ACID": checkboxState["URIC ACID"],
       "OTHER_TEST": checkboxState["OTHER TEST"],
-      "OTHER_TEST_DETAILS": "N",
-      "DATE_VAL": "N",
-      "UNW_RESULT_DT": "5/17/2045",
-      "ADDRESS_VAL": "N",
-      "FA_PD_BR_VAL": "N",
-      "PR_AMT_VAL": "N",
-      "NOMINEE_VAL": "N",
-      "SUP_PREM_VAL": "N",
-      "EXTRA_PREM_VAL": "N",
-      "COMENT": "N",
-      "TOTAL_PREM_VAL": "N",
-      "SD": checkboxState.SD,
-      "CR": checkboxState.CR,
-      "INCOME_SOURCE": "N",
-      "INCOME_CERTIFICATE": "N",
-      "APC_PIC_NAME": "N",
-      "PROPOSER_PIC_NAME": "N",
-      "PROPOSER_SIGN_NAME": "N"
-    }
-    // const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0]);
+    };
+
+    const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0]);
+    console.log(encodedProposalNo);
+
     // Sanitize updateData by removing empty or null fields
     const sanitizedUpdateData = {};
     Object.keys(medicalInfo).forEach((key) => {
@@ -1888,22 +1914,181 @@ const Index = () => {
         sanitizedUpdateData[key] = medicalInfo[key];
       }
     });
-    try {
-      const response = await axios.put(`http://localhost:5001/api/medical-info/B023000000015%2f24`, sanitizedUpdateData);
 
-      if (response.status === 200) {
+    try {
+      // Update the medical info
+      const medicalResponse = await axios.put(`http://localhost:5001/api/medical-info/${encodedProposalNo}`, sanitizedUpdateData);
+
+      if (medicalResponse.status === 200) {
         console.log('Medical info updated successfully');
-        alert('Medical info updated successfully');
       } else {
         console.log('No rows updated');
-        alert('No rows updated');
       }
+
+      // Update the additional table
+      const policyNoData = {
+        POLICY_NO1: policy1.policyNo,
+        POLICY_NO2: policy2.policyNo,
+        POLICY_NO3: policy3.policyNo,
+        POLICY_NO4: policy4.policyNo,
+        POLICY_NO5: policy5.policyNo,
+      };
+
+      const policyResponse = await axios.put(`http://localhost:5001/api/prev-policy-no/${encodedProposalNo}`, policyNoData);
+
+      if (policyResponse.status === 200) {
+        console.log('Previous policy info updated successfully');
+      } else {
+        console.log('No rows updated');
+      }
+
+      // Show success notification
+      swal({
+        title: "Updated Successfully",
+        text: `Medical Info and Policy Numbers updated`,
+        icon: "success",
+      });
+
     } catch (error) {
-      console.error('Error updating medical info:', error);
-      alert('Error updating medical info');
+      console.error('Error updating medical info or previous policy info:', error);
+      swal({
+        title: "Error",
+        text: 'Error updating medical info or previous policy info',
+        icon: "error",
+      });
+    }
+  };
+  // nominee part 5th page
+  const [formData, setFormData] = useState({
+    name: '',
+    relation: '',
+    dob: '',
+    age: '',
+    idType: '',
+    idNo: '',
+    percentage: '',
+    mobileNo: '',
+    accNo: '',
+    routingNo: '',
+    guardianName: '',
+    guardianRelation: '',
+    guardianAge: '',
+    guardianAccNo: '',
+    guardianRoutingNo: '',
+    nBankCode: ''
+  });
+
+  // Handle input changes
+  const handleNomineeInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log(value)
+    setFormData({
+      ...formData, // Keep the other fields unchanged
+      [name]: value, // Update the specific field
+    });
+  };
+  console.log(formData.routingNo)
+  console.log(formData.nBankCode)
+  const { data: nomineeBankbranchList } = useGetBankbranchlistQuery(formData.nBankCode);
+  // console.log(nomineeBankbranchList)
+  // console.log(bankbranchList)
+  const nomineeDob = formatAsMMDDYYYY(formData.dob)
+  // get Nominee  age
+  useEffect(() => {
+    const fetchData = async () => {
+      const nomineeDob = formatAsMMDDYYYY(formData.dob);
+      const abc = `http://localhost:5001/api/get-nomineeAge/${comm_datee}/${nomineeDob}`;
+      try {
+        const response = await axios.get(abc);
+        const age = response?.data?.age[0];
+        setNomineeAge(response?.data);
+
+        // Reset guardian fields if age is less than 18
+        if (age < 18) {
+          setFormData(prevData => ({
+            ...prevData,
+            guardianName: '',
+            guardianRelation: '',
+            guardianAge: '',
+            guardianAccNo: '',
+            guardianRoutingNo: '',
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching nominee age:', error);
+      }
+    };
+
+    fetchData();
+  }, [comm_datee, formData.dob, nomineeDob]);
+
+  const isGuardianDisabled = nomineeAge?.age[0] < 18;
+  console.log(formData.dob)
+  const sanitizeData = (data) => {
+    const formattedData = {
+      NAME: formData.name,
+      RELATION: formData.relation,
+      DOB: formData.dob,
+      AGE: nomineeAge?.age[0],
+      PERCENTAGE: formData.percentage,
+      ID_TYPE: '2',
+      NN_ID_NUMBER: formData.idNo,
+      N_MOBILE_NO: formData.mobileNo,
+      ACC_NO: formData.accNo,
+      ROUTINGNO: formData.routingNo,
+      GUARDIAN: formData.guardianName,
+      GRELATION: formData.guardianRelation,
+      GAGE: formData.guardianAge,
+      GACCNO: formData.guardianAccNo,
+      GROUTINGNO: formData.guardianRoutingNo,
+    };
+
+    // Remove empty or undefined fields
+    return Object.fromEntries(
+      Object.entries(formattedData).filter(([key, value]) => value !== '' && value !== undefined)
+    );
+  };
+
+  const handleNomineeUpdate = async () => {
+    try {
+      const sanitizedData = sanitizeData(formData);
+      const response = await axios.put('http://localhost:5001/api/nominee/B023000000015%2f24', sanitizedData);
+      swal({
+        title: 'Successful',
+        text: `${response?.message}`,
+        icon: "success",
+      });
+
+      // Reset form data after successful update
+
+      setFormData({
+        name: '',
+        relation: '',
+        dob: '',
+        age: '',
+        idType: '',
+        idNo: '',
+        percentage: '',
+        mobileNo: '',
+        accNo: '',
+        routingNo: '',
+        guardianName: '',
+        guardianRelation: '',
+        guardianAge: '',
+        guardianAccNo: '',
+        guardianRoutingNo: '',
+      });
+      setNomineeAge('')
+    } catch (error) {
+      console.error('Error updating data:', error);
     }
   };
 
+  const [data, setData] = useState([
+    { col1: 'Data 1', col2: 'Data 2', col3: 'Data 3', col4: 'Data 4', col5: 'Data 5', col6: 'Data 6', col7: 'Data 7', col8: 'Data 8', col9: 'Data 9', col10: 'Data 10' },
+    { col1: 'Data 11', col2: 'Data 12', col3: 'Data 13', col4: 'Data 14', col5: 'Data 15', col6: 'Data 16', col7: 'Data 17', col8: 'Data 18', col9: 'Data 19', col10: 'Data 20' },
+    // Add more rows as needed
+  ]);
   return (
     <div>
       <Navbar />
@@ -2917,7 +3102,7 @@ const Index = () => {
 
       {selectedTopbarItem === "P" ? (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
-          <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+          <div class="p-1 mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="text-start px-2">
               <div className="shadow border-2 rounded p-1 mt-2 mb-3">
                 <h2 className=" text-center font-bold text-success  p-2 rounded text-xs text-dark">
@@ -3773,6 +3958,7 @@ const Index = () => {
                         onChange={handleBankCode}
                         className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                       >
+                        <option>SELECT BANK</option>
                         {bankList?.map((bank, i) => (
                           <option key={i} value={bank?.bank_code}>
                             {bank?.bank_name}
@@ -3785,7 +3971,7 @@ const Index = () => {
                         BANK BRANCH
                       </label>
                       <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                        {bankbranchList?.map((branch, i) => (
+                        {nomineeBankbranchList?.map((branch, i) => (
                           <option key={i} value={branch?.routing_no}>
                             {branch?.branch_name}
                           </option>
@@ -4807,7 +4993,296 @@ const Index = () => {
         </div>
       )
       }
-    </div >
+      {selectedTopbarItem === "N" && (
+        <div className="shadow-lg border lg:mx-48 mt-1 m-2">
+          <div className="p-1 mb-0 grid grid-cols-1 lg:grid-cols-3 gap-0 w-full lg:mx-auto lg:mt-0 w-">
+            <div className="col-span-2 text-start px-2">
+              <div className="shadow border-2 rounded p-1 mt-2 mb-3">
+                <h2 className="text-center font-bold text-success p-2 rounded text-xs text-dark">
+                  NOMINEE INFO
+                </h2>
+
+                <div className="p-0 mb-0 grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                  <div className="grid grid-cols-4 justify-center align-items-center">
+                    <div className="col-span-2 text-start px-2">
+                      <label className="text-start text-xs">Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleNomineeInputChange}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      />
+                    </div>
+                    <div className="text-start px-2">
+                      <label className="text-start text-xs">RELATION</label>
+                      <input
+                        type="text"
+                        name="relation"
+                        value={formData.relation}
+                        onChange={handleNomineeInputChange}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      />
+                    </div>
+                    <div className="text-start px-2">
+                      <label className="text-start text-xs">PERCENTAGE</label>
+                      <input
+                        type="text"
+                        name="percentage"
+                        value={formData.percentage}
+                        onChange={handleNomineeInputChange}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-1 mb-0 grid grid-cols-1 rounded mt-0 lg:grid-cols-4 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">DOB</label>
+                    <input
+                      type="date"
+                      name="dob"
+                      value={formData.dob}
+                      onChange={handleNomineeInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    />
+                  </div>
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">AGE</label>
+                    <input
+                      type="text"
+                      name="age"
+                      value={nomineeAge?.age[0]}
+                      onChange={handleNomineeInputChange}
+                      disabled
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    />
+                  </div>
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">
+                      ID TYPE
+                    </label>
+                    <select
+                      name="idType"
+                      onChange={handleNomineeInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>SELECT ID TYPE</option>
+                      {TypeList?.map((type, ii) => (
+                        <option key={ii} value={type?.type_id}>
+                          {type?.type_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">ID NO.</label>
+                    <input
+                      type="text"
+                      name="idNo"
+                      value={formData.idNo}
+                      onChange={handleNomineeInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    />
+                  </div>
+                </div>
+                <div className="p-1 mb-0 grid grid-cols-1 rounded mt-0 lg:grid-cols-4 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">ACC NO</label>
+                    <input
+                      type="text"
+                      name="accNo"
+                      value={formData.accNo}
+                      onChange={handleNomineeInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    />
+                  </div>
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">MOBILE NO</label>
+                    <input
+                      type="text"
+                      name="mobileNo"
+                      value={formData.mobileNo}
+                      onChange={handleNomineeInputChange}
+                      disabled
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    />
+                  </div>
+
+                  <div className="text-start px-2">
+                    <label className="text-center mt-3  text-sm  w-20">
+                      BANK
+                    </label>
+                    <select
+                      onChange={handleNomineeInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      name="nBankCode"
+                    >
+                      <option>SELECT BANK</option>
+                      {bankList?.map((bank, i) => (
+                        <option key={i} value={bank?.bank_code}>
+                          {bank?.bank_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="text-start px-2">
+                    <label className="text-center mt-3  text-sm  w-48">
+                      BANK BRANCH
+                    </label>
+                    <select
+                      name="routingNo"
+                      onChange={handleNomineeInputChange}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    >
+                      <option>SELECT BRANCH</option>
+                      {bankbranchList?.map((branch, i) => (
+                        <option key={i} value={branch?.routing_no}>
+                          {branch?.branch_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Additional form fields similar to above, using formData and handleInputChange */}
+
+              </div>
+            </div>
+            <div className="shadow border-2 rounded p-1 mt-2 mb-3">
+              <h2 className="text-center font-bold text-success p-2 rounded text-xs text-dark">
+                GUARDIAN
+              </h2>
+              <div class="p-0 mb-0 grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+                <div className="grid grid-cols-3 justify-center align-items-center ">
+                  <div className="col-span-2 text-start px-2">
+                    <label className="text-start text-xs">Name</label>
+                    <input
+                      type="text"
+                      name="guardianName"
+                      onChange={handleNomineeInputChange}
+                      value={formData.guardianName}
+                      disabled={isGuardianDisabled}
+
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    />
+                  </div>
+                  <div className=" text-start px-2">
+                    <label className="text-start text-xs">RELATION</label>
+                    <input
+                      type="text"
+                      name="guardianRelation"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      onChange={handleNomineeInputChange}
+                      value={formData.guardianRelation}
+                      disabled={isGuardianDisabled}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0 justify-center align-items-center p-2 lg:mx-auto lg:mt-0">
+                <div className="bg-white align-items-center m-1  lg:mt-0">
+                  <label className="text-xs text-start w-44 mt-3 p-0">
+                    AGE
+                  </label>
+                  <input
+                    type="text"
+                    name="guardianAge"
+                    class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    onChange={handleNomineeInputChange}
+                    value={formData.guardianAge}
+                    disabled={isGuardianDisabled}
+                  />
+                </div>
+                <div className="bg-white  align-items-center m-1  lg:mt-0">
+                  <label className="text-xs text-start w-16 mt-3 p-0">
+                    GACC NO
+                  </label>
+                  <input
+                    type="text"
+                    name="guardianAccNo"
+                    class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    onChange={handleNomineeInputChange}
+                    value={formData.guardianAccNo}
+                    disabled={isGuardianDisabled}
+                  />
+                </div>
+                <div className="bg-white  align-items-center m-1  lg:mt-0">
+                  <label className="text-xs text-center w-16 mt-3 p-0">
+                    GROUTING NO
+                  </label>
+                  <input
+                    type="text"
+                    name="guardianRoutingNo"
+                    class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    onChange={handleNomineeInputChange}
+                    value={formData.guardianRoutingNo}
+                    disabled={isGuardianDisabled}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="text-center">
+            <button
+              onClick={handleNomineeUpdate}
+              type="submit"
+              className=" text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            >
+              UPDATE
+            </button>
+          </div>
+          <div className="overflow-x-auto mt-2">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr className="bg-gray-200 text-gray-600 uppercase text-xs leading-normal">
+                  <th className="py-3 px-6 text-left">NAME</th>
+                  <th className="py-3 px-6 text-left">RELATION </th>
+                  <th className="py-3 px-6 text-left">AGE</th>
+                  <th className="py-3 px-6 text-left">ID NO</th>
+                  <th className="py-3 px-6 text-left">PERCENTAGE</th>
+                  <th className="py-3 px-6 text-left">MOBILE NO</th>
+                  <th className="py-3 px-6 text-left">ACC NO</th>
+                  <th className="py-3 px-6 text-left">GUARDIAN</th>
+                  <th className="py-3 px-6 text-left">GRELATION</th>
+                  <th className="py-3 px-6 text-left">GAGE</th>
+                  <th className="py-3 px-6 text-left">GACC NO</th>
+                  <th className="py-3 px-6 text-left">ACTION</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-600 text-sm">
+                {nomineeList?.data?.map((row, index) => (
+                  <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.name}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.relation}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.age}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.nn_id_number}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.percentage}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.n_mobile_no}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.acc_no}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.guardian}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.grelation}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.gage}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.gaccno}</td>
+                    <td className="py-3 px-6 text-left whitespace-nowrap text-xl text-red-800 flex items-center space-x-2"><FontAwesomeIcon icon={faPenToSquare} className="text-blue-500 cursor-pointer" /><FontAwesomeIcon icon={faTrash} className="text-red-600 cursor-pointer" /> </td>
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div >
+
+      )
+
+      }
+
+
+    </div>
+
   );
 };
 
