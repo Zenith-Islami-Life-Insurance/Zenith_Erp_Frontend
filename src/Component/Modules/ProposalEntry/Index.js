@@ -25,6 +25,7 @@ import {
   useGetOptionsQuery,
   useGetPreviousSumassuranceQuery,
   useGetAllNomineeQuery,
+  useGetNomineeBankbranchlistQuery,
 } from "../../../features/api/proposal";
 import axios from "axios";
 import swal from "sweetalert";
@@ -825,7 +826,6 @@ const Index = () => {
   // get commencement date
 
   const commenceDate = formatAsMMDDYYYYy(commencementDate?.comm_date[0])
-  console.log(commenceDate)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1153,10 +1153,6 @@ const Index = () => {
       console.error("Error saving proposal:", error.message);
     }
   };
-
-
-
-
   // 2nd page update proposal
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -1989,8 +1985,8 @@ const Index = () => {
   };
   console.log(formData.routingNo)
   console.log(formData.nBankCode)
-  const { data: nomineeBankbranchList } = useGetBankbranchlistQuery(formData.nBankCode);
-  // console.log(nomineeBankbranchList)
+  const { data: nomineeBankbranchList } = useGetNomineeBankbranchlistQuery(formData.nBankCode);
+  console.log(nomineeBankbranchList)
   // console.log(bankbranchList)
   const nomineeDob = formatAsMMDDYYYY(formData.dob)
   // get Nominee  age
@@ -2022,13 +2018,19 @@ const Index = () => {
     fetchData();
   }, [comm_datee, formData.dob, nomineeDob]);
 
-  const isGuardianDisabled = nomineeAge?.age[0] < 18;
-  console.log(formData.dob)
-  const sanitizeData = (data) => {
-    const formattedData = {
+  const isGuardianDisabled = nomineeAge?.age[0] > 18;
+  console.log(isGuardianDisabled)
+  console.log(nomineeAge?.age[0])
+
+  //insert nominee data
+
+  const handleNomineeInsert = async () => {
+    const dob = formatAsMMDDYYYY(formData.dob);
+    const data = {
+      PROPOSAL_N: 'B023000000014/24',
       NAME: formData.name,
       RELATION: formData.relation,
-      DOB: formData.dob,
+      DOB: dob,
       AGE: nomineeAge?.age[0],
       PERCENTAGE: formData.percentage,
       ID_TYPE: '2',
@@ -2036,53 +2038,117 @@ const Index = () => {
       N_MOBILE_NO: formData.mobileNo,
       ACC_NO: formData.accNo,
       ROUTINGNO: formData.routingNo,
-      GUARDIAN: formData.guardianName,
-      GRELATION: formData.guardianRelation,
-      GAGE: formData.guardianAge,
-      GACCNO: formData.guardianAccNo,
-      GROUTINGNO: formData.guardianRoutingNo,
+      GUARDIAN: formData.guardianName || '',
+      GRELATION: formData.guardianRelation || '',
+      GAGE: formData.guardianAge || '',
+      GACCNO: formData.guardianAccNo || '',
+      GROUTINGNO: formData.guardianRoutingNo || '',
     };
 
-    // Remove empty or undefined fields
-    return Object.fromEntries(
-      Object.entries(formattedData).filter(([key, value]) => value !== '' && value !== undefined)
-    );
-  };
-
-  const handleNomineeUpdate = async () => {
     try {
-      const sanitizedData = sanitizeData(formData);
-      const response = await axios.put('http://localhost:5001/api/nominee/B023000000015%2f24', sanitizedData);
-      swal({
-        title: 'Successful',
-        text: `${response?.message}`,
-        icon: "success",
+      const response = await axios.post("http://localhost:5001/api/nominees", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
-      // Reset form data after successful update
+      console.log(response.data);
 
-      setFormData({
-        name: '',
-        relation: '',
-        dob: '',
-        age: '',
-        idType: '',
-        idNo: '',
-        percentage: '',
-        mobileNo: '',
-        accNo: '',
-        routingNo: '',
-        guardianName: '',
-        guardianRelation: '',
-        guardianAge: '',
-        guardianAccNo: '',
-        guardianRoutingNo: '',
-      });
-      setNomineeAge('')
+      // Check if the response indicates success
+      if (response.data.success === true) {
+        swal({
+          title: 'Successful',
+          text: `${response.data.message}`,
+          icon: "success",
+        });
+
+        // Reset form data
+        setFormData({
+          name: '',
+          relation: '',
+          dob: '',
+          age: '',
+          idType: '',
+          idNo: '',
+          percentage: '',
+          mobileNo: '',
+          accNo: '',
+          routingNo: '',
+          guardianName: '',
+          guardianRelation: '',
+          guardianAge: '',
+          guardianAccNo: '',
+          guardianRoutingNo: '',
+        });
+        // setNomineeAge('');
+      }
+
     } catch (error) {
-      console.error('Error updating data:', error);
+      console.error("Error saving proposal:", error.message);
     }
   };
+
+
+
+  // const sanitizeData = (data) => {
+  //   const formattedData = {
+  //     NAME: formData.name,
+  //     RELATION: formData.relation,
+  //     DOB: formData.dob,
+  //     AGE: nomineeAge?.age[0],
+  //     PERCENTAGE: formData.percentage,
+  //     ID_TYPE: '2',
+  //     NN_ID_NUMBER: formData.idNo,
+  //     N_MOBILE_NO: formData.mobileNo,
+  //     ACC_NO: formData.accNo,
+  //     ROUTINGNO: formData.routingNo,
+  //     GUARDIAN: formData.guardianName,
+  //     GRELATION: formData.guardianRelation,
+  //     GAGE: formData.guardianAge,
+  //     GACCNO: formData.guardianAccNo,
+  //     GROUTINGNO: formData.guardianRoutingNo,
+  //   };
+
+  //   // Remove empty or undefined fields
+  //   return Object.fromEntries(
+  //     Object.entries(formattedData).filter(([key, value]) => value !== '' && value !== undefined)
+  //   );
+  // };
+
+  // const handleNomineeUpdate = async () => {
+  //   try {
+  //     const sanitizedData = sanitizeData(formData);
+  //     const response = await axios.put('http://localhost:5001/api/nominee/B023000000015%2f24', sanitizedData);
+  //     swal({
+  //       title: 'Successful',
+  //       text: `${response?.message}`,
+  //       icon: "success",
+  //     });
+
+  //     // Reset form data after successful update
+
+  // setFormData({
+  //   name: '',
+  //   relation: '',
+  //   dob: '',
+  //   age: '',
+  //   idType: '',
+  //   idNo: '',
+  //   percentage: '',
+  //   mobileNo: '',
+  //   accNo: '',
+  //   routingNo: '',
+  //   guardianName: '',
+  //   guardianRelation: '',
+  //   guardianAge: '',
+  //   guardianAccNo: '',
+  //   guardianRoutingNo: '',
+  // });
+  // setNomineeAge('')
+  //   } catch (error) {
+  //     console.error('Error updating data:', error);
+  //   }
+  // };
 
   const [data, setData] = useState([
     { col1: 'Data 1', col2: 'Data 2', col3: 'Data 3', col4: 'Data 4', col5: 'Data 5', col6: 'Data 6', col7: 'Data 7', col8: 'Data 8', col9: 'Data 9', col10: 'Data 10' },
@@ -3971,7 +4037,8 @@ const Index = () => {
                         BANK BRANCH
                       </label>
                       <select className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full">
-                        {nomineeBankbranchList?.map((branch, i) => (
+                        <option>SELECT BRANCH</option>
+                        {bankbranchList?.map((branch, i) => (
                           <option key={i} value={branch?.routing_no}>
                             {branch?.branch_name}
                           </option>
@@ -5105,7 +5172,6 @@ const Index = () => {
                       name="mobileNo"
                       value={formData.mobileNo}
                       onChange={handleNomineeInputChange}
-                      disabled
                       className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                     />
                   </div>
@@ -5137,7 +5203,7 @@ const Index = () => {
                       className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                     >
                       <option>SELECT BRANCH</option>
-                      {bankbranchList?.map((branch, i) => (
+                      {nomineeBankbranchList?.map((branch, i) => (
                         <option key={i} value={branch?.routing_no}>
                           {branch?.branch_name}
                         </option>
@@ -5150,89 +5216,114 @@ const Index = () => {
 
               </div>
             </div>
+
             <div className="shadow border-2 rounded p-1 mt-2 mb-3">
               <h2 className="text-center font-bold text-success p-2 rounded text-xs text-dark">
                 GUARDIAN
               </h2>
-              <div class="p-0 mb-0 grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
-                <div className="grid grid-cols-3 justify-center align-items-center ">
-                  <div className="col-span-2 text-start px-2">
-                    <label className="text-start text-xs">Name</label>
-                    <input
-                      type="text"
-                      name="guardianName"
-                      onChange={handleNomineeInputChange}
-                      value={formData.guardianName}
-                      disabled={isGuardianDisabled}
 
-                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                    />
-                  </div>
-                  <div className=" text-start px-2">
-                    <label className="text-start text-xs">RELATION</label>
-                    <input
-                      type="text"
-                      name="guardianRelation"
-                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                      onChange={handleNomineeInputChange}
-                      value={formData.guardianRelation}
-                      disabled={isGuardianDisabled}
-                    />
-                  </div>
+              <div className="p-0 mb-0 grid grid-cols-1 rounded mt-0 lg:grid-cols-3 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                <div className="col-span-2 text-start px-2">
+                  <label className="text-start text-xs">Name</label>
+                  <input
+                    type="text"
+                    name="guardianName"
+                    onChange={handleNomineeInputChange}
+                    value={formData.guardianName}
+                    disabled={isGuardianDisabled}
+
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                  />
+                </div>
+                <div className="text-start px-2">
+                  <label className="text-start text-xs">RELATION</label>
+                  <input
+                    type="text"
+                    name="guardianRelation"
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    onChange={handleNomineeInputChange}
+                    value={formData.guardianRelation}
+                    disabled={isGuardianDisabled}
+                  />
                 </div>
               </div>
-              <div className="w-full mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0 justify-center align-items-center p-2 lg:mx-auto lg:mt-0">
-                <div className="bg-white align-items-center m-1  lg:mt-0">
+
+              <div className="py-1 mb-0 grid grid-cols-1 rounded mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                <div className="text-start px-2">
                   <label className="text-xs text-start w-44 mt-3 p-0">
                     AGE
                   </label>
                   <input
                     type="text"
                     name="guardianAge"
-                    class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                     onChange={handleNomineeInputChange}
                     value={formData.guardianAge}
                     disabled={isGuardianDisabled}
                   />
                 </div>
-                <div className="bg-white  align-items-center m-1  lg:mt-0">
+                <div className="text-start px-2">
                   <label className="text-xs text-start w-16 mt-3 p-0">
                     GACC NO
                   </label>
                   <input
                     type="text"
                     name="guardianAccNo"
-                    class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                    class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                     onChange={handleNomineeInputChange}
                     value={formData.guardianAccNo}
                     disabled={isGuardianDisabled}
                   />
                 </div>
-                <div className="bg-white  align-items-center m-1  lg:mt-0">
-                  <label className="text-xs text-center w-16 mt-3 p-0">
-                    GROUTING NO
+              </div>
+              <div className="py-1 mb-0 grid grid-cols-1 rounded mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center lg:mx-auto lg:mt-0">
+                <div className="text-start px-2">
+                  <label className="text-center mt-3  text-sm  w-20">
+                    GBANK NAME
                   </label>
-                  <input
-                    type="text"
-                    name="guardianRoutingNo"
-                    class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                  <select
                     onChange={handleNomineeInputChange}
-                    value={formData.guardianRoutingNo}
-                    disabled={isGuardianDisabled}
-                  />
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    name="nBankCode"
+                  >
+                    <option>SELECT BANK</option>
+                    {bankList?.map((bank, i) => (
+                      <option key={i} value={bank?.bank_code}>
+                        {bank?.bank_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="text-start px-2">
+                  <label className="text-center mt-3  text-sm  w-48">
+                    GBANK BRANCH
+                  </label>
+                  <select
+                    name="routingNo"
+                    onChange={handleNomineeInputChange}
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                  >
+                    <option>SELECT BRANCH</option>
+                    {nomineeBankbranchList?.map((branch, i) => (
+                      <option key={i} value={branch?.routing_no}>
+                        {branch?.branch_name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
+
           </div>
 
 
           <div className="text-center">
             <button
-              onClick={handleNomineeUpdate}
+              onClick={handleNomineeInsert}
               type="submit"
               className=" text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
-              UPDATE
+              SAVE
             </button>
           </div>
           <div className="overflow-x-auto mt-2">
