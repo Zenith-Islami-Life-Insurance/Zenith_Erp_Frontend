@@ -152,8 +152,8 @@ const Index = () => {
   const [hRate, setHRate] = useState();
   const [previousPolicyNo, setPreviousPolicyNo] = useState();
   const [nomineeAge, setNomineeAge] = useState()
-
-
+  const [nomineeList, setNomines] = useState([])
+  console.log(nomineeList)
   // console.log(totalInstallment);
   const calcuAge = calAge?.age[0];
   const jointAge = jcalAge?.age[0];
@@ -815,7 +815,7 @@ const Index = () => {
         );
         setNewProposalNo(response?.data);
       } catch (error) {
-      } finally {
+        console.error("Error fetching proposal number:", error);
       }
     };
 
@@ -998,39 +998,37 @@ const Index = () => {
   const { data: options } = useGetOptionsQuery(planName);
   const { data: premiumList } = useGetPremiumListQuery();
   const { data: previousSumAssurance, error, isLoading } = useGetPreviousSumassuranceQuery(previousPolicyNo);
-  // console.log(proposalNo)
-  // const { data: nomineeList } = useGetAllNomineeQuery(proposalNo)
-  const [nomineeList, setNomines] = useState([])
-  console.log(nomineeList?.data)
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Log the proposal number for debugging
-        // console.log("Proposal Number:", proposalNo);
 
-        const response = await axios.get(
-          `http://localhost:5001/api/nominee/B023000000015%2f24`
-        );
+  console.log(nomineeList)
+  console.log(newProposalNo?.proposal_no[0])
+  console.log(proposalNo)
 
-        console.log("API Response:", response);
+  const fetchNomines = async () => {
+    try {
+      const encodedManualProposalNo = encodeURIComponent(proposalNo || '');
+      const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0] || '');
+      const finalProposalNo = encodedProposalNo || encodedManualProposalNo;
+      const url = `http://localhost:5001/api/nominee/${finalProposalNo}`;
 
-        // Check if data exists before setting state
-        if (response && response?.data) {
-          setNomines(response?.data);
-        } else {
-          console.error("No data in the response");
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setMedicalStatus("NO");
-        } else {
-          console.error("Error fetching data:", error);
-        }
+      console.log("Final URL:", url);  // Check if the URL is correct here
+
+      const response = await axios.get(url);
+      console.log("API Response:", response);
+
+      if (response && response?.data) {
+        setNomines(response?.data);
+      } else {
+        console.error("No data in the response");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchNomines();
+  }, [proposalNo, newProposalNo?.proposal_no[0]]);
 
-    fetchData();
-  }, [proposalNo]);
+
 
   const { data: TypeList } = useGetallTypeListQuery();
   const { data: thanaList } = useGetThanalistQuery(
@@ -1071,10 +1069,19 @@ const Index = () => {
   // Enter proposal Entry
   console.log(newProposalNo?.proposal_no[0])
   console.log(proposalNo)
+  const sanitize = (value, defaultValue = "") => {
+    if (value === undefined || value === null || Number.isNaN(value)) {
+      return defaultValue;
+    }
+    return value;
+  };
+  const sanitizeDate = (date) => {
+    return date && !isNaN(Date.parse(date)) ? formatAsMMDDYYYY(date) : "";
+  };
   const saveProposal = async () => {
-    const pDate = formatAsMMDDYYYY(proposal_date);
-    const riskDate = formatAsMMDDYYYY(commencementDate?.comm_date[0]);
-    const marriageDate = formatAsMMDDYYYY(marriage_date);
+    const pDate = sanitizeDate(proposal_date);
+    const riskDate = sanitizeDate(commencementDate?.comm_date[0]);
+    const marriageDate = maritalStatus === "Married" ? sanitizeDate(marriage_date) : ""; // Set to empty if single
 
     try {
       const response = await fetch("http://localhost:5001/api/proposal-entry", {
@@ -1083,35 +1090,35 @@ const Index = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          PROPOSAL_N: newProposalNo?.proposal_no[0] || "",
+          PROPOSAL_N: sanitize(newProposalNo?.proposal_no[0]),
           PROPOSAL_D: pDate,
           RISKDATE: riskDate,
-          PROPOSER: proposerName,
-          POL_ENTRY_STATUS: policytype,
-          FATHERS_NAME: fatherName,
-          FATHERHUSB: fatherName,
-          MOTHERS_NAME: motherName,
-          ADDRESS1: address,
-          POST_CODE_CUR: "12",
-          POST_CODE_PER: "13",
-          CITY: district,
-          MOBILE: mobile,
-          LOCALITY: resident || "",
-          N_ID_NUMBER: nid,
-          DOB: dob,
-          AGE: calcuAge,
-          SEX: gender,
-          OCCUPATION: occupation,
-          AGENT_ID: agentValue,
-          BRANCH_ID: branch || "",
-          USERID: "650",
-          LAST_EDUCATION: educationName,
-          RELIGION: religion,
-          MARITAL_STATUS: maritalStatus,
-          MARRIAGE_DATE: marriageDate,
-          LOCALITY_COUNTRY: country,
-          SPOUSE: spouseName,
-          PD_CODE: projectId,
+          PROPOSER: sanitize(proposerName),
+          POL_ENTRY_STATUS: sanitize(policytype),
+          FATHERS_NAME: sanitize(fatherName),
+          FATHERHUSB: sanitize(fatherName),
+          MOTHERS_NAME: sanitize(motherName),
+          ADDRESS1: sanitize(address),
+          POST_CODE_CUR: sanitize("12"),
+          POST_CODE_PER: sanitize("13"),
+          CITY: sanitize(district),
+          MOBILE: sanitize(mobile),
+          LOCALITY: sanitize(resident),
+          N_ID_NUMBER: sanitize(nid),
+          DOB: sanitize(dob),
+          AGE: sanitize(calcuAge),
+          SEX: sanitize(gender),
+          OCCUPATION: sanitize(occupation),
+          AGENT_ID: sanitize(agentValue),
+          BRANCH_ID: sanitize(branch),
+          USERID: sanitize("650"),
+          LAST_EDUCATION: sanitize(educationName),
+          RELIGION: sanitize(religion),
+          MARITAL_STATUS: sanitize(maritalStatus),
+          MARRIAGE_DATE: marriageDate,  // Use sanitized date if married
+          LOCALITY_COUNTRY: sanitize(country),
+          SPOUSE: sanitize(spouseName),
+          PD_CODE: sanitize(projectId),
           LAST_EDU_DOCUMENT: isEduDocChecked ? 'Y' : 'N',
         }),
       });
@@ -1126,10 +1133,10 @@ const Index = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            PROPOSAL_N: newProposalNo?.proposal_no[0] || "",
-            DCODE: "25",
-            TCODE: "30",
-            POST_CODE: "35",
+            PROPOSAL_N: sanitize(newProposalNo?.proposal_no[0]),
+            DCODE: sanitize("25"),
+            TCODE: sanitize("30"),
+            POST_CODE: sanitize("35"),
           }),
         });
 
@@ -1153,6 +1160,9 @@ const Index = () => {
       console.error("Error saving proposal:", error.message);
     }
   };
+
+
+
   // 2nd page update proposal
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -1259,29 +1269,12 @@ const Index = () => {
     fetchData();
   }, [occupation]);
 
-
-  // get Occupation prem rate
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:5001/api/oe-rate/${planName}/${occupation}/${gender}/${sumAssured}/${eduId}/'Y'/${paymentMode}`
-  //       );
-  //       setOeRatePrem(response?.data);
-  //     } catch (error) {
-  //     } finally {
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [planName, occupation, gender, sumAssured, eduStatus, pmode]);
-  // get Occupation prem rate
   //handler for reset 
   const [sup, setSup] = useState()
   const [mdr, setMDR] = useState('NO');
   const [ipdRider, setIPDRider] = useState('NO');
   const { data: SupplementaryList, refetch: refetchClassList } = useGetSupplimentClassListQuery({ occup_id: occupation, supp_code: supplimentId });
-  console.log(SupplementaryList)
+
   const { data: SupplementList, refetch: refetchSupplementList } = useGetSupplimentListQuery();
 
   const [supplementList, setSupplementList] = useState([]);
@@ -1971,24 +1964,23 @@ const Index = () => {
     guardianAge: '',
     guardianAccNo: '',
     guardianRoutingNo: '',
-    nBankCode: ''
+    nBankCode: '',
+    slno: ''
   });
-
+  console.log(formData.routingNo)
   // Handle input changes
   const handleNomineeInputChange = (e) => {
     const { name, value } = e.target;
     console.log(value)
     setFormData({
       ...formData, // Keep the other fields unchanged
-      [name]: value, // Update the specific field
+      [name]: value.toUpperCase(), // Update the specific field
     });
   };
-  console.log(formData.routingNo)
-  console.log(formData.nBankCode)
+
   const { data: nomineeBankbranchList } = useGetNomineeBankbranchlistQuery(formData.nBankCode);
-  console.log(nomineeBankbranchList)
-  // console.log(bankbranchList)
   const nomineeDob = formatAsMMDDYYYY(formData.dob)
+
   // get Nominee  age
   useEffect(() => {
     const fetchData = async () => {
@@ -2019,15 +2011,22 @@ const Index = () => {
   }, [comm_datee, formData.dob, nomineeDob]);
 
   const isGuardianDisabled = nomineeAge?.age[0] > 18;
-  console.log(isGuardianDisabled)
-  console.log(nomineeAge?.age[0])
 
   //insert nominee data
 
   const handleNomineeInsert = async () => {
+    if (!newProposalNo) {
+      swal({
+        title: 'Error',
+        text: 'Proposal number is not available.',
+        icon: "error",
+      });
+      return;
+    }
+
     const dob = formatAsMMDDYYYY(formData.dob);
     const data = {
-      PROPOSAL_N: 'B023000000014/24',
+      PROPOSAL_N: newProposalNo?.proposal_no[0], // Use the fetched proposal number
       NAME: formData.name,
       RELATION: formData.relation,
       DOB: dob,
@@ -2052,9 +2051,6 @@ const Index = () => {
         },
       });
 
-      console.log(response.data);
-
-      // Check if the response indicates success
       if (response.data.success === true) {
         swal({
           title: 'Successful',
@@ -2067,10 +2063,8 @@ const Index = () => {
           name: '',
           relation: '',
           dob: '',
-          age: '',
-          idType: '',
-          idNo: '',
           percentage: '',
+          idNo: '',
           mobileNo: '',
           accNo: '',
           routingNo: '',
@@ -2080,81 +2074,155 @@ const Index = () => {
           guardianAccNo: '',
           guardianRoutingNo: '',
         });
-        // setNomineeAge('');
-      }
+        setNomineeAge(null);
+        // Fetch the newly inserted nominee data
+        const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0]);
+        const fetchResponse = await axios.get(`http://localhost:5001/api/nominee/${encodedProposalNo}`);
 
+        if (fetchResponse && fetchResponse?.data) {
+          setNomines(fetchResponse.data);
+        } else {
+          console.error("No data found after insertion.");
+        }
+      }
     } catch (error) {
       console.error("Error saving proposal:", error.message);
+
+      if (error.response && error.response.data.message) {
+        swal({
+          title: 'Error',
+          text: error.response.data.message,
+          icon: "error",
+        });
+      }
     }
   };
 
+  const handleGetRowData = (rowData) => {
+    console.log(rowData)
+    setFormData({
+      proposal_n: rowData.proposal_n,
+      name: rowData.name,
+      age: rowData.age,
+      dob: formatAsMMDDYYYYSlash(rowData.dob),
+      relation: rowData.relation,
+      percentage: rowData.percentage,
+      id_type: rowData.id_type,
+      idNo: rowData.nn_id_number,
+      mobileNo: rowData.n_mobile_no,
+      accNo: rowData.acc_no,
+      routingNo: rowData.routingno,
+      guardianName: rowData.guardian || '',     // Set to empty string if null
+      guardianAge: rowData.gage || '',             // Set to empty string if null
+      guardianRelation: rowData.grelation || '',   // Set to empty string if null
+      guardianAccNo: rowData.gaccno || '',         // Set to empty string if null
+      guardianRoutingNo: rowData.groutingno || '', // Set to empty string if null
+      slno: rowData.slno
+    });
+  }
+  const sanitizeData = (data) => {
+    const formattedData = {
+      NAME: formData.name,
+      RELATION: formData.relation,
+      DOB: formData.dob,
+      AGE: nomineeAge?.age[0],
+      PERCENTAGE: formData.percentage,
+      ID_TYPE: '2',
+      NN_ID_NUMBER: formData.idNo,
+      N_MOBILE_NO: formData.mobileNo,
+      ACC_NO: formData.accNo,
+      ROUTINGNO: formData.routingNo,
+      GUARDIAN: formData.guardianName,
+      GRELATION: formData.guardianRelation,
+      GAGE: formData.guardianAge,
+      GACCNO: formData.guardianAccNo,
+      GROUTINGNO: formData.guardianRoutingNo,
+    };
 
+    // Remove empty or undefined fields
+    return Object.fromEntries(
+      Object.entries(formattedData).filter(([key, value]) => value !== '' && value !== undefined)
+    );
+  };
+  const handleNomineeUpdate = async () => {
+    try {
+      // Sanitize the form data before sending it to the server
+      const sanitizedData = sanitizeData(formData);
 
-  // const sanitizeData = (data) => {
-  //   const formattedData = {
-  //     NAME: formData.name,
-  //     RELATION: formData.relation,
-  //     DOB: formData.dob,
-  //     AGE: nomineeAge?.age[0],
-  //     PERCENTAGE: formData.percentage,
-  //     ID_TYPE: '2',
-  //     NN_ID_NUMBER: formData.idNo,
-  //     N_MOBILE_NO: formData.mobileNo,
-  //     ACC_NO: formData.accNo,
-  //     ROUTINGNO: formData.routingNo,
-  //     GUARDIAN: formData.guardianName,
-  //     GRELATION: formData.guardianRelation,
-  //     GAGE: formData.guardianAge,
-  //     GACCNO: formData.guardianAccNo,
-  //     GROUTINGNO: formData.guardianRoutingNo,
-  //   };
+      // Make the PUT request to update the nominee
+      const response = await axios.put(`http://localhost:5001/api/nominee/${formData.slno}`, sanitizedData);
 
-  //   // Remove empty or undefined fields
-  //   return Object.fromEntries(
-  //     Object.entries(formattedData).filter(([key, value]) => value !== '' && value !== undefined)
-  //   );
-  // };
+      // Show success message using swal if update is successful
+      swal({
+        title: 'Successful',
+        text: response.data.message || 'Nominee information updated successfully!',
+        icon: 'success',
+        button: 'OK',
+      });
 
-  // const handleNomineeUpdate = async () => {
-  //   try {
-  //     const sanitizedData = sanitizeData(formData);
-  //     const response = await axios.put('http://localhost:5001/api/nominee/B023000000015%2f24', sanitizedData);
-  //     swal({
-  //       title: 'Successful',
-  //       text: `${response?.message}`,
-  //       icon: "success",
-  //     });
+      // Reset form data after successful update
+      setFormData({
+        name: '',
+        relation: '',
+        dob: '',
+        age: '',
+        idType: '',
+        idNo: '',
+        percentage: '',
+        mobileNo: '',
+        accNo: '',
+        routingNo: '',
+        guardianName: '',
+        guardianRelation: '',
+        guardianAge: '',
+        guardianAccNo: '',
+        guardianRoutingNo: '',
+      });
 
-  //     // Reset form data after successful update
+      setNomineeAge(null);  // Reset specific fields
+      fetchNomines();       // Fetch updated nominee list
 
-  // setFormData({
-  //   name: '',
-  //   relation: '',
-  //   dob: '',
-  //   age: '',
-  //   idType: '',
-  //   idNo: '',
-  //   percentage: '',
-  //   mobileNo: '',
-  //   accNo: '',
-  //   routingNo: '',
-  //   guardianName: '',
-  //   guardianRelation: '',
-  //   guardianAge: '',
-  //   guardianAccNo: '',
-  //   guardianRoutingNo: '',
-  // });
-  // setNomineeAge('')
-  //   } catch (error) {
-  //     console.error('Error updating data:', error);
-  //   }
-  // };
+    } catch (error) {
+      console.error('Error updating data:', error);
 
-  const [data, setData] = useState([
-    { col1: 'Data 1', col2: 'Data 2', col3: 'Data 3', col4: 'Data 4', col5: 'Data 5', col6: 'Data 6', col7: 'Data 7', col8: 'Data 8', col9: 'Data 9', col10: 'Data 10' },
-    { col1: 'Data 11', col2: 'Data 12', col3: 'Data 13', col4: 'Data 14', col5: 'Data 15', col6: 'Data 16', col7: 'Data 17', col8: 'Data 18', col9: 'Data 19', col10: 'Data 20' },
-    // Add more rows as needed
-  ]);
+      // Check for the specific error message related to percentage > 100
+      if (error.message.includes('Percentage is already 100%')) {
+        swal({
+          title: 'Error',
+          text: error.message,  // This will show "Percentage is already 100% for proposal ${PROPOSAL_N}"
+          icon: 'error',
+          button: 'OK',
+        });
+      } else {
+        // Show a generic error message if it's not the percentage error
+        swal({
+          title: 'Error',
+          text: error.response?.data?.message || 'Failed to update nominee information.',
+          icon: 'error',
+          button: 'Try Again',
+        });
+      }
+    }
+  };
+  //delete nomineee
+
+  const deleteNominee = async (slno) => {
+    const nomineeId = 112290; // Replace with the nominee ID you want to delete
+    const apiUrl = `http://localhost:5001/api/nominee/delete/${slno}`;
+
+    try {
+      const response = await axios.delete(apiUrl);
+      console.log('Nominee deleted:', response.data);
+      swal({
+        title: 'Successfully deleted',
+        icon: 'success',
+        button: 'OK',
+      });
+      fetchNomines();
+    } catch (error) {
+      console.error('Error deleting nominee:', error.response?.data || error.message);
+    }
+  };
   return (
     <div>
       <Navbar />
@@ -5078,7 +5146,7 @@ const Index = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleNomineeInputChange}
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full uppercase"
                       />
                     </div>
                     <div className="text-start px-2">
@@ -5088,7 +5156,7 @@ const Index = () => {
                         name="relation"
                         value={formData.relation}
                         onChange={handleNomineeInputChange}
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full uppercase"
                       />
                     </div>
                     <div className="text-start px-2">
@@ -5120,7 +5188,7 @@ const Index = () => {
                     <input
                       type="text"
                       name="age"
-                      value={nomineeAge?.age[0]}
+                      value={nomineeAge?.age[0] || formData.age || 0}
                       onChange={handleNomineeInputChange}
                       disabled
                       className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
@@ -5231,8 +5299,7 @@ const Index = () => {
                     onChange={handleNomineeInputChange}
                     value={formData.guardianName}
                     disabled={isGuardianDisabled}
-
-                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full uppercase"
                   />
                 </div>
                 <div className="text-start px-2">
@@ -5240,7 +5307,7 @@ const Index = () => {
                   <input
                     type="text"
                     name="guardianRelation"
-                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full uppercase"
                     onChange={handleNomineeInputChange}
                     value={formData.guardianRelation}
                     disabled={isGuardianDisabled}
@@ -5319,52 +5386,63 @@ const Index = () => {
 
           <div className="text-center">
             <button
-              onClick={handleNomineeInsert}
+              onClick={formData.slno === '' ? handleNomineeInsert : handleNomineeUpdate}
               type="submit"
               className=" text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
-              SAVE
+              {
+                formData.slno === '' ? 'SAVE' : 'UPDATE'
+              }
             </button>
           </div>
-          <div className="overflow-x-auto mt-2">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr className="bg-gray-200 text-gray-600 uppercase text-xs leading-normal">
-                  <th className="py-3 px-6 text-left">NAME</th>
-                  <th className="py-3 px-6 text-left">RELATION </th>
-                  <th className="py-3 px-6 text-left">AGE</th>
-                  <th className="py-3 px-6 text-left">ID NO</th>
-                  <th className="py-3 px-6 text-left">PERCENTAGE</th>
-                  <th className="py-3 px-6 text-left">MOBILE NO</th>
-                  <th className="py-3 px-6 text-left">ACC NO</th>
-                  <th className="py-3 px-6 text-left">GUARDIAN</th>
-                  <th className="py-3 px-6 text-left">GRELATION</th>
-                  <th className="py-3 px-6 text-left">GAGE</th>
-                  <th className="py-3 px-6 text-left">GACC NO</th>
-                  <th className="py-3 px-6 text-left">ACTION</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600 text-sm">
-                {nomineeList?.data?.map((row, index) => (
-                  <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.name}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.relation}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.age}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.nn_id_number}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.percentage}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.n_mobile_no}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.acc_no}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.guardian}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.grelation}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.gage}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{row.gaccno}</td>
-                    <td className="py-3 px-6 text-left whitespace-nowrap text-xl text-red-800 flex items-center space-x-2"><FontAwesomeIcon icon={faPenToSquare} className="text-blue-500 cursor-pointer" /><FontAwesomeIcon icon={faTrash} className="text-red-600 cursor-pointer" /> </td>
+          <>
+            {
+              nomineeList?.data?.length !== 0 &&
+              <div className="overflow-x-auto mt-2">
+                <table className="min-w-full bg-white border border-gray-200">
+                  <thead>
+                    <tr className="bg-gray-200 text-gray-600 uppercase text-xs leading-normal">
+                      <th className="py-3 px-6 text-left">NAME</th>
+                      <th className="py-3 px-6 text-left">RELATION </th>
+                      <th className="py-3 px-6 text-left">AGE</th>
+                      <th className="py-3 px-6 text-left">ID NO</th>
+                      <th className="py-3 px-6 text-left">PERCENTAGE</th>
+                      <th className="py-3 px-6 text-left">MOBILE NO</th>
+                      <th className="py-3 px-6 text-left">ACC NO</th>
+                      <th className="py-3 px-6 text-left">GUARDIAN</th>
+                      <th className="py-3 px-6 text-left">GRELATION</th>
+                      <th className="py-3 px-6 text-left">GAGE</th>
+                      <th className="py-3 px-6 text-left">GACC NO</th>
+                      <th className="py-3 px-6 text-left">ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-600 text-sm">
+                    {nomineeList?.data?.map((row, index) => (
+                      <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.name}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.relation}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.age}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.nn_id_number}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.percentage}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.n_mobile_no}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.acc_no}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.guardian}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.grelation}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.gage}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.gaccno}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap text-xl text-red-800 flex items-center space-x-2"> <FontAwesomeIcon
+                          onClick={() => handleGetRowData(row)}
+                          icon={faPenToSquare}
+                          className="text-blue-500 cursor-pointer"
+                        /><FontAwesomeIcon icon={faTrash} onClick={() => deleteNominee(row.slno)} className="text-red-600 cursor-pointer" /> </td>
 
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            }
+          </>
         </div >
 
       )
