@@ -34,6 +34,7 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const Index = () => {
   const [projectId, setProjectId] = useState("");
+
   const [gender, setGender] = useState("");
   console.log(gender)
   const [maritalStatus, setMaritalStaus] = useState("");
@@ -277,10 +278,6 @@ const Index = () => {
     setBankCode(e.target.value);
   };
 
-  const handleterm = (e) => {
-    console.log(e.target.value)
-    setTerm(e.target.value);
-  };
   const handlePaymode = (e) => {
     setPaymode(e.target.value);
   };
@@ -292,7 +289,8 @@ const Index = () => {
   const handlePremAge = (e) => {
     setPremAge(e.target.value);
   };
-
+  const [planId, setPlanId] = useState("");
+  const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
   const handlePlan = (e) => {
     const value = e.target.value;
     console.log(value)
@@ -311,7 +309,8 @@ const Index = () => {
       min_suminsured,
       max_suminsured,
     ] = value.split("-");
-    console.log(calcuType)
+
+    setPlanId(value);  // Set the full value to planId
     setPlan(planId);
     setCalcuType(calcuType);
     setSuplimentary(suplimentary);
@@ -325,12 +324,31 @@ const Index = () => {
     setMaxterm(max_term);
     setMaxSumInsure(max_suminsured);
     setMinSumInsure(min_suminsured);
-    setSupplementList([])
-    setClassList([])
-    setSuppPrem([])
-    setSuppliRate([])
-    setSuppliClass()
+    setSupplementList([]);
+    setClassList([]);
+    setSuppPrem([]);
+    setSuppliRate([]);
+    setSuppliClass();
   };
+
+  // Set planId based on proposalInfo
+
+  useEffect(() => {
+    if (proposalInfo[0]?.table_id) {
+      const foundPlan = planList?.find(plan => plan.plan_id === proposalInfo[0]?.table_id);
+      if (foundPlan) {
+        setPlanId(`${foundPlan.plan_id}-${foundPlan.calcu_type}-${foundPlan.suplimentary}-${foundPlan.extra_loading}-${foundPlan.major_diseage}-${foundPlan.impatient_reader}-${foundPlan.prem_waiver}-${foundPlan.min_age}-${foundPlan.max_age}-${foundPlan.min_term}-${foundPlan.max_term}-${foundPlan.min_suminsured}-${foundPlan.max_suminsured}`);
+        setPlan(planId);
+        setCalcuType(foundPlan.calcu_type);
+        setSuplimentary(foundPlan.suplimentary);
+        setPremWaiver(foundPlan.prem_waiver);
+        setImpatientReader(foundPlan.impatient_reader);
+        setExtraLoading(foundPlan.extra_loading);
+        setMajordiseage(foundPlan.major_diseage);
+      }
+    }
+  }, [proposalInfo, planList]);
+
   useEffect(() => {
     if (proposalInfo[0]?.sPrem > 0) {
       setSuplimentary('YES')
@@ -379,7 +397,6 @@ const Index = () => {
     const values = e.target.value;
     const [education_id, education_name] = values.split("-");
     setEduId(education_id);
-    // console.log(education_name);
     setEducation(e.target.value);
   };
 
@@ -392,11 +409,11 @@ const Index = () => {
   };
   const handleOccupation = (e) => {
     setOccupation(e.target.value);
-    setSupplementList([])
-    setClassList([])
-    setSuppPrem([])
-    setSuppliRate([])
-    setSuppliClass()
+    // setSupplementList([])
+    // setClassList([])
+    // setSuppPrem([])
+    // setSuppliRate([])
+    // setSuppliClass()
   };
   const handleAge = (e) => {
     setAge(e.target.value);
@@ -512,6 +529,7 @@ const Index = () => {
   }
   //handle EducationName
   const handleEducationName = (e) => {
+    console.log(e.target.value)
     const updatedValue = e.target.value.toUpperCase();
     setEducationName(updatedValue);
   }
@@ -580,7 +598,6 @@ const Index = () => {
       setGender(proposalInfo[0]?.sex);
     }
   }, [proposalInfo]);
-
   useEffect(() => {
     if (proposalInfo[0]?.pd_code) {
       setProjectId(proposalInfo[0]?.pd_code);
@@ -592,9 +609,31 @@ const Index = () => {
       setAgentValue(proposalInfo[0]?.agent_id);
     }
   }, [proposalInfo]);
+  console.log(proposalInfo[0])
+
+  useEffect(() => {
+    if (proposalInfo[0]?.occupation) {
+      setOccupation(proposalInfo[0]?.occupation);
+    }
+  }, [proposalInfo]);
+  useEffect(() => {
+    if (proposalInfo[0]?.religion) {
+      setReligion(proposalInfo[0]?.religion);
+    }
+  }, [proposalInfo]);
+
+  useEffect(() => {
+    if (proposalInfo[0]?.edu) {
+      setEduId(proposalInfo[0]?.edu);
+    }
+  }, [proposalInfo]);
+  useEffect(() => {
+    if (proposalInfo[0]?.term) {
+      setTerm(proposalInfo[0]?.term);
+    }
+  }, [proposalInfo]);
 
   const proposer = proposalInfo[0]?.proposer;
-  console.log(proposalInfo[0])
   // get proposal informations
   const handleProposalNo = (e) => {
     const newValue = e.target.value;
@@ -794,7 +833,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/term-list/${planName}/${calcuAge || proposalInfo[0]?.age}`
+          `http://localhost:5001/api/term-list/${planName || proposalInfo[0]?.table_id}/${calcuAge || proposalInfo[0]?.age}`
         );
         setTermList(response?.data);
       } catch (error) {
@@ -803,7 +842,7 @@ const Index = () => {
     };
 
     fetchData();
-  }, [planName, calcuAge, proposalInfo[0]?.age]);
+  }, [planName, calcuAge, proposalInfo[0]?.age, proposalInfo[0]?.table_id]);
   // get chainlist
 
   // get new proposal Number
@@ -992,16 +1031,14 @@ const Index = () => {
   const { data: locallityList } = useGetLocallityQuery();
   const { data: countryList } = useGetCountrylistQuery();
   const { data: occupationList } = useGetOccupationlistQuery();
+  console.log(occupationList)
   const { data: educationList } = useGetEducationListQuery();
+  console.log(educationList)
   const { data: religionList } = useGetReligionListQuery();
-  const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
+  // const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
   const { data: options } = useGetOptionsQuery(planName);
   const { data: premiumList } = useGetPremiumListQuery();
   const { data: previousSumAssurance, error, isLoading } = useGetPreviousSumassuranceQuery(previousPolicyNo);
-
-  console.log(nomineeList)
-  console.log(newProposalNo?.proposal_no[0])
-  console.log(proposalNo)
 
   const fetchNomines = async () => {
     try {
@@ -2013,7 +2050,7 @@ const Index = () => {
   const isGuardianDisabled = nomineeAge?.age[0] > 18;
 
   //insert nominee data
-
+  console.log(newProposalNo?.proposal_no[0], proposalNo)
   const handleNomineeInsert = async () => {
     if (!newProposalNo) {
       swal({
@@ -2436,21 +2473,17 @@ const Index = () => {
                     <select
                       onChange={(e) => setGender(e.target.value)}
                       className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      value={gender}
                     >
-                      {gender === "1" && <option value="1">MALE</option>}
-                      {gender === "2" && <option value="2">FEMALE</option>}
-                      {gender === "3" && <option value="3">COMMON</option>}
-                      {gender === "4" && <option value="4">OTHERS</option>}
-                      {!gender && (
-                        <>
-                          <option>Select Gender</option>
-                          {genderList?.map((g, i) => (
-                            <option key={i} value={g?.gender_id}>
-                              {g?.gender_name}
-                            </option>
-                          ))}
-                        </>
-                      )}
+                      <>
+                        <option>Select Gender</option>
+                        {genderList?.map((g, i) => (
+                          <option key={i} value={g?.gender_id}>
+                            {g?.gender_name}
+                          </option>
+                        ))}
+                      </>
+
                     </select>
                   </div>
                   <div className="text-start px-2">
@@ -3048,8 +3081,10 @@ const Index = () => {
                         </label>
 
                         <select
-                          onChange={handleReligion}
+                          // onChange={handleReligion}
+                          // onchange={setReligion}
                           className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                          value={religion}
                         >
                           <>
                             {religionList?.map((list) => (
@@ -3109,25 +3144,27 @@ const Index = () => {
                           <label className="w-32 text-center  mt-3 font-bold text-xs">
                             EDUCATION
                           </label>
-                          {
+                          {/* {
                             proposalInfo[0]?.edu ?
                               <input
                                 type="text"
                                 id="success"
                                 value={proposalInfo[0]?.edu || ''}
                                 className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
-                              /> :
-                              <select
-                                onChange={handleEducation}
-                                className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                              /> : */}
+                          <select
+                            onChange={(e) => setEduId(e.target.value)}
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                            value={eduId}
+                          >
+                            {educationList?.map((education, i) => (
+                              <option key={i} value={education?.education_id}
                               >
-                                {educationList?.map((education, i) => (
-                                  <option key={i} value={`${education?.education_id}-${education?.education_name}`} onChange={handleEducationName}>
-                                    {education?.education_name}
-                                  </option>
-                                ))}
-                              </select>
-                          }
+                                {education?.education_name}
+                              </option>
+                            ))}
+                          </select>
+
                         </div>
                         <div className="flex items-center gap-x-2.5">
                           <Checkbox
@@ -3163,10 +3200,11 @@ const Index = () => {
                           <label className="w-32   mt-3 font-bold text-xs">
                             OCCUPATION
                           </label>
-
                           <select
-                            onChange={handleOccupation}
+                            onChange={(e) => setOccupation(e.target.value)}
+                            // onChange={handleOccupation}
                             className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                            value={occupation}
                           >
                             <option>Select Occupation</option>
                             {occupationList?.map((occupation, i) => (
@@ -3244,39 +3282,28 @@ const Index = () => {
                 </h2>
 
                 <div class="p-0 mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                  {proposalInfo[0]?.plan_desc ? (
-                    <div className="text-start px-2">
-                      <label className="text-start text-xs">Plan Name</label>
-                      <input
-                        type="text"
-                        id="success"
-                        value={proposalInfo[0]?.plan_desc}
-                        disabled
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                      // onChange={(e) => setPlanDetails([{ ...proposalInfo[0], plan_desc: e.target.value }])}
-                      />
-                    </div>
-                  ) : (
-                    <div className="text-start px-2">
-                      <label className="text-start text-xs">PLAN LIST</label>
-                      <select
-                        onChange={handlePlan}
-                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                      >
-                        <>
-                          <option>Select Plan</option>
-                          {planList?.map((plan, i) => (
-                            <option
-                              key={i}
-                              value={`${plan?.plan_id}-${plan?.calcu_type}-${plan?.suplimentary}-${plan?.extra_loading}-${plan?.major_diseage}-${plan?.impatient_reader}-${plan?.prem_waiver}-${plan?.min_age}-${plan?.max_age}-${plan?.min_term}-${plan?.max_term}-${plan?.min_suminsured}-${plan?.max_suminsured}`}
-                            >
-                              {plan?.plan_id}-{plan?.plan_name}
-                            </option>
-                          ))}
-                        </>
-                      </select>
-                    </div>
-                  )}
+
+                  <div className="text-start px-2">
+                    <label className="text-start text-xs">PLAN LIST</label>
+                    <select
+                      onChange={handlePlan}
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      value={planId}  // Ensure value matches one of the dropdown options
+                    >
+                      <option>Select Plan</option>
+                      {planList?.map((plan, i) => {
+                        const optionValue = `${plan?.plan_id}-${plan?.calcu_type}-${plan?.suplimentary}-${plan?.extra_loading}-${plan?.major_diseage}-${plan?.impatient_reader}-${plan?.prem_waiver}-${plan?.min_age}-${plan?.max_age}-${plan?.min_term}-${plan?.max_term}-${plan?.min_suminsured}-${plan?.max_suminsured}`;
+
+                        return (
+                          <option key={i} value={optionValue}>
+                            {plan?.plan_id}-{plan?.plan_name}
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                  </div>
+
                 </div>
                 {(planName === '08' || planName === '09') && (
                   <div className="shadow-lg border m-2 rounded p-2">
@@ -3394,41 +3421,27 @@ const Index = () => {
                     />
                   </div>
                   <div className="col-span-2 bg-white align-items-center m-1  lg:mt-0">
-                    {proposalInfo[0]?.term ? (
-                      <div className="text-start px-2">
-                        <label className="text-start text-xs">
-                          {" "}
-                          TERM OF POLICY
-                        </label>
-                        <input
-                          type="text"
-                          id="success"
-                          value={proposalInfo[0]?.term}
-                          disabled
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                          onChange={handlePlan}
-                        />
-                      </div>
-                    ) : (
-                      <div>
-                        <label className="text-start text-xs">
-                          TERM OF POLICY
-                        </label>
-                        <select
-                          onChange={handleterm}
-                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        >
-                          <>
-                            <option>Select Term</option>
-                            {termList?.map((termm, i) => (
-                              <option key={i} value={termm?.term}>
-                                {termm?.term}
-                              </option>
-                            ))}
-                          </>
-                        </select>
-                      </div>
-                    )}
+
+                    <div>
+                      <label className="text-start text-xs">
+                        TERM OF POLICY
+                      </label>
+                      <select
+                        onChange={(e) => setTerm(e.target.value)}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                        value={selectTerm}
+                      >
+                        <>
+                          <option>Select Term</option>
+                          {termList?.map((termm, i) => (
+                            <option key={i} value={termm?.term}>
+                              {termm?.term}
+                            </option>
+                          ))}
+                        </>
+                      </select>
+                    </div>
+
                   </div>
                 </div>
                 <div class="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
