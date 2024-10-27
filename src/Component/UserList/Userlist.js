@@ -13,7 +13,7 @@ const Userlist = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/dept-permission-list`
+        `http://115.127.36.173:5001/api/dept-permission-list`
       );
       setpermissionList(response.data?.dept_permission_list);
       setSpinner(false);

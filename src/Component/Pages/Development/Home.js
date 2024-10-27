@@ -21,6 +21,7 @@ const Home = () => {
   const dept_name = Dept_head?.department_name;
   //Get from localstorage user_details data
   const UserD = JSON.parse(localStorage.getItem("UserDetails"));
+  console.log(UserD)
   const PERSONAL_ID = UserD?.PERSONALID;
   const prjct = UserD?.PROJECT;
   const NAME = UserD?.NAME;
@@ -39,7 +40,7 @@ const Home = () => {
   const departmentHeadList = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/department-head/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/department-head/${PERSONAL_ID}`
       );
       setDept_head(response.data?.dept_head_details);
     } catch (error) {
@@ -56,7 +57,7 @@ const Home = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/project-list/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/project-list/${PERSONAL_ID}`
       );
       setProjetList(response.data?.project_list);
       setSpinner(false);
@@ -74,7 +75,7 @@ const Home = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/permission-module-list/${PERSONAL_ID}/${projectid}`
+        `http://115.127.36.173:5001/api/permission-module-list/${PERSONAL_ID}/${prjct}`
       );
       setModuleList(response?.data);
       setSpinner(false);
@@ -84,7 +85,7 @@ const Home = () => {
   };
   useEffect(() => {
     moduleList();
-  }, [PERSONAL_ID, projectid]);
+  }, [PERSONAL_ID, prjct]);
   // Module List
 
   return (

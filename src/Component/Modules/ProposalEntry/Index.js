@@ -83,13 +83,14 @@ const Index = () => {
   const [optionId, setOption] = useState('A');
   const [deathCoverage, setDeathCoverage] = useState('N');
   const [premage, setPremAge] = useState();
-  const [termList, setTermList] = useState([""]);
+  const [termList, setTermList] = useState([]);
   const [calAge, setCalage] = useState();
   const [jcalAge, setJointAge] = useState();
   const [pmode, setPaymode] = useState(0);
   const [paymentMode, setPaymentMode] = useState('1');
   const [t_installment, setInstallment] = useState();
-  const [selectTerm, setTerm] = useState();
+  const [selectTerm, setTerm] = useState("");
+  console.log(paymentMode)
   const [calcuType, setCalcuType] = useState();
   const [rate, setRate] = useState();
   const [bankCode, setBankCode] = useState();
@@ -609,7 +610,7 @@ const Index = () => {
       setAgentValue(proposalInfo[0]?.agent_id);
     }
   }, [proposalInfo]);
-  console.log(proposalInfo[0])
+
 
   useEffect(() => {
     if (proposalInfo[0]?.occupation) {
@@ -631,7 +632,13 @@ const Index = () => {
     if (proposalInfo[0]?.term) {
       setTerm(proposalInfo[0]?.term);
     }
-  }, [proposalInfo]);
+  }, [proposalInfo[0]?.term]);
+  console.log(proposalInfo[0]?.instmode)
+  useEffect(() => {
+    if (proposalInfo[0]?.instmode) {
+      setPaymentMode(proposalInfo[0]?.instmode);
+    }
+  }, [proposalInfo[0]?.instmode]);
 
   const proposer = proposalInfo[0]?.proposer;
   // get proposal informations
@@ -654,7 +661,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/policy-info?policy_no=${policyNo}`
+          `http://115.127.36.173:5001/api/policy-info?policy_no=${policyNo}`
         );
         setPolicyInfo(response?.data);
       } catch (error) {
@@ -670,7 +677,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/proposal-info?proposal_no=${proposalNo}`
+          `http://115.127.36.173:5001/api/proposal-info?proposal_no=${proposalNo}`
         );
         setProposalInfo(response?.data);
       } catch (error) {
@@ -687,7 +694,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/endAtDate/${comm_datee}`
+          `http://115.127.36.173:5001/api/endAtDate/${comm_datee}`
         );
         setEndatDate(response?.data);
       } catch (error) {
@@ -702,7 +709,7 @@ const Index = () => {
   //total installment
   useEffect(() => {
     const InstallmentData = async () => {
-      const url = `http://localhost:5001/api/total-installment/${pmode}/${selectTerm}`;
+      const url = `http://115.127.36.173:5001/api/total-installment/${pmode}/${selectTerm}`;
       try {
         const response = await axios.get(url);
         setInstallment(response?.data);
@@ -720,7 +727,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/prem-plan-list/${sumAssured}
+          `http://115.127.36.173:5001/api/prem-plan-list/${sumAssured}
             `
         );
         setPremPlanlist(response?.data);
@@ -738,7 +745,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/chain-list/${projectId}/${agentValue}`
+          `http://115.127.36.173:5001/api/chain-list/${projectId}/${agentValue}`
         );
         setChainList(response?.data);
       } catch (error) {
@@ -759,7 +766,7 @@ const Index = () => {
   // get age
   useEffect(() => {
     const fetchData = async () => {
-      const abc = `http://localhost:5001/api/get-age/${comm_datee}/${birth_dateE ? birth_dateE : dob
+      const abc = `http://115.127.36.173:5001/api/get-age/${comm_datee}/${birth_dateE ? birth_dateE : dob
         }`;
       try {
         const response = await axios.get(abc);
@@ -774,7 +781,7 @@ const Index = () => {
   // get joint policy age
   useEffect(() => {
     const fetchData = async () => {
-      const abc = `http://localhost:5001/api/get-age/${comm_datee}/${birth_dateE ? birth_dateE : jDob
+      const abc = `http://115.127.36.173:5001/api/get-age/${comm_datee}/${birth_dateE ? birth_dateE : jDob
         }`;
       try {
         const response = await axios.get(abc);
@@ -798,7 +805,7 @@ const Index = () => {
   // get child age
   useEffect(() => {
     const fetchChildAge = async () => {
-      const childAgeUrl = `http://localhost:5001/api/get-age/${comm_datee}/${cDob}`;
+      const childAgeUrl = `http://115.127.36.173:5001/api/get-age/${comm_datee}/${cDob}`;
       try {
         const response = await axios.get(childAgeUrl);
         setChildAge(response?.data);
@@ -815,7 +822,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/rate-calculation/${calcuAge}/${selectTerm}/${planName}/${childFinalAge}`
+          `http://115.127.36.173:5001/api/rate-calculation/${calcuAge}/${selectTerm}/${planName}/${childFinalAge}`
         );
         setRate(response?.data?.rate);
       } catch (error) {
@@ -828,12 +835,12 @@ const Index = () => {
 
 
   // get term-list
-
+  console.log(proposalInfo[0]?.age)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/term-list/${planName || proposalInfo[0]?.table_id}/${calcuAge || proposalInfo[0]?.age}`
+          `http://115.127.36.173:5001/api/term-list/${planName || proposalInfo[0]?.table_id}/${calcuAge || proposalInfo[0]?.age}`
         );
         setTermList(response?.data);
       } catch (error) {
@@ -850,7 +857,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/proposal-number?OFFICE_CODE=${branch}`
+          `http://115.127.36.173:5001/api/proposal-number?OFFICE_CODE=${branch}`
         );
         setNewProposalNo(response?.data);
       } catch (error) {
@@ -869,7 +876,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/comm_date/${currentDate}/${policytype}`
+          `http://115.127.36.173:5001/api/comm_date/${currentDate}/${policytype}`
         );
         setUpdateCommDate(response?.data);
       } catch (error) {
@@ -887,7 +894,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${paymentMode}`
+          `http://115.127.36.173:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${paymentMode}`
         );
         setSuppPrem(response?.data);
       } catch (error) {
@@ -905,7 +912,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/sumAssurance/${planName}/${selectTerm}/${calcuAge}/${+pmode}/${0}`
+          `http://115.127.36.173:5001/api/sumAssurance/${planName}/${selectTerm}/${calcuAge}/${+pmode}/${0}`
         );
         setSumassurance(response?.data);
       } catch (error) {
@@ -921,7 +928,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${paymentMode}/${sumAssured}/${optionId}/${0}/${deathCoverage}`
+          `http://115.127.36.173:5001/api/basic-premium/${planName}/${selectTerm}/${calcuAge}/${paymentMode}/${sumAssured}/${optionId}/${0}/${deathCoverage}`
         );
         setBasicPrem(response?.data);
       } catch (error) {
@@ -939,7 +946,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/sumat-risk/${planName}/${sumassurance[0] || sumAssured}/${basicPrem || pmode}/${pFactor}/${paymentMode}
+          `http://115.127.36.173:5001/api/sumat-risk/${planName}/${sumassurance[0] || sumAssured}/${basicPrem || pmode}/${pFactor}/${paymentMode}
           `
         );
         setSumAtRisk(response?.data);
@@ -958,7 +965,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/ipd-prem-rate/${ipdPlanNo}/${dob}/${comm_datee}/${paymentMode}/${planName}`
+          `http://115.127.36.173:5001/api/ipd-prem-rate/${ipdPlanNo}/${dob}/${comm_datee}/${paymentMode}/${planName}`
         );
         setIpdPlanRate(response?.data);
       } catch (error) {
@@ -975,7 +982,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/rider-prem-rate/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${pmode}`
+          `http://115.127.36.173:5001/api/rider-prem-rate/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${pmode}`
         );
         setRiderPremRate(response?.data);
       } catch (error) {
@@ -995,7 +1002,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}`
+          `http://115.127.36.173:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}`
         );
         setSuppliRate(response?.data);
       } catch (error) {
@@ -1045,7 +1052,7 @@ const Index = () => {
       const encodedManualProposalNo = encodeURIComponent(proposalNo || '');
       const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0] || '');
       const finalProposalNo = encodedProposalNo || encodedManualProposalNo;
-      const url = `http://localhost:5001/api/nominee/${finalProposalNo}`;
+      const url = `http://115.127.36.173:5001/api/nominee/${finalProposalNo}`;
 
       console.log("Final URL:", url);  // Check if the URL is correct here
 
@@ -1121,7 +1128,7 @@ const Index = () => {
     const marriageDate = maritalStatus === "Married" ? sanitizeDate(marriage_date) : ""; // Set to empty if single
 
     try {
-      const response = await fetch("http://localhost:5001/api/proposal-entry", {
+      const response = await fetch("http://115.127.36.173:5001/api/proposal-entry", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1164,7 +1171,7 @@ const Index = () => {
       console.log(data);
 
       if (data.message === "Proposal Entry Successfully") {
-        const secondResponse = await fetch("http://localhost:5001/api/proposal-entry-address", {
+        const secondResponse = await fetch("http://115.127.36.173:5001/api/proposal-entry-address", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1213,7 +1220,7 @@ const Index = () => {
     };
     try {
       const response = await axios.put(
-        `http://localhost:5001/api/proposal-update/B023000000002%2F24`,
+        `http://115.127.36.173:5001/api/proposal-update/B023000000002%2F24`,
         data,
       );
       console.log(response)
@@ -1232,7 +1239,7 @@ const Index = () => {
         console.log(encodedProposalNo);
 
         const response = await axios.get(
-          `http://localhost:5001/api/medical-status/${encodedProposalNo}`
+          `http://115.127.36.173:5001/api/medical-status/${encodedProposalNo}`
         );
 
         // If the request is successful, update the state with the fetched data
@@ -1257,7 +1264,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/maturity-date/${comm_datee}/${selectTerm}`
+          `http://115.127.36.173:5001/api/maturity-date/${comm_datee}/${selectTerm}`
         );
         // Format the date
         const formattedDate = new Date(response?.data?.maturity_date).toLocaleDateString('en-GB', {
@@ -1279,7 +1286,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/hospital-prem/${planName}/${occupation}/${gender}/${sumAssured}/${eduId}/${lastEdu}/${paymentMode}`
+          `http://115.127.36.173:5001/api/hospital-prem/${planName}/${occupation}/${gender}/${sumAssured}/${eduId}/${lastEdu}/${paymentMode}`
         );
         setHospitalRatePrem(response?.data);
       } catch (error) {
@@ -1295,7 +1302,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/occupRate/${occupation}`
+          `http://115.127.36.173:5001/api/occupRate/${occupation}`
         );
         setPremOccupRate(response?.data);
       } catch (error) {
@@ -1341,7 +1348,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}`
+          `http://115.127.36.173:5001/api/suppli-rate/${occupation}/${supplimentId}/${supplimentClass}`
         );
         setSuppliRate(response?.data);
       } catch (error) {
@@ -1358,7 +1365,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${paymentMode}`
+          `http://115.127.36.173:5001/api/suppliment-premium/${planName}/${occupation}/${supplimentId}/${supplimentClass}/${sumAssured}/${paymentMode}`
         );
         setSuppPrem(response?.data);
       } catch (error) {
@@ -1375,7 +1382,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/waiver_premium/${calcuAge}/${[planName]}/${basicPrem || pmode}`
+          `http://115.127.36.173:5001/api/waiver_premium/${calcuAge}/${[planName]}/${basicPrem || pmode}`
         );
         setWaiverPrem(response?.data);
       } catch (error) {
@@ -1392,7 +1399,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/mdr-prem/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${paymentMode}/PREM`
+          `http://115.127.36.173:5001/api/mdr-prem/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${paymentMode}/PREM`
         );
         setMdrPremium(response?.data);
       } catch (error) {
@@ -1408,7 +1415,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/mdr-prem/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${paymentMode}/RATE`
+          `http://115.127.36.173:5001/api/mdr-prem/${planName}/${selectTerm}/${dob}/${comm_datee}/${sumAssured}/${paymentMode}/RATE`
         );
         setMdrRate(response?.data);
       } catch (error) {
@@ -1422,7 +1429,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/ipd-plan/${comm_datee}/${sumAssured}`
+          `http://115.127.36.173:5001/api/ipd-plan/${comm_datee}/${sumAssured}`
         );
         setIpdPlans(response?.data);
       } catch (error) {
@@ -1580,7 +1587,7 @@ const Index = () => {
       console.log('Sanitized Update Data:', sanitizedUpdateData);
 
       // First, delete existing records
-      await axios.delete(`http://localhost:5001/api/ipdRider/delete/${encodedProposalNo}`, {
+      await axios.delete(`http://115.127.36.173:5001/api/ipdRider/delete/${encodedProposalNo}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -1588,7 +1595,7 @@ const Index = () => {
       });
 
       // Then, insert new records
-      await axios.post('http://localhost:5001/api/ipdRider', [insertData], {
+      await axios.post('http://115.127.36.173:5001/api/ipdRider', [insertData], {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -1596,7 +1603,7 @@ const Index = () => {
 
       // Finally, update records
       const response = await axios.put(
-        `http://localhost:5001/api/update-proposal-dummy/${encodedProposalNo}`,
+        `http://115.127.36.173:5001/api/update-proposal-dummy/${encodedProposalNo}`,
         sanitizedUpdateData,
         {
           headers: {
@@ -1943,7 +1950,7 @@ const Index = () => {
 
     try {
       // Update the medical info
-      const medicalResponse = await axios.put(`http://localhost:5001/api/medical-info/${encodedProposalNo}`, sanitizedUpdateData);
+      const medicalResponse = await axios.put(`http://115.127.36.173:5001/api/medical-info/${encodedProposalNo}`, sanitizedUpdateData);
 
       if (medicalResponse.status === 200) {
         console.log('Medical info updated successfully');
@@ -1960,7 +1967,7 @@ const Index = () => {
         POLICY_NO5: policy5.policyNo,
       };
 
-      const policyResponse = await axios.put(`http://localhost:5001/api/prev-policy-no/${encodedProposalNo}`, policyNoData);
+      const policyResponse = await axios.put(`http://115.127.36.173:5001/api/prev-policy-no/${encodedProposalNo}`, policyNoData);
 
       if (policyResponse.status === 200) {
         console.log('Previous policy info updated successfully');
@@ -2022,7 +2029,7 @@ const Index = () => {
   useEffect(() => {
     const fetchData = async () => {
       const nomineeDob = formatAsMMDDYYYY(formData.dob);
-      const abc = `http://localhost:5001/api/get-nomineeAge/${comm_datee}/${nomineeDob}`;
+      const abc = `http://115.127.36.173:5001/api/get-nomineeAge/${comm_datee}/${nomineeDob}`;
       try {
         const response = await axios.get(abc);
         const age = response?.data?.age[0];
@@ -2082,7 +2089,7 @@ const Index = () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:5001/api/nominees", data, {
+      const response = await axios.post("http://115.127.36.173:5001/api/nominees", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -2114,7 +2121,7 @@ const Index = () => {
         setNomineeAge(null);
         // Fetch the newly inserted nominee data
         const encodedProposalNo = encodeURIComponent(newProposalNo?.proposal_no[0]);
-        const fetchResponse = await axios.get(`http://localhost:5001/api/nominee/${encodedProposalNo}`);
+        const fetchResponse = await axios.get(`http://115.127.36.173:5001/api/nominee/${encodedProposalNo}`);
 
         if (fetchResponse && fetchResponse?.data) {
           setNomines(fetchResponse.data);
@@ -2187,7 +2194,7 @@ const Index = () => {
       const sanitizedData = sanitizeData(formData);
 
       // Make the PUT request to update the nominee
-      const response = await axios.put(`http://localhost:5001/api/nominee/${formData.slno}`, sanitizedData);
+      const response = await axios.put(`http://115.127.36.173:5001/api/nominee/${formData.slno}`, sanitizedData);
 
       // Show success message using swal if update is successful
       swal({
@@ -2245,7 +2252,7 @@ const Index = () => {
 
   const deleteNominee = async (slno) => {
     const nomineeId = 112290; // Replace with the nominee ID you want to delete
-    const apiUrl = `http://localhost:5001/api/nominee/delete/${slno}`;
+    const apiUrl = `http://115.127.36.173:5001/api/nominee/delete/${slno}`;
 
     try {
       const response = await axios.delete(apiUrl);
@@ -3429,53 +3436,42 @@ const Index = () => {
                       <select
                         onChange={(e) => setTerm(e.target.value)}
                         className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        value={selectTerm}
+                        value={selectTerm} // Ensure a default value or set it to an empty string initially
                       >
-                        <>
-                          <option>Select Term</option>
-                          {termList?.map((termm, i) => (
-                            <option key={i} value={termm?.term}>
-                              {termm?.term}
+                        <option value="">Select Term</option>
+                        {termList?.length > 0 &&
+                          termList.map((termm, i) => (
+                            <option key={i} value={termm.term}>
+                              {termm.term}
                             </option>
                           ))}
-                        </>
                       </select>
+
                     </div>
 
                   </div>
                 </div>
                 <div class="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                   <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                    {proposalInfo[0]?.instmode ? (
-                      <div className="text-start px-2">
-                        <label className="text-start text-xs">PAYMENT MODE</label>
-                        <input
-                          type="text"
-                          id="success"
-                          value={proposalInfo[0]?.instmode}
-                          disabled
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                          onChange={handlePaymentMode}
-                        />
-                      </div>
-                    ) : (
-                      <div className=" bg-white align-items-center m-1  lg:mt-0">
-                        <label className="text-start text-xs">PAYMENT MODE</label>
-                        <select
-                          onChange={handlePaymentMode}
-                          className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        >
-                          <>
-                            <option>Select Mode</option>
-                            {modeList?.map((mode, i) => (
-                              <option key={i} value={mode?.mode_code}>
-                                {mode?.mode_code}-{mode?.mode_name}
-                              </option>
-                            ))}
-                          </>
-                        </select>
-                      </div>
-                    )}
+
+                    <div className=" bg-white align-items-center m-1  lg:mt-0">
+                      <label className="text-start text-xs">PAYMENT MODE</label>
+                      <select
+                        onChange={(e) => setPaymentMode(e.target.value)}
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                        value='1'
+                      >
+                        <>
+                          <option>Select Mode</option>
+                          {modeList?.map((mode, i) => (
+                            <option key={i} value={mode?.mode_code}>
+                              {mode?.mode_code}-{mode?.mode_name}
+                            </option>
+                          ))}
+                        </>
+                      </select>
+                    </div>
+
                   </div>
                   <div className="bg-white  align-items-center m-1  lg:mt-0">
                     <label className="text-xs text-center w-36 mt-3 p-0">

@@ -17,7 +17,7 @@ const SinglePermission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/single-privilage-list/${id}/${name}`
+        `http://115.127.36.173:5001/api/single-privilage-list/${id}/${name}`
       );
       setPermissionDetails(response.data?.permission_list);
       setSpinner(false);
@@ -80,33 +80,29 @@ const SinglePermission = () => {
 
             <h1 class="px-0 py-5 text-center">
               <span
-                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${
-                  selectedPermissions.includes(1) ? "bg-[#DD2C00]" : ""
-                }`}
+                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${selectedPermissions.includes(1) ? "bg-[#DD2C00]" : ""
+                  }`}
                 onClick={() => handleCheckboxChange(1)}
               >
                 {p?.p_read === 1 ? "VIEW" : "NO"}
               </span>
               <span
-                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${
-                  selectedPermissions.includes(2) ? "bg-[#DD2C00]" : ""
-                }`}
+                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${selectedPermissions.includes(2) ? "bg-[#DD2C00]" : ""
+                  }`}
                 onClick={() => handleCheckboxChange(2)}
               >
                 {p?.p_create === 2 ? "CREATE" : "NO"}
               </span>
               <span
-                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${
-                  selectedPermissions.includes(3) ? "bg-[#DD2C00]" : ""
-                }`}
+                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${selectedPermissions.includes(3) ? "bg-[#DD2C00]" : ""
+                  }`}
                 onClick={() => handleCheckboxChange(3)}
               >
                 {p?.p_edit === 3 ? "EDIT" : "NO"}
               </span>
               <span
-                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${
-                  selectedPermissions.includes(4) ? "bg-[#DD2C00]" : ""
-                }`}
+                className={`ml-1 text-white bg-[#00838F] rounded p-2 ${selectedPermissions.includes(4) ? "bg-[#DD2C00]" : ""
+                  }`}
                 onClick={() => handleCheckboxChange(4)}
               >
                 {p?.p_delete === 4 ? "DELETE" : "NO"}

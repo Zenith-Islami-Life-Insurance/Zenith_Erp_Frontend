@@ -21,7 +21,7 @@ const Home = () => {
   const departmentHeadList = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/department-head/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/department-head/${PERSONAL_ID}`
       );
       setDept_head(response.data?.dept_head_details);
     } catch (error) {
@@ -38,7 +38,7 @@ const Home = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
       );
       setModueleList(response.data?.module_list);
       setSpinner(false);
@@ -94,7 +94,7 @@ const Home = () => {
         {moduleList.length >= 1 && (
           <div class="grid grid-cols-2 mt-5 lg:grid-cols-6 gap-2 flex  justify-center">
             {moduleList?.map((mName, i) => (
-              <Link key={i} to={"#"}>
+              <Link key={i} to='/proposal-entry'>
                 <div class=" shadow-md bordered text-white rounded p-2 lg:p-4 rounded bordered  bg-[#0E9F6E] max-w-sm">
                   <h5 className="font-normal mt-1">{mName?.Module_name}</h5>
                 </div>

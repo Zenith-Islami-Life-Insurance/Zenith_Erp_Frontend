@@ -41,7 +41,7 @@ const Modulelist = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
       );
       setModueleList(response.data?.module_list);
       setSpinner(false);
@@ -105,7 +105,7 @@ const Modulelist = () => {
 
     // console.log(permissions)
     createPermission(permissions)
-      .then((data) => {})
+      .then((data) => { })
       .catch((error) => {
         // Handle the error
         console.error("Error creating permission:", error);

@@ -33,7 +33,7 @@ console.log(mid)
 const ModuleList = async () => {
      setSpinner(true)
     try {
-      const response = await axios.get(`http://localhost:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`);
+      const response = await axios.get(`http://115.127.36.173:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`);
       setModueleList(response.data?.module_list);
       setSpinner(false); 
     } catch (error) {
@@ -50,7 +50,7 @@ const ModuleList = async () => {
 // fetch userlist module list
 const PrevList = async () => {
     try {
-      const response = await axios.get(`http://localhost:5001/api/privilage-list/${module_id}/${DEPT_CODE}`);
+      const response = await axios.get(`http://115.127.36.173:5001/api/privilage-list/${module_id}/${DEPT_CODE}`);
       setUserList(response.data?.privilage_list);
       setSpinner(false); 
     } catch (error) {
@@ -109,7 +109,7 @@ const permissionAdd = (event) => {
 
     console.log(permissions);
 
-    const url = 'http://localhost:5001/api/create-permission';
+    const url = 'http://115.127.36.173:5001/api/create-permission';
     fetch(url, {
       method: "POST",
       headers: {

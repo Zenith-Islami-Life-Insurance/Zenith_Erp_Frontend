@@ -28,7 +28,7 @@ const Home = () => {
   const departmentHeadList = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/department-head/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/department-head/${PERSONAL_ID}`
       );
       setDept_head(response.data?.dept_head_details);
     } catch (error) {
@@ -43,7 +43,7 @@ const Home = () => {
   // Total User count
   const totalUser = async () => {
     try {
-      const response = await axios.get(`http://localhost:5001/api/total-user`);
+      const response = await axios.get(`http://115.127.36.173:5001/api/total-user`);
       setTotalUser(response.data?.total_user);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -58,7 +58,7 @@ const Home = () => {
   const totalModule = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/total-module`
+        `http://115.127.36.173:5001/api/total-module`
       );
       setTotalModule(response.data?.total_module);
     } catch (error) {
@@ -74,7 +74,7 @@ const Home = () => {
   const totalDeptHead = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/total-depthead`
+        `http://115.127.36.173:5001/api/total-depthead`
       );
       setDeptHead(response.data?.total_depthead);
     } catch (error) {
@@ -89,7 +89,7 @@ const Home = () => {
   const totalDeskUser = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/totaldesk-user`
+        `http://115.127.36.173:5001/api/totaldesk-user`
       );
       setDeskuser(response.data?.total_user);
     } catch (error) {

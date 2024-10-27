@@ -19,7 +19,7 @@ const Home = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/deskmodule-list/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/deskmodule-list/${PERSONAL_ID}`
       );
       setModueleList(response.data?.module_list);
       setSpinner(false);
