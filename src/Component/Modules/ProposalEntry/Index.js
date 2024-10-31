@@ -80,6 +80,7 @@ const Index = () => {
 
   const [commencementDate, setUpdateCommDate] = useState()
   const [planName, setPlan] = useState();
+  console.log(planName)
   const [optionId, setOption] = useState('A');
   const [deathCoverage, setDeathCoverage] = useState('N');
   const [premage, setPremAge] = useState();
@@ -87,10 +88,11 @@ const Index = () => {
   const [calAge, setCalage] = useState();
   const [jcalAge, setJointAge] = useState();
   const [pmode, setPaymode] = useState(0);
-  const [paymentMode, setPaymentMode] = useState('1');
+  const [paymentMode, setPaymentMode] = useState('');
+  console.log(paymentMode);
   const [t_installment, setInstallment] = useState();
   const [selectTerm, setTerm] = useState("");
-  console.log(paymentMode)
+  console.log(selectTerm)
   const [calcuType, setCalcuType] = useState();
   const [rate, setRate] = useState();
   const [bankCode, setBankCode] = useState();
@@ -339,7 +341,7 @@ const Index = () => {
       const foundPlan = planList?.find(plan => plan.plan_id === proposalInfo[0]?.table_id);
       if (foundPlan) {
         setPlanId(`${foundPlan.plan_id}-${foundPlan.calcu_type}-${foundPlan.suplimentary}-${foundPlan.extra_loading}-${foundPlan.major_diseage}-${foundPlan.impatient_reader}-${foundPlan.prem_waiver}-${foundPlan.min_age}-${foundPlan.max_age}-${foundPlan.min_term}-${foundPlan.max_term}-${foundPlan.min_suminsured}-${foundPlan.max_suminsured}`);
-        setPlan(planId);
+        setPlan(foundPlan?.plan_id);
         setCalcuType(foundPlan.calcu_type);
         setSuplimentary(foundPlan.suplimentary);
         setPremWaiver(foundPlan.prem_waiver);
@@ -386,7 +388,7 @@ const Index = () => {
   const handleCountry = (e) => {
     setCountry(e.target.value);
   };
-
+  console.log(maritalStatus)
   const handleMaritalStatus = (e) => {
     setMaritalStaus(e.target.value);
   };
@@ -1029,9 +1031,12 @@ const Index = () => {
   const { data: projectList } = useGetProjectlistQuery();
   const { data: agentList } = useGetAgentlistQuery(projectId);
   const { data: modeList } = useGetModelistQuery(planName);
+  console.log(modeList);
+  console.log(planName);
   const { data: bankList } = useGetBankListQuery();
   const { data: bankbranchList } = useGetBankbranchlistQuery(bankCode);
   const { data: districtList } = useGetDistrictlisttQuery();
+  console.log(district)
   const { data: birthPlaceList } = useGetDistrictlisttQuery();
   const { data: genderList } = useGetGenderQuery();
 
@@ -2384,17 +2389,19 @@ const Index = () => {
           <div class="p-1 mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
             <div className="text-start px-2">
               <label className="text-start text-xs">SELECT OFFICE</label>
+
               <select
                 onChange={handleBranch}
                 className="form-input shadow text-sm border-[#E3F2FD] mt-1 w-full"
               >
-                <option>SELECT</option>
+                <option value="">SELECT</option>
                 {branchList?.map((branchName, i) => (
-                  <option key={i} value={branchName?.branch_id}>
-                    {branchName?.branch_name} - {branchName?.branch_id}
+                  <option key={i} value={branchName.branch_id}>
+                    {branchName.branch_id} - {branchName.branch_name}
                   </option>
                 ))}
               </select>
+
             </div>
             <div className="text-start px-2">
               <label className="text-start text-xs">SELECT PROJECT</label>
@@ -2578,10 +2585,12 @@ const Index = () => {
                       <input
                         type="text"
                         id="success"
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         value={spouseName}
                         onChange={handleSpouse}
+                        disabled={maritalStatus !== '1'}
                       />
+
                     )}
                   </div>
                 </div>
@@ -2725,11 +2734,6 @@ const Index = () => {
                           <input
                             type="text"
                             id="success"
-                            // value={
-                            //   proposalInfo[0]?.address1
-                            //     ? proposalInfo[0]?.address1
-                            //     : ""
-                            // }
                             value={address}
                             class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleAddressChange}
@@ -3459,16 +3463,15 @@ const Index = () => {
                       <select
                         onChange={(e) => setPaymentMode(e.target.value)}
                         className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
-                        value='1'
+                        value={paymentMode}
                       >
-                        <>
-                          <option>Select Mode</option>
-                          {modeList?.map((mode, i) => (
-                            <option key={i} value={mode?.mode_code}>
-                              {mode?.mode_code}-{mode?.mode_name}
-                            </option>
-                          ))}
-                        </>
+                        <option value="">Select Mode</option> {/* Set value to empty string */}
+
+                        {modeList?.length > 0 && modeList?.map((mode, i) => (
+                          <option key={i} value={mode.mode_code}>
+                            {mode.mode_code}-{mode.mode_name}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
