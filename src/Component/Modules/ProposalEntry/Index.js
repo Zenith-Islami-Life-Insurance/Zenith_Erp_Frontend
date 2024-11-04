@@ -335,7 +335,6 @@ const Index = () => {
   };
 
   // Set planId based on proposalInfo
-
   useEffect(() => {
     if (proposalInfo[0]?.table_id) {
       const foundPlan = planList?.find(plan => plan.plan_id === proposalInfo[0]?.table_id);
@@ -1625,17 +1624,21 @@ const Index = () => {
 
   //3rd page 
   // Initialize state with 7 rows
-  const initialRows = Array(7).fill({
-    relation: "",
-    healthStatus: "",
-    age: "",
-    ageAtDeath: "",
-    causeOfDeath: "",
-    durationOfDisease: "",
-    deathYear: "",
-  });
 
-  const [rows, setRows] = useState(initialRows);
+  const [familyHistoryData, setFamilyHostoryData] = useState([])
+  console.log(familyHistoryData)
+  const [rows, setRows] = useState([
+    {
+      relation: '',
+      healthStatus: '',
+      age: '',
+      ageAtDeath: '',
+      causeOfDeath: '',
+      durationOfDisease: '',
+      deathYear: ''
+    },
+    // Additional rows can be added here
+  ]);
 
   const handleInputChange = (index, field, value) => {
     setRows((prevRows) => {
@@ -1644,11 +1647,9 @@ const Index = () => {
           const updatedRow = { ...row, [field]: value };
 
           if (field === "healthStatus") {
-            // If healthStatus changes to "Late", clear age and disable certain fields
             if (value === "Late") {
               updatedRow.age = "";
-            }
-            if (value === "Good" || value === "Sick") {
+            } else if (value === "Good" || value === "Sick") {
               updatedRow.ageAtDeath = "";
               updatedRow.deathYear = "";
               updatedRow.causeOfDeath = "";
@@ -1665,45 +1666,43 @@ const Index = () => {
     });
   };
 
-  const addRow = () => {
-    setRows((prevRows) => [
-      ...prevRows,
-      {
-        relation: "",
-        healthStatus: "",
-        age: "",
-        ageAtDeath: "",
-        causeOfDeath: "",
-        durationOfDisease: "",
-        deathYear: "",
-      },
-    ]);
-  };
+  const handleFamilySubmit = async () => {
+    try {
+      const formattedRows = rows.map((row) => ({
+        PROPOSAL_N: '12345', // Adjust this as needed
+        RELCODE: row.relation || '',
+        REL_AGE: row.age || '',
+        REL_PHYSICAL: row.healthStatus || '',
+        DEATH_AGE: row.ageAtDeath || null,
+        DEATH_CAUSE: row.causeOfDeath || null,
+        DISEASE_TIME_MONTH: row.durationOfDisease || null,
+        DEATH_YEAR: row.deathYear || null,
+      }));
 
-  const deleteRow = (index) => {
-    setRows((prevRows) => prevRows.filter((_, i) => i !== index));
-  };
+      console.log('Formatted Rows:', formattedRows);
 
-  const isRowFilled = (row) => {
-    if (row.healthStatus === "Late") {
-      // When healthStatus is "Late", age should be empty and other fields should be filled
-      return (
-        !row.age && // Ensure age is empty
-        row.ageAtDeath &&
-        row.causeOfDeath &&
-        row.durationOfDisease &&
-        row.deathYear
-      );
-    } else if (row.healthStatus === "Good" || row.healthStatus === "Sick") {
-      // When healthStatus is "Good" or "Sick", only age should be required
-      return row.age;
-    } else {
-      // For other statuses, handle as per your requirement (could be similar to "Good" or "Sick")
-      return row.age;
+      const response = await axios.post('http://localhost:5001/api/family-history', formattedRows);
+      console.log('Data inserted successfully:', response.data);
+
+      // Assuming response.data.data contains the newly inserted rows
+      setFamilyHostoryData(prev => [...prev, ...response.data.data]);
+
+      // Display the proposal number of the last inserted row
+      if (response.data.data.length > 0) {
+        const lastInsertedProposal = response.data.data[response.data.data.length - 1].PROPOSAL_N;
+        alert(`Inserted proposal number: ${lastInsertedProposal}`);
+      }
+
+      // Reset the form fields
+      setRows([{ relation: '', age: '', healthStatus: '', ageAtDeath: '', causeOfDeath: '', durationOfDisease: '', deathYear: '' }]);
+    } catch (error) {
+      console.error('Error inserting family history data:', error);
     }
   };
 
-  const allRowsFilled = rows.every((row) => isRowFilled(row));
+
+  //get relId
+
 
   // Medical Info 4thpage
   const [healthInfo, setHealthInfo] = useState({
@@ -4246,28 +4245,24 @@ const Index = () => {
                             <td className="border-r border-gray-300 px-4 py-2">
                               <select
                                 value={row.relation}
-                                onChange={(e) =>
-                                  handleInputChange(index, "relation", e.target.value)
-                                }
+                                onChange={(e) => handleInputChange(index, "relation", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={index > 0 && !isRowFilled(rows[index - 1])}
                               >
                                 <option value="">Select</option>
-                                <option value="Father">Father</option>
-                                <option value="Mother">Mother</option>
-                                <option value="Brother">Brother</option>
-                                <option value="Sister">Sister</option>
-                                <option value="Spouse">Spouse</option>
-                                <option value="Son">Son</option>
-                                <option value="Daughter">Daughter</option>
+                                <option value="04">Father</option>
+                                <option value="05">Mother</option>
+                                <option value="03">Brother</option>
+                                <option value="06">Sister</option>
+                                <option value="40">Spouse</option>
+                                <option value="11">Son</option>
+                                <option value="12">Daughter</option>
                               </select>
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2">
                               <select
                                 value={row.healthStatus}
-                                onChange={(e) =>
-                                  handleInputChange(index, "healthStatus", e.target.value)
-                                }
+                                onChange={(e) => handleInputChange(index, "healthStatus", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={index > 0 && !isRowFilled(rows[index - 1])}
                               >
@@ -4281,95 +4276,53 @@ const Index = () => {
                               <input
                                 type="number"
                                 value={row.age}
-                                min={16}
-                                max={99}
                                 onChange={(e) => {
-                                  // Get the input value and parse it to an integer
                                   let value = parseInt(e.target.value, 10);
-                                  // Check if the value is a valid number before processing
                                   if (!isNaN(value)) {
-                                    // Enforce the min/max constraints
-                                    if (value < 16) {
-                                      value = 16;
-                                    } else if (value > 99) {
-                                      value = 99;
-                                    }
-
-                                    // Update the value using handleInputChange
+                                    if (value < 16) value = 16;
+                                    else if (value > 99) value = 99;
                                     handleInputChange(index, "age", value);
                                   }
                                 }}
                                 className="w-full border-gray-300 rounded"
-                                disabled={
-                                  row.healthStatus === "Late" ||
-                                  (index > 0 && !isRowFilled(rows[index - 1]))
-                                }
+                                disabled={row.healthStatus === "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
                               />
                             </td>
-
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
                                 value={row.ageAtDeath}
-                                onChange={(e) =>
-                                  handleInputChange(index, "ageAtDeath", e.target.value)
-                                }
+                                onChange={(e) => handleInputChange(index, "ageAtDeath", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={
-                                  row.healthStatus !== "Late" ||
-                                  (index > 0 && !isRowFilled(rows[index - 1]))
-                                }
+                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
                                 value={row.causeOfDeath}
-                                onChange={(e) =>
-                                  handleInputChange(index, "causeOfDeath", e.target.value)
-                                }
+                                onChange={(e) => handleInputChange(index, "causeOfDeath", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={
-                                  row.healthStatus !== "Late" ||
-                                  (index > 0 && !isRowFilled(rows[index - 1]))
-                                }
+                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
                                 value={row.durationOfDisease}
-                                onChange={(e) =>
-                                  handleInputChange(index, "durationOfDisease", e.target.value)
-                                }
+                                onChange={(e) => handleInputChange(index, "durationOfDisease", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={
-                                  row.healthStatus !== "Late" ||
-                                  (index > 0 && !isRowFilled(rows[index - 1]))
-                                }
+                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
                                 value={row.deathYear}
-                                onChange={(e) =>
-                                  handleInputChange(index, "deathYear", e.target.value)
-                                }
+                                onChange={(e) => handleInputChange(index, "deathYear", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={
-                                  row.healthStatus !== "Late" ||
-                                  (index > 0 && !isRowFilled(rows[index - 1]))
-                                }
+                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
                               />
-                            </td>
-                            <td className="border px-2 py-1 bg-gray-100">
-                              <button
-                                onClick={() => deleteRow(index)}
-                                className="bg-red-500 text-white px-2 py-1 rounded"
-                              >
-                                X
-                              </button>
                             </td>
                           </tr>
                         ))}
@@ -4380,7 +4333,7 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex justify-end mt-1">
+            {/* <div className="flex justify-end mt-1">
               <button
                 onClick={addRow}
                 className={`px-4 py-1 rounded text-white ${allRowsFilled ? 'bg-green-500' : 'bg-green-200'}`}
@@ -4388,7 +4341,7 @@ const Index = () => {
               >
                 add+
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* ====medical  and family members part end==== */}
@@ -4424,7 +4377,7 @@ const Index = () => {
               </label>
             </div>
           </div> */}
-          <div class=" mb-0 flex grid grid-cols-2 rounded lg:px-80    mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+          {/* <div class=" mb-0 flex grid grid-cols-2 rounded lg:px-80    mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
             <div className="bg-white flex align-items-center m-1  lg:mt-0">
               <label className="text-xs text-center w-48 mt-3 p-0">
                 WITNESS NAME
@@ -4446,16 +4399,69 @@ const Index = () => {
                 class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
               />
             </div>
-          </div>
+          </div> */}
 
-          <div className="text-center mt-5">
+          <div className="text-center mt-2">
             <button
+              onClick={handleFamilySubmit}
               type="submit"
-              class="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              class="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               SUBMIT
             </button>
           </div>
+          <>
+            {
+              nomineeList?.data?.length !== 0 &&
+              <div className="overflow-x-auto mt-2">
+                <table className="min-w-full bg-white border border-gray-200">
+                  <thead>
+                    <tr className="bg-gray-200 text-gray-600 uppercase text-xs leading-normal">
+                      <th className="py-3 px-6 text-left">RELATION </th>
+                      <th className="py-3 px-6 text-left">PRESENT HEALTH STATUS</th>
+                      <th className="py-3 px-6 text-left">AGE</th>
+                      <th className="py-3 px-6 text-left">AGE AT DEATH</th>
+                      <th className="py-3 px-6 text-left">CAUSE OF DEATH</th>
+                      <th className="py-3 px-6 text-left">DURATION OF DISEASE</th>
+                      <th className="py-3 px-6 text-left">DEATH YEAR</th>
+                      <th className="py-3 px-6 text-left">ACTION</th>
+
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-600 text-sm">
+                    {familyHistoryData?.map((row, index) => (
+                      <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
+                        <td className="py-3 px-6 text-left whitespace-nowrap">
+                          {row.RELCODE === "04" ? "FATHER" :
+                            row.RELCODE === "05" ? "MOTHER" :
+                              row.RELCODE === "03" ? "BROTHER" :
+                                row.RELCODE === "06" ? "SISTER" :
+                                  row.RELCODE === "11" ? "SON" :
+                                    row.RELCODE === "12" ? "DAUGHTER" :
+                                      row.RELCODE === "40" ? "SPOUSE" :
+                                        row.RELCODE}  {/* Default to original RELCODE if it doesn't match */}
+                        </td>
+
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.REL_PHYSICAL}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.REL_AGE}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.DEATH_AGE}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.DEATH_CAUSE}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.DISEASE_TIME_MONTH}</td>
+                        <td className="py-3 px-6 text-left whitespace-nowrap">{row.DEATH_YEAR}</td>
+
+                        <td className="py-3 px-6 text-left whitespace-nowrap text-xl text-red-800 flex items-center space-x-2"> <FontAwesomeIcon
+                          onClick={() => handleGetRowData(row)}
+                          icon={faPenToSquare}
+                          className="text-blue-500 cursor-pointer"
+                        /><FontAwesomeIcon icon={faTrash} onClick={() => deleteNominee(row.slno)} className="text-red-600 cursor-pointer" /> </td>
+
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            }
+          </>
         </div>
       )}
 
