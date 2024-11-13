@@ -1639,7 +1639,7 @@ const Index = () => {
     },
     // Additional rows can be added here
   ]);
-
+  console.log(rows)
   const handleInputChange = (index, field, value) => {
     setRows((prevRows) => {
       const updatedRows = prevRows.map((row, i) => {
@@ -1669,7 +1669,7 @@ const Index = () => {
   const handleFamilySubmit = async () => {
     try {
       const formattedRows = rows.map((row) => ({
-        PROPOSAL_N: '12345', // Adjust this as needed
+        PROPOSAL_N: newProposalNo?.proposal_no[0] || proposalNo,
         RELCODE: row.relation || '',
         REL_AGE: row.age || '',
         REL_PHYSICAL: row.healthStatus || '',
@@ -1681,7 +1681,7 @@ const Index = () => {
 
       console.log('Formatted Rows:', formattedRows);
 
-      const response = await axios.post('http://localhost:5001/api/family-history', formattedRows);
+      const response = await axios.post('http://115.127.36.173:5001/api/family-history', formattedRows);
       console.log('Data inserted successfully:', response.data);
 
       // Assuming response.data.data contains the newly inserted rows
@@ -1699,7 +1699,9 @@ const Index = () => {
       console.error('Error inserting family history data:', error);
     }
   };
-
+  const handlefamilyUpdateData = (data) => {
+    setRows([data])
+  }
 
   //get relId
 
@@ -3629,7 +3631,7 @@ const Index = () => {
                     </div>
                   )}
 
-                  <div class=" mb-0 flex grid grid-cols-3 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                  <div class="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                     <div className="bg-white align-items-center m-1  lg:mt-0">
                       <label className="text-xs text-start w-44 mt-3 p-0">
                         SUM ASSURED
@@ -3666,7 +3668,7 @@ const Index = () => {
                         class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     </div>
-                    <div className="bg-white  align-items-center m-1  lg:mt-0">
+                    <div className="bg-white align-items-center m-1 lg:mt-0">
                       <label className="text-xs text-center w-16 mt-3 p-0">
                         FACTOR
                       </label>
@@ -4244,7 +4246,7 @@ const Index = () => {
                           <tr key={index}>
                             <td className="border-r border-gray-300 px-4 py-2">
                               <select
-                                value={row.relation}
+                                value={row.relation || row.RELCODE}
                                 onChange={(e) => handleInputChange(index, "relation", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={index > 0 && !isRowFilled(rows[index - 1])}
@@ -4261,7 +4263,7 @@ const Index = () => {
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2">
                               <select
-                                value={row.healthStatus}
+                                value={row.healthStatus || row.REL_PHYSICAL}
                                 onChange={(e) => handleInputChange(index, "healthStatus", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={index > 0 && !isRowFilled(rows[index - 1])}
@@ -4275,7 +4277,7 @@ const Index = () => {
                             <td className="border-r border-gray-300 px-4 py-2">
                               <input
                                 type="number"
-                                value={row.age}
+                                value={row.age || row.REL_AGE}
                                 onChange={(e) => {
                                   let value = parseInt(e.target.value, 10);
                                   if (!isNaN(value)) {
@@ -4291,7 +4293,7 @@ const Index = () => {
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
-                                value={row.ageAtDeath}
+                                value={row.ageAtDeath || row.DEATH_AGE}
                                 onChange={(e) => handleInputChange(index, "ageAtDeath", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
@@ -4300,7 +4302,7 @@ const Index = () => {
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
-                                value={row.causeOfDeath}
+                                value={row.causeOfDeath || row.DEATH_CAUSE}
                                 onChange={(e) => handleInputChange(index, "causeOfDeath", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
@@ -4309,7 +4311,7 @@ const Index = () => {
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
-                                value={row.durationOfDisease}
+                                value={row.durationOfDisease || row.DISEASE_TIME_MONTH}
                                 onChange={(e) => handleInputChange(index, "durationOfDisease", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
@@ -4318,7 +4320,7 @@ const Index = () => {
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
                               <input
                                 type="text"
-                                value={row.deathYear}
+                                value={row.deathYear || row.DEATH_YEAR}
                                 onChange={(e) => handleInputChange(index, "deathYear", e.target.value)}
                                 className="w-full border-gray-300 rounded"
                                 disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
@@ -4332,74 +4334,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
-
-            {/* <div className="flex justify-end mt-1">
-              <button
-                onClick={addRow}
-                className={`px-4 py-1 rounded text-white ${allRowsFilled ? 'bg-green-500' : 'bg-green-200'}`}
-                disabled={!allRowsFilled}
-              >
-                add+
-              </button>
-            </div> */}
           </div>
-
-          {/* ====medical  and family members part end==== */}
-
-          {/* postponded by Sir 9/8/2024 */}
-          {/* <div class=" mb-0 flex rounded p-2 mt-0 lg:grid-cols-2 gap-0 w-full justify-center align-items-center   lg:mx-auto lg:mt-2">
-            <div class="flex border items-center shadow p-2 mb-0">
-              <input
-                id="default-checkbox"
-                type="checkbox"
-                value=""
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                for="default-checkbox"
-                class="ms-2 ml-2  text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                FIRST PREGNANCY
-              </label>
-            </div>
-            <div class="flex border items-center ml-2 shadow p-2 mb-0">
-              <input
-                id="default-checkbox"
-                type="checkbox"
-                value=""
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                for="default-checkbox"
-                class="ms-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                MINORITY
-              </label>
-            </div>
-          </div> */}
-          {/* <div class=" mb-0 flex grid grid-cols-2 rounded lg:px-80    mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
-            <div className="bg-white flex align-items-center m-1  lg:mt-0">
-              <label className="text-xs text-center w-48 mt-3 p-0">
-                WITNESS NAME
-              </label>
-              <input
-                type="text"
-                id="success"
-                class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-              />
-            </div>
-
-            <div className="bg-white flex align-items-center m-1  lg:mt-0">
-              <label className="text-xs text-center w-48 mt-3 p-0">
-                WITNESS MOBILE NO
-              </label>
-              <input
-                type="text"
-                id="success"
-                class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
-              />
-            </div>
-          </div> */}
 
           <div className="text-center mt-2">
             <button
@@ -4412,7 +4347,7 @@ const Index = () => {
           </div>
           <>
             {
-              nomineeList?.data?.length !== 0 &&
+              familyHistoryData?.length !== 0 &&
               <div className="overflow-x-auto mt-2">
                 <table className="min-w-full bg-white border border-gray-200">
                   <thead>
@@ -4450,7 +4385,7 @@ const Index = () => {
                         <td className="py-3 px-6 text-left whitespace-nowrap">{row.DEATH_YEAR}</td>
 
                         <td className="py-3 px-6 text-left whitespace-nowrap text-xl text-red-800 flex items-center space-x-2"> <FontAwesomeIcon
-                          onClick={() => handleGetRowData(row)}
+                          onClick={() => handlefamilyUpdateData(row)}
                           icon={faPenToSquare}
                           className="text-blue-500 cursor-pointer"
                         /><FontAwesomeIcon icon={faTrash} onClick={() => deleteNominee(row.slno)} className="text-red-600 cursor-pointer" /> </td>
@@ -5404,12 +5339,12 @@ const Index = () => {
 
           <div className="text-center">
             <button
-              onClick={formData.slno === '' ? handleNomineeInsert : handleNomineeUpdate}
+              onClick={formData.slno !== '' ? handleNomineeInsert : handleNomineeUpdate}
               type="submit"
               className=" text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               {
-                formData.slno === '' ? 'SAVE' : 'UPDATE'
+                formData.slno !== '' ? 'SAVE' : 'UPDATE'
               }
             </button>
           </div>
