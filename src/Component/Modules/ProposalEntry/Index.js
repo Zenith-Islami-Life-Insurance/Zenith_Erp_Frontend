@@ -4249,7 +4249,7 @@ const Index = () => {
                                 value={row.relation || row.RELCODE}
                                 onChange={(e) => handleInputChange(index, "relation", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={index > 0 && !isRowFilled(rows[index - 1])}
+                              // disabled={index > 0 && !isRowFilled(rows[index - 1])}
                               >
                                 <option value="">Select</option>
                                 <option value="04">Father</option>
@@ -4266,7 +4266,7 @@ const Index = () => {
                                 value={row.healthStatus || row.REL_PHYSICAL}
                                 onChange={(e) => handleInputChange(index, "healthStatus", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={index > 0 && !isRowFilled(rows[index - 1])}
+                              // disabled={index > 0 && !isRowFilled(rows[index - 1])}
                               >
                                 <option value="">Select</option>
                                 <option value="Good">Good</option>
@@ -4287,7 +4287,8 @@ const Index = () => {
                                   }
                                 }}
                                 className="w-full border-gray-300 rounded"
-                                disabled={row.healthStatus === "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
+                                disabled={row.healthStatus === "Late"}
+                              // (index > 0 && !isRowFilled(rows[index - 1]))
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
@@ -4296,7 +4297,8 @@ const Index = () => {
                                 value={row.ageAtDeath || row.DEATH_AGE}
                                 onChange={(e) => handleInputChange(index, "ageAtDeath", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
+                                disabled={row.healthStatus !== "Late"}
+                              // || (index > 0 && !isRowFilled(rows[index - 1]))
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
@@ -4305,7 +4307,8 @@ const Index = () => {
                                 value={row.causeOfDeath || row.DEATH_CAUSE}
                                 onChange={(e) => handleInputChange(index, "causeOfDeath", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
+                                disabled={row.healthStatus !== "Late"}
+                              // || (index > 0 && !isRowFilled(rows[index - 1]))
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
@@ -4314,7 +4317,8 @@ const Index = () => {
                                 value={row.durationOfDisease || row.DISEASE_TIME_MONTH}
                                 onChange={(e) => handleInputChange(index, "durationOfDisease", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
+                                disabled={row.healthStatus !== "Late"}
+                              // || (index > 0 && !isRowFilled(rows[index - 1]))
                               />
                             </td>
                             <td className="border-r border-gray-300 px-4 py-2 bg-gray-100">
@@ -4323,7 +4327,8 @@ const Index = () => {
                                 value={row.deathYear || row.DEATH_YEAR}
                                 onChange={(e) => handleInputChange(index, "deathYear", e.target.value)}
                                 className="w-full border-gray-300 rounded"
-                                disabled={row.healthStatus !== "Late" || (index > 0 && !isRowFilled(rows[index - 1]))}
+                                disabled={row.healthStatus !== "Late"}
+                              // || (index > 0 && !isRowFilled(rows[index - 1]))
                               />
                             </td>
                           </tr>
