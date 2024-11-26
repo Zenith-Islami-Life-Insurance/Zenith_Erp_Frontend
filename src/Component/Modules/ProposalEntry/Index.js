@@ -34,9 +34,7 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const Index = () => {
   const [projectId, setProjectId] = useState("");
-
   const [gender, setGender] = useState("");
-  console.log(gender)
   const [maritalStatus, setMaritalStaus] = useState("");
   const [agentValue, setAgentValue] = useState("");
   const [proposalNo, setProposalNo] = useState("");
@@ -46,11 +44,12 @@ const Index = () => {
   const [policyInfo, setPolicyInfo] = useState([]);
 
   const [proposal_date, setProposalDate] = useState(proposalInfo[0]?.proposal_date || '');
-  console.log(proposalInfo[0]?.proposal_date)
+
   const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
   // const [birth_date, setBirthDate] = useState(proposalInfo[0]?.risk_date || '');
   const [resident, setResident] = useState();
   const [district, setDistrict] = useState();
+
   const [thana, setThana] = useState();
   const [postOffice, setPostoffice] = useState();
   const [pdistrict, setPDistrict] = useState();
@@ -72,6 +71,7 @@ const Index = () => {
 
   const [occupation, setOccupation] = useState();
   const [branch, setBranch] = useState();
+  console.log(branch)
   const [educationName, setEducation] = useState();
   const [eduId, setEduId] = useState();
   const [religion, setReligion] = useState();
@@ -157,7 +157,7 @@ const Index = () => {
   const [previousPolicyNo, setPreviousPolicyNo] = useState();
   const [nomineeAge, setNomineeAge] = useState()
   const [nomineeList, setNomines] = useState([])
-  console.log(nomineeList)
+
   // console.log(totalInstallment);
   const calcuAge = calAge?.age[0];
   const jointAge = jcalAge?.age[0];
@@ -294,6 +294,7 @@ const Index = () => {
   };
   const [planId, setPlanId] = useState("");
   const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
+  console.log(planList)
   const handlePlan = (e) => {
     const value = e.target.value;
     console.log(value)
@@ -407,15 +408,15 @@ const Index = () => {
   };
 
   const handleBranch = (e) => {
-    setBranch(e.target.value);
+    const value = e.target.value;
+    const branchCode = value.split(" - ")[0];
+    setBranch(branchCode);
   };
+
   const handleOccupation = (e) => {
-    setOccupation(e.target.value);
-    // setSupplementList([])
-    // setClassList([])
-    // setSuppPrem([])
-    // setSuppliRate([])
-    // setSuppliClass()
+    const input = e.target.value;
+    const code = input.split(" - ")[0];
+    setOccupation(code);
   };
   const handleAge = (e) => {
     setAge(e.target.value);
@@ -462,6 +463,9 @@ const Index = () => {
     setIsAddressChecked(checked);
     if (checked) {
       setPermanentAddress(address);
+      setDistrict(district)
+      setThana(thana)
+
     } else {
       setPermanentAddress('');
     }
@@ -560,7 +564,7 @@ const Index = () => {
   //   setProposalDate(''); // Reset proposal date
   //   setRiskDate(''); // Reset risk date
   // };
-  console.log(proposalInfo[0]?.plan_desc)
+  console.log(proposalInfo[0])
 
   const handleproposalDateChange = (event) => {
     const newProposalDate = event.target.value;
@@ -606,13 +610,27 @@ const Index = () => {
     }
   }, [proposalInfo]);
 
+  const handleAgentChange = (e) => {
+    const input = e.target.value;
+    const code = input.split(" - ")[0];
+    setAgentValue(code);
+  };
   useEffect(() => {
     if (proposalInfo[0]?.agent_id) {
       setAgentValue(proposalInfo[0]?.agent_id);
     }
   }, [proposalInfo]);
 
-
+  const handleDistrictChange = (e) => {
+    const input = e.target.value;
+    const code = input.split(" - ")[0];
+    setDistrict(code);
+  };
+  const handleThanaChange = (e) => {
+    const input = e.target.value;
+    const code = input.split(" - ")[0];
+    setThana(code);
+  };
   useEffect(() => {
     if (proposalInfo[0]?.occupation) {
       setOccupation(proposalInfo[0]?.occupation);
@@ -1030,21 +1048,16 @@ const Index = () => {
   const { data: projectList } = useGetProjectlistQuery();
   const { data: agentList } = useGetAgentlistQuery(projectId);
   const { data: modeList } = useGetModelistQuery(planName);
-  console.log(modeList);
-  console.log(planName);
+
   const { data: bankList } = useGetBankListQuery();
   const { data: bankbranchList } = useGetBankbranchlistQuery(bankCode);
   const { data: districtList } = useGetDistrictlisttQuery();
-  console.log(district)
   const { data: birthPlaceList } = useGetDistrictlisttQuery();
   const { data: genderList } = useGetGenderQuery();
-
   const { data: locallityList } = useGetLocallityQuery();
   const { data: countryList } = useGetCountrylistQuery();
   const { data: occupationList } = useGetOccupationlistQuery();
-  console.log(occupationList)
   const { data: educationList } = useGetEducationListQuery();
-  console.log(educationList)
   const { data: religionList } = useGetReligionListQuery();
   // const { data: planList } = useGetPlanlistQuery(calcuAge || proposalInfo[0]?.age);
   const { data: options } = useGetOptionsQuery(planName);
@@ -1193,6 +1206,7 @@ const Index = () => {
 
         if (secondData.success) {
           setProposalFristPage('ok');
+          setProposalNo(data?.proposalNumber)
           swal({
             title: "Proposal Entry Successfully",
             text: `Your proposal number: ${data.proposalNumber}`,
@@ -2282,26 +2296,38 @@ const Index = () => {
       >
         PROPOSAL ENTRY FORM
       </h1>
-
       <div className="lg:mx-48 mt-3">
-        <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-success-200 dark:border-gray-700 dark:text-gray-400">
-          {(topbarItems || [])?.map((item, index) => {
-            return (
-              <li
-                key={index}
-                className={`border-b-transparent mr-3 px-4 inline-flex items-center gap-2 text-sm font-medium text-center text-dark rounded-t-lg py-3 border rounded  ${selectedTopbarItem === item.code
-                  ? "bg-[#087f23] text-[#fff]"
-                  : ""
-                  }`}
-                onClick={() => handleTopbarItemClick(item.code)}
-              >
-                {" "}
-                {item.title}
-              </li>
-            );
-          })}
+        <ul
+          className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-success-200 dark:border-gray-700 dark:text-gray-400"
+          role="tablist"
+        >
+          {(topbarItems || []).map((item, index) => (
+            <li
+              key={index}
+              role="tab"
+              aria-selected={selectedTopbarItem === item.code}
+              className={`border-b-transparent mr-3 px-4 inline-flex items-center gap-2 text-sm font-medium text-center text-dark rounded-t-lg py-3 border rounded ${selectedTopbarItem === item.code ? "bg-[#087f23] text-[#fff]" : ""
+                }`}
+              onClick={() => handleTopbarItemClick(item.code)}
+            >
+              {item.title}
+            </li>
+          ))}
         </ul>
+
+        <div className="mt-4">
+          {topbarItems.map((item, index) => (
+            <div
+              key={index}
+              style={{ display: selectedTopbarItem === item.code ? "block" : "none" }}
+            >
+              {item.content} {/* Replace with the actual content for the tab */}
+            </div>
+          ))}
+        </div>
       </div>
+
+
 
       {selectedTopbarItem === "PI" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2 ">
@@ -2367,6 +2393,7 @@ const Index = () => {
                 className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                 onChange={handleProposalNo}
                 placeholder="Enter Proposal No"
+                value={proposalNo}
               />
             </div>
             <div className="text-center flex w-full  mt-2 lg:mt-0">
@@ -2391,17 +2418,20 @@ const Index = () => {
             <div className="text-start px-2">
               <label className="text-start text-xs">SELECT OFFICE</label>
 
-              <select
+              <input
+                list="branchList"
                 onChange={handleBranch}
-                className="form-input shadow text-sm border-[#E3F2FD] mt-1 w-full"
-              >
-                <option value="">SELECT</option>
+                placeholder="Select or type branch"
+                className="shadow-sm border border-[#E3F2FD] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm px-3 py-2 mt-1 w-full"
+              // value={branch}
+              />
+              <datalist id="branchList">
                 {branchList?.map((branchName, i) => (
-                  <option key={i} value={branchName.branch_id}>
+                  <option key={i} value={`${branchName.branch_id} - ${branchName.branch_name}`} CLASS>
                     {branchName.branch_id} - {branchName.branch_name}
                   </option>
                 ))}
-              </select>
+              </datalist>
 
             </div>
             <div className="text-start px-2">
@@ -2422,6 +2452,22 @@ const Index = () => {
 
             <div className="text-start px-2">
               <label className="text-start text-xs">SELECT AGENT</label>
+
+              <input
+                list="agentList"
+                onChange={handleAgentChange}
+                placeholder="Select or type branch"
+                className="shadow-sm border border-[#E3F2FD] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm px-3 py-2 mt-1 w-full"
+              // value={agentValue}
+              />
+              <datalist id="agentList">
+                {agentList?.map((agent, i) => (
+                  <option key={i} value={`${agent?.agent_code} - ${agent?.agent_name}`}>
+                    {agent?.agent_name} - {agent?.agent_code}
+                  </option>
+                ))}
+              </datalist>
+              {/* 
               <select
                 onChange={(e) => setAgentValue(e.target.value)}
                 className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
@@ -2433,7 +2479,7 @@ const Index = () => {
                     {agent?.agent_name}- {agent?.agent_code}
                   </option>
                 ))}
-              </select>
+              </select> */}
             </div>
             <div className="text-start px-2">
               <label className="text-start text-xs">PROPOSAL DATE</label>
@@ -2756,7 +2802,23 @@ const Index = () => {
                         <label className="text-start text-xs">
                           SELECT DISTRICT
                         </label>
-                        <select
+
+                        <input
+                          list="districtList"
+                          onChange={handleDistrictChange}
+                          placeholder="Select or type branch"
+                          className="shadow-sm border border-[#E3F2FD] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm px-3 py-2 mt-1 w-full"
+                        // value={district}
+                        />
+                        <datalist id="districtList">
+                          {districtList?.map((district, i) => (
+                            <option key={i} value={`${district?.div_code} - ${district?.division_name}`}>
+                              {district?.division_name} - {district?.div_code}
+                            </option>
+                          ))}
+                        </datalist>
+
+                        {/* <select
                           onChange={(e) => setDistrict(e.target.value)}
                           value={district}
                           className="form-input shadow text-sm border-[#E3F2FD] mt-1 w-full"
@@ -2766,12 +2828,27 @@ const Index = () => {
                               {district?.division_name} - {district?.div_code}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
                       </div>
                       <div className="text-start px-2">
                         <label className="text-start text-xs">
                           SELECT THANA
                         </label>
+                        <input
+                          list="thanaList"
+                          onChange={handleThanaChange}
+                          placeholder="Select or type branch"
+                          className="shadow-sm border border-[#E3F2FD] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm px-3 py-2 mt-1 w-full"
+                        // value={agentValue}
+                        />
+                        <datalist id="thanaList">
+                          {thanaList?.map((thana, i) => (
+                            <option key={i} value={`${thana?.thana_code} - ${thana?.thana_name}`}>
+                              {thana?.thana_name} - {thana?.thana_code}
+                            </option>
+                          ))}
+                        </datalist>
+                        {/* 
                         <select
                           onChange={(e) => setThana(e.target.value)}
                           value={thana}
@@ -2782,7 +2859,7 @@ const Index = () => {
                               {thana?.thana_name} - {thana?.thana_code}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
                       </div>
 
                       <div className="text-start px-2">
@@ -2846,7 +2923,7 @@ const Index = () => {
                         </label>
                         <select
                           onChange={(e) => setPDistrict(e.target.value)}
-                          value={pdistrict}
+                          value={isAddressChecked ? district : pdistrict}
                           className="form-input shadow text-sm border-[#E3F2FD] mt-1 w-full"
                         >
                           {districtList?.map((districtt, ii) => (
@@ -2862,7 +2939,7 @@ const Index = () => {
                         </label>
                         <select
                           onChange={(e) => setPThana(e.target.value)}
-                          value={pthana}
+                          value={isAddressChecked ? thana : pthana}
                           className="form-input shadow text-sm border-[#E3F2FD] mt-1 w-full"
                         >
                           {thanaList?.map((thanaa, ii) => (
@@ -3176,7 +3253,6 @@ const Index = () => {
                               </option>
                             ))}
                           </select>
-
                         </div>
                         <div className="flex items-center gap-x-2.5">
                           <Checkbox
@@ -3190,13 +3266,11 @@ const Index = () => {
                             </label>
                           </div>
                         </div>
-
                         {/* // POSTPONDED bY SIR */}
                         {/* <div className="text-start flex px-1">
                           <label className="w-32 text-center  mt-3 font-bold text-xs">
                             EDU STATUS
                           </label>
-
                           <select
                             onChange={handleEducationStatus}
                             className="form-input text-sm shadow border-[#E3F2FD] mt-3 w-full"
@@ -3212,7 +3286,21 @@ const Index = () => {
                           <label className="w-32   mt-3 font-bold text-xs">
                             OCCUPATION
                           </label>
-                          <select
+                          <input
+                            list="occupationList"
+                            onChange={handleOccupation}
+                            placeholder="Select or type branch"
+                            className="shadow-sm border border-[#E3F2FD] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm px-3 py-2 mt-1 w-full"
+                          // value={agentValue}
+                          />
+                          <datalist id="occupationList">
+                            {occupationList?.map((item, i) => (
+                              <option key={i} value={`${item?.occupation_ID} - ${item?.occupation_name}`}>
+                                {item?.agent_name} - {item?.agent_code}
+                              </option>
+                            ))}
+                          </datalist>
+                          {/* <select
                             onChange={(e) => setOccupation(e.target.value)}
                             // onChange={handleOccupation}
                             className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
@@ -3224,7 +3312,7 @@ const Index = () => {
                                 {occupation?.occupation_ID}-{occupation?.occupation_name}
                               </option>
                             ))}
-                          </select>
+                          </select> */}
                         </div>
                       </div>
 
@@ -4280,11 +4368,9 @@ const Index = () => {
                                 value={row.age || row.REL_AGE}
                                 onChange={(e) => {
                                   let value = parseInt(e.target.value, 10);
-                                  if (!isNaN(value)) {
-                                    if (value < 16) value = 16;
-                                    else if (value > 99) value = 99;
-                                    handleInputChange(index, "age", value);
-                                  }
+
+                                  handleInputChange(index, "age", value);
+
                                 }}
                                 className="w-full border-gray-300 rounded"
                                 disabled={row.healthStatus === "Late"}
