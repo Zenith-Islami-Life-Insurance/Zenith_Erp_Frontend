@@ -1,24 +1,38 @@
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/icon/jenith.png";
 import { Circles, ThreeCircles } from "react-loader-spinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import swal from "sweetalert";
+import { AuthContext } from "../../providers/AuthProvider";
 // import 'react-toastify/dist/ReactToastify.css';
+
 const Login = () => {
+  
+  const {loggedIn} = useContext(AuthContext);
+
   const navigate = useNavigate();
+
   const [userData, setUserData] = useState("");
   const [spinner, setSpinner] = useState(false);
-  // console.log(userData)
+
+  if(userData) console.log(userData);
+
   const error = userData?.error;
   // console.log(error);
   const User = userData?.user_details;
 
   const ROLE_ID = User?.ROLE_ID;
 
-  localStorage.setItem("UserDetails", JSON.stringify(User));
+  useEffect(() => {
+    if (loggedIn) {
+      navigate("/dashboard");
+    }
+  }, [loggedIn, navigate]);
+
+  if(User?.ROLE_ID){localStorage.setItem("UserDetails", JSON.stringify(User));}
 
   //user login process
   const login = (event) => {
@@ -38,20 +52,21 @@ const Login = () => {
       .then((data) => setUserData(data));
     setSpinner(true);
   };
-  console.log('abul bashar:', ROLE_ID)
+  // console.log('abul bashar:', ROLE_ID)
   useEffect(() => {
     if (ROLE_ID === 0) {
       swal({
         title: "Login Successfully",
         icon: "success",
       });
-      navigate(`/dashboard`);
+      navigate(`/module`);
     } else if (error === "User not found") {
       // alert('Please type proper user id & pass');
       setSpinner(false);
       //  toast.error(`Opps!Please type proper emp code & password`);
     } else if (ROLE_ID === 1) {
-      navigate(`/development`);
+      // navigate(`/development`);
+      navigate('/module')
     } else if (ROLE_ID === 2) {
       navigate(`/department-head`);
     } else if (ROLE_ID === 3) {
@@ -66,8 +81,8 @@ const Login = () => {
 
   return (
     <div>
-      <div class="flex justify-center mx-6 mt-24 lg:mx-0 lg:mt-36">
-        <div class="block shadow-xl w-full lg:w-1/2  bordered rounded p-3 lg:p-10 rounded bordered shadow-xl bg-white max-w-lg">
+      <div className="flex justify-center mx-6 mt-24 lg:mx-0 lg:mt-36">
+        <div className="block w-full lg:w-1/2  bordered p-3 lg:p-10 rounded bordered shadow-xl bg-white max-w-lg">
           <form onSubmit={login} className="flex w-full flex-col gap-4">
             <div className="flex justify-center">
               <img
