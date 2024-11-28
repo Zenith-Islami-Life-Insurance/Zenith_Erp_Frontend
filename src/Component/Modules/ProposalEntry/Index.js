@@ -388,7 +388,7 @@ const Index = () => {
   const handleCountry = (e) => {
     setCountry(e.target.value);
   };
-  console.log(maritalStatus)
+
   const handleMaritalStatus = (e) => {
     setMaritalStaus(e.target.value);
   };
@@ -2588,6 +2588,7 @@ const Index = () => {
                           id="success"
                           className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                           onChange={handleMarrigeDate}
+                          disabled={maritalStatus === '1'}
                         />
                     }
                   </div>
@@ -2635,7 +2636,7 @@ const Index = () => {
                         className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         value={spouseName}
                         onChange={handleSpouse}
-                        disabled={maritalStatus !== '1'}
+                        disabled={maritalStatus === '1'}
                       />
 
                     )}
