@@ -14,15 +14,18 @@ const Navbar = () => {
   const location = useLocation();
   const { pathname } = location;
 
+  // console.log(role_id);
+  
+
   return (
     <div>
       {/* <!-- Section: Design Block --> */}
-      <section class="mb-0">
-        <nav class="navbar navbar-expand-lg bg-[#1faa00] lg:px-12 shadow-md py-1 relative flex items-center w-full justify-between">
-          <div class="px-6 w-full flex flex-wrap items-center justify-between">
-            <div class="flex items-center">
+      <section className="mb-0">
+        <nav className="navbar navbar-expand-lg bg-[#1faa00] lg:px-12 shadow-md py-1 relative flex items-center w-full justify-between">
+          <div className="px-6 w-full flex flex-wrap items-center justify-between">
+            <div className="flex items-center">
               <button
-                class="navbar-toggler border-0 py-3 lg:hidden leading-none text-xl bg-transparent text-white hover:text-white focus:text-white transition-shadow duration-150 ease-in-out mr-2"
+                className="navbar-toggler border-0 py-3 lg:hidden leading-none text-xl bg-transparent text-white hover:text-white focus:text-white transition-shadow duration-150 ease-in-out mr-2"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContentY"
@@ -34,7 +37,7 @@ const Navbar = () => {
                   aria-hidden="true"
                   focusable="false"
                   data-prefix="fas"
-                  class="w-5"
+                  className="w-5"
                   role="img"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 448 512"
@@ -50,100 +53,100 @@ const Navbar = () => {
                 className="w-12  shadow-lg bg-white rounded-full p-1 hidden lg:block"
                 src={logo}
               />
-              <a class="btn btn-ghost normal-case text-md lg:px-3 text-white font-bold">
+              <a className="btn btn-ghost normal-case text-md lg:px-3 text-white font-bold">
                 ZENITH ISLAMI LIFE
               </a>
             </div>
             <div
-              class="navbar-collapse collapse grow items-center"
+              className="navbar-collapse grow items-center"
               id="navbarSupportedContentY"
             >
               {role_id === 0 && (
-                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
+                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
                       }`}
                   >
                     <AiOutlineHome className="mt-1 text-white mr-1" />{" "}
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/dashboard"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Home
                     </NavLink>
                   </li>
 
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("department-head") && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("department-head") && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/department-head"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Module List
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("module-list") && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("module-list") && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/module-list"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Access Permission
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("permission-user-list") &&
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("permission-user-list") &&
                       "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/permission-user-list"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Privilage List
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/module" && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/module" && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/module"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Module Assign
                     </NavLink>
                   </li>
 
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/user-list" && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/user-list" && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/user-list"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Department User List
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("proposal-entry") && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("proposal-entry") && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/proposal-entry"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Proposal Entry
                     </NavLink>
@@ -155,7 +158,7 @@ const Navbar = () => {
                                 <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                                 <NavLink className='text-white pr-3' to='/contact'>Contact us</NavLink>
                                 </li> */}
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-2 mt-1 pr-0 p-1.5 mr-0 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-2 mt-1 pr-0 p-1.5 mr-0 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       onClick={handleLogout}
@@ -168,92 +171,94 @@ const Navbar = () => {
                   </li>
                 </ul>
               )}
+
+              
               {role_id === 1 && (
-                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
+                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
                       }`}
                   >
                     <AiOutlineHome className="mt-1 text-white mr-1" />{" "}
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/dashboard"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Home
                     </NavLink>
                   </li>
 
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("department-head") && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("department-head") && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
-                      to="/department-head"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      to="/module"
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Module List
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("module-list") && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("module-list") && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/module-list"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Access Permission
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("permission-user-list") &&
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("permission-user-list") &&
                       "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/permission-user-list"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Privilage List
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/module" && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/module" && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/module"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Module Assign
                     </NavLink>
                   </li>
 
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/user-list" && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname === "/user-list" && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/user-list"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Department User List
                     </NavLink>
                   </li>
                   <li
-                    class={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("proposal-entry") && "bg-green-800"
+                    className={`nav-item flex text-center bg-[#087f23] pl-3  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("proposal-entry") && "bg-green-800"
                       }`}
                   >
                     <NavLink
                       className="text-white pr-3 font-weight-bold"
                       to="/proposal-entry"
-                      activeStyle={{ color: "#005005", textDecoration: "none" }}
+                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
                     >
                       Proposal Entry
                     </NavLink>
@@ -265,7 +270,7 @@ const Navbar = () => {
                                 <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                                 <NavLink className='text-white pr-3' to='/contact'>Contact us</NavLink>
                                 </li> */}
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-2 mt-1 pr-0 p-1.5 mr-0 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-2 mt-1 pr-0 p-1.5 mr-0 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       onClick={handleLogout}
@@ -279,21 +284,21 @@ const Navbar = () => {
                 </ul>
               )}
               {role_id === 2 && (
-                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
+                  <li className="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/development">
                       Home
                     </NavLink>
                     {/* <a class="nav-link block pr-2 lg:px-2 py-2 text-white hover:text-white focus:text-white transition duration-150 ease-in-out" href="/about" data-mdb-ripple="true" data-mdb-ripple-color="light">About Us</a> */}
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/contact">
                       Contact us
                     </NavLink>
 
                     {/* <a class="nav-link block pr-2 lg:px-2 py-2 text-white hover:text-white focus:text-white transition duration-150 ease-in-out" href="#!" data-mdb-ripple="true" data-mdb-ripple-color="light">Contact Us</a> */}
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       onClick={handleLogout}
@@ -307,18 +312,18 @@ const Navbar = () => {
                 </ul>
               )}
               {role_id === 2 && (
-                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
+                  <li className="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/department-head">
                       Home
                     </NavLink>
                   </li>
-                  <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/module-list">
                       Permission Module
                     </NavLink>
                   </li>
-                  <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       to="/permission-user-list"
@@ -327,14 +332,14 @@ const Navbar = () => {
                     </NavLink>
                   </li>
 
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/contact">
                       Contact us
                     </NavLink>
 
                     {/* <a class="nav-link block pr-2 lg:px-2 py-2 text-white hover:text-white focus:text-white transition duration-150 ease-in-out" href="#!" data-mdb-ripple="true" data-mdb-ripple-color="light">Contact Us</a> */}
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       onClick={handleLogout}
@@ -348,18 +353,18 @@ const Navbar = () => {
                 </ul>
               )}
               {role_id === 3 && (
-                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
+                  <li className="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/development">
                       Home
                     </NavLink>
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/contact">
                       Contact us
                     </NavLink>
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       onClick={handleLogout}
@@ -371,18 +376,18 @@ const Navbar = () => {
                 </ul>
               )}
               {role_id === 4 && (
-                <ul class="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li class="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
-                    <NavLink className="text-white pr-3" to="/development">
+                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
+                  <li className="nav-item flex  text-center bg-[#087f23] pl-3 pr-0 p-1.5 mt-1 mr-3 rounded hover:bg-[#005005]">
+                    <NavLink className="text-white pr-3" to="/director">
                       Home
                     </NavLink>
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink className="text-white pr-3" to="/contact">
                       Contact us
                     </NavLink>
                   </li>
-                  <li class="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
+                  <li className="nav-item mb-2 lg:mb-0 flex text-center bg-[#087f23] pl-3 mt-1 pr-0 p-1.5 mr-3 rounded hover:bg-[#005005]">
                     <NavLink
                       className="text-white pr-3"
                       onClick={handleLogout}

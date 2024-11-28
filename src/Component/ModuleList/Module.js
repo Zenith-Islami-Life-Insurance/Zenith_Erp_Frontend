@@ -9,11 +9,18 @@ const Module = () => {
   const [moduleList, setModueleList] = useState([""]);
   const [spinner, setSpinner] = useState(false);
 
+  const UserD = JSON.parse(localStorage.getItem("UserDetails"));
+  console.log(UserD);
+  const PERSONAL_ID = UserD?.PERSONALID;
+
   // fetch sub module list
   const ModuleList = async () => {
     setSpinner(true);
     try {
-      const response = await axios.get("http://115.127.36.173:5001/api/all-modules");
+      // const response = await axios.get("http://115.127.36.173:5001/api/all-modules");
+      const response = await axios.get(
+        `http://115.127.36.173:5001/api/modules/${PERSONAL_ID}`
+      );
       setModueleList(response.data?.module_list);
       setSpinner(false);
     } catch (error) {
@@ -48,13 +55,13 @@ const Module = () => {
             middleCircleColor=""
           />
         </div>
-        <div class="grid grid-cols-2 mt-5 lg:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 mt-5 lg:grid-cols-6 gap-2">
           {moduleList.map((mName, i) => (
             <Link
               key={i}
               to={`/permission=${mName?.module_id}=${mName?.module_name}`}
             >
-              <div class=" shadow-md bordered text-white p-2 lg:p-4 rounded bordered  bg-[#0E9F6E] max-w-sm">
+              <div className=" shadow-md bordered text-white p-2 lg:p-4 rounded bordered  bg-[#0E9F6E] max-w-sm">
                 <h5 className="font-normal mt-1">{mName?.module_name}</h5>
               </div>
             </Link>
