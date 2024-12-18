@@ -1,17 +1,19 @@
 import { Card } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../Nabar/Navbar";
 import { Link, useParams } from "react-router-dom";
 import { ThreeCircles } from "react-loader-spinner";
 import axios from "axios";
+import { AuthContext } from "../../providers/AuthProvider";
 
 const Module = () => {
+
+  const {loggedIn, userDetailsString} = useContext(AuthContext);
+  
   const [moduleList, setModueleList] = useState([""]);
   const [spinner, setSpinner] = useState(false);
 
-  const UserD = JSON.parse(localStorage.getItem("UserDetails"));
-  console.log(UserD);
-  const PERSONAL_ID = UserD?.PERSONALID;
+  const { PERSONALID, NAME, ROLE_ID, DEPT_CODE, PROJECT, USER_TYPE} = userDetailsString;
 
   // fetch sub module list
   const ModuleList = async () => {
@@ -19,9 +21,12 @@ const Module = () => {
     try {
       // const response = await axios.get("http://115.127.36.173:5001/api/all-modules");
       const response = await axios.get(
-        `http://115.127.36.173:5001/api/modules/${PERSONAL_ID}`
+        // `http://115.127.36.173:5001/api/modules/${PERSONAL_ID}`
+        `http://localhost:5000/api/modules/${PERSONALID}`
       );
+      
       setModueleList(response.data?.module_list);
+      
       setSpinner(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -59,10 +64,13 @@ const Module = () => {
           {moduleList.map((mName, i) => (
             <Link
               key={i}
-              to={`/permission=${mName?.module_id}=${mName?.module_name}`}
+              to={
+                  ROLE_ID === 0 ? `/permission/${mName?.Module_id}/${mName?.Module_name}` : mName?.Module_link
+                }  
+              
             >
               <div className=" shadow-md bordered text-white p-2 lg:p-4 rounded bordered  bg-[#0E9F6E] max-w-sm">
-                <h5 className="font-normal mt-1">{mName?.module_name}</h5>
+                <h5 className="font-normal mt-1">{mName?.Module_name}</h5>
               </div>
             </Link>
           ))}

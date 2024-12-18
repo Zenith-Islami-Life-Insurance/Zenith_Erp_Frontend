@@ -15,3 +15,19 @@ code {
     monospace;
 }
 
+.navitem{
+  @apply p-4 bg-green-600 text-white rounded-xl mr-2
+}
+
+.navitem a{
+  @apply p-0 m-0
+}
+
+.navitem a:hover{
+  @apply text-black
+}
+
+.active{
+  @apply underline text-fuchsia-300
+}
+

@@ -10,31 +10,14 @@ import { AuthContext } from "../../providers/AuthProvider";
 // import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
-  
-  const {loggedIn} = useContext(AuthContext);
-
+  const { loggedIn, setLoggedIn, userDetailsString } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const [userData, setUserData] = useState("");
   const [spinner, setSpinner] = useState(false);
 
-  if(userData) console.log(userData);
+  const error = userDetailsString?.error;
+  const ROLE_ID = userDetailsString?.ROLE_ID;
 
-  const error = userData?.error;
-  // console.log(error);
-  const User = userData?.user_details;
-
-  const ROLE_ID = User?.ROLE_ID;
-
-  useEffect(() => {
-    if (loggedIn) {
-      navigate("/dashboard");
-    }
-  }, [loggedIn, navigate]);
-
-  if(User?.ROLE_ID){localStorage.setItem("UserDetails", JSON.stringify(User));}
-
-  //user login process
+  // User login process
   const login = (event) => {
     event.preventDefault();
     const username = event.target.username.value;
@@ -49,35 +32,43 @@ const Login = () => {
       },
     })
       .then((Response) => Response.json())
-      .then((data) => setUserData(data));
+      .then((data) => {
+        if (data?.user_details) {
+          const userDetails = data.user_details;
+          setLoggedIn(userDetails); // Update context and localStorage
+          setSpinner(false);
+        } else {
+          setSpinner(false);
+          // Handle error (e.g., invalid login)
+        }
+      })
+      .catch((error) => {
+        setSpinner(false);
+        // Handle network error
+      });
+
     setSpinner(true);
   };
-  // console.log('abul bashar:', ROLE_ID)
-  useEffect(() => {
-    if (ROLE_ID === 0) {
-      swal({
-        title: "Login Successfully",
-        icon: "success",
-      });
-      navigate(`/module`);
-    } else if (error === "User not found") {
-      // alert('Please type proper user id & pass');
-      setSpinner(false);
-      //  toast.error(`Opps!Please type proper emp code & password`);
-    } else if (ROLE_ID === 1) {
-      // navigate(`/development`);
-      navigate('/module')
-    } else if (ROLE_ID === 2) {
-      navigate(`/department-head`);
-    } else if (ROLE_ID === 3) {
-      navigate(`/development`);
-    } else if (ROLE_ID === 4) {
-      navigate(`/development`);
-    } else if (ROLE_ID === 5) {
-      navigate(`/about`);
-      // alert('!!Your Account Deactivated');
+
+  // Check loggedIn state to redirect
+  React.useEffect(() => {
+    if (loggedIn) {
+      const ROLE_ID = userDetailsString?.ROLE_ID;
+      if (ROLE_ID === 0) {
+        navigate("/dashboard");
+      } else if (ROLE_ID === 1) {
+        navigate("/module");
+      } else if (ROLE_ID === 2) {
+        navigate("/department-head");
+      } else if (ROLE_ID === 3 || ROLE_ID === 4) {
+        navigate("/development");
+      } else if (ROLE_ID === 5) {
+        navigate("/about");
+      }
+    }else{
+      navigate('/');
     }
-  });
+  }, [loggedIn, ROLE_ID, navigate]);
 
   return (
     <div>
@@ -86,7 +77,7 @@ const Login = () => {
           <form onSubmit={login} className="flex w-full flex-col gap-4">
             <div className="flex justify-center">
               <img
-                className="w-24  shadow-lg bg-white rounded-full p-2 hidden lg:block"
+                className="w-24 shadow-lg bg-white rounded-full p-2 hidden lg:block"
                 src={logo}
               />
             </div>
@@ -123,36 +114,15 @@ const Login = () => {
                 height="60"
                 width="60"
                 color="#4fa94d"
-                wrapperStyle={{}}
-                wrapperClass=""
                 visible={spinner}
                 ariaLabel="three-circles-rotating"
-                outerCircleColor=""
-                innerCircleColor=""
-                middleCircleColor=""
               />
             </div>
-            <div></div>
-
             <Button type="submit" color="success">
               Login
             </Button>
           </form>
         </div>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          type="warning"
-        />
       </div>
     </div>
   );

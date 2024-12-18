@@ -1,34 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./Nabar/Navbar";
 import user from "../assets/icon/user.png";
 import users from "../assets/icon/users.png";
 import dept_head from "../assets/icon/dept_head.png";
 import total_module_icon from "../assets/icon/module.png";
 import department from "../assets/icon/dept_total.png";
-import info from "../assets/icon/info.png";
 import axios from "axios";
+import { AuthContext } from "../providers/AuthProvider";
+
 const Home = () => {
+
+  const {userDetailsString} = useContext(AuthContext);
+
+  // console.log(userDetailsString);
+  
+
+  const { PERSONALID, NAME, ROLE_ID, DEPT_NAME, DEPT_CODE, PROJECT, USER_TYPE} = userDetailsString;
+
   const [Dept_head, setDept_head] = useState("");
   const [total_user, setTotalUser] = useState("");
   const [total_module, setTotalModule] = useState("");
   const [total_dept_head, setDeptHead] = useState("");
   const [total_desk_user, setDeskuser] = useState("");
-  // console.log(total_user)
-
-  const dept_name = Dept_head?.department_name;
-  // console.log(dept_name);
-
+ 
   //Get from localstorage user_details data
-  const UserD = JSON.parse(localStorage.getItem("UserDetails"));
-  console.log(UserD);
-  const PERSONAL_ID = UserD?.PERSONALID;
-  const NAME = UserD?.NAME;
+  // const UserD = JSON.parse(localStorage.getItem("UserDetails"));
+  // console.log(UserD);
+  // const PERSONAL_ID = UserD?.PERSONALID;
+  // const NAME = UserD?.NAME;
 
   // Department Head Details
   const departmentHeadList = async () => {
     try {
       const response = await axios.get(
-        `http://115.127.36.173:5001/api/department-head/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/department-head/${PERSONALID}`
       );
       setDept_head(response.data?.dept_head_details);
     } catch (error) {
@@ -114,17 +119,17 @@ const Home = () => {
         </div>
         <h1 className="mt-4">
           {" "}
-          <span className="font-bold">{NAME}</span> <br />{" "}
-          <span className="text-sm">({PERSONAL_ID})</span>
+          {/* <span className="font-bold">{NAME}</span> <br />{" "} */}
+          {/* <span className="text-sm">({PERSONAL_ID})</span> */}
           <br /> <span className="text-sm font-bold-none">
-            {dept_name}{" "}
+            {DEPT_NAME}{" "}
           </span>{" "}
         </h1>
       </div>
 
       <div className="p-2 lg:p-5 lg:px-48">
-        <div class="grid grid-cols-2 mt-3 lg:grid-cols-5 gap-4">
-          <div class=" shadow-md bordered text-white lg:flex rounded p-5 rounded bordered  bg-[#3F83F8] max-w-sm">
+        <div className="grid grid-cols-2 mt-3 lg:grid-cols-5 gap-4">
+          <div className=" shadow-md bordered text-white lg:flex rounded p-5 bordered  bg-[#3F83F8] max-w-sm">
             <div className="justify-center lg:justify-left flex ">
               <img
                 className="lg:w-20   w-16 shadow-lg bg-white rounded-full p-1 
@@ -141,7 +146,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div class=" shadow-md bordered text-white lg:flex rounded p-5 rounded bordered  bg-[#3F83F8] max-w-sm">
+          <div className=" shadow-md bordered text-white lg:flex rounded p-5 bordered  bg-[#3F83F8] max-w-sm">
             <div className="justify-center lg:justify-left flex ">
               <img
                 className="lg:w-20   w-16 shadow-lg bg-white rounded-full p-1 
@@ -158,7 +163,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div class=" shadow-md bordered text-white lg:flex rounded p-5 rounded bordered  bg-[#3F83F8] max-w-sm">
+          <div className=" shadow-md bordered text-white lg:flex rounded p-5 bordered  bg-[#3F83F8] max-w-sm">
             <div className="justify-center lg:justify-left flex ">
               <img
                 className="lg:w-20   w-16 shadow-lg bg-white rounded-full p-1 
@@ -175,7 +180,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div class=" shadow-md bordered text-white lg:flex rounded p-5 rounded bordered  bg-[#3F83F8] max-w-sm">
+          <div className=" shadow-md bordered text-white lg:flex rounded p-5 bordered  bg-[#3F83F8] max-w-sm">
             <div className="justify-center lg:justify-left flex ">
               <img
                 className="lg:w-20   w-16 shadow-lg bg-white rounded-full p-1 
@@ -192,7 +197,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div class=" shadow-md bordered text-white lg:flex rounded p-5 rounded bordered  bg-[#3F83F8] max-w-sm">
+          <div className=" shadow-md bordered text-white lg:flex rounded p-5 bordered  bg-[#3F83F8] max-w-sm">
             <div className="justify-center lg:justify-left flex ">
               <img
                 className="lg:w-20   w-16 shadow-lg bg-white rounded-full p-1 

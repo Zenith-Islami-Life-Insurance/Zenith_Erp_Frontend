@@ -2331,7 +2331,7 @@ const Index = () => {
 
       {selectedTopbarItem === "PI" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2 ">
-          <div class="p-4 flex grid grid-cols-1       mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
+          <div className="p-4 flex grid grid-cols-1       mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
             <div className="justify-center  flex gap-2">
               {
                 USER_TYPE === "IN" ?
@@ -2400,13 +2400,13 @@ const Index = () => {
               <button
                 onClick={handleClearClick}
                 type="button"
-                class="focus:outline-none  text-xs lg:text-md ml-7 mt-1 lg:ml-20  w-32 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                className="focus:outline-none  text-xs lg:text-md ml-7 mt-1 lg:ml-20  w-32 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
               >
                 CLEAR
               </button>
               <button
                 type="button"
-                class="w-801 lg:w-62 mr-12 ml-3 text-xs lg:text-md mt-1 lg:mr-0 lg:ml-5  focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                className="w-801 lg:w-62 mr-12 ml-3 text-xs lg:text-md mt-1 lg:mr-0 lg:ml-5  focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 UNDERWRITING PREVIEW
               </button>
@@ -2414,7 +2414,7 @@ const Index = () => {
           </div>
           <hr />
 
-          <div class="p-1 mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+          <div className="p-1 mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
             <div className="text-start px-2">
               <label className="text-start text-xs">SELECT OFFICE</label>
 
@@ -2525,9 +2525,9 @@ const Index = () => {
           </div>
 
           <div className="shadow-lg m-2 border mt-5">
-            <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+            <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
               <div className="text-start px-0">
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="text-start px-2">
                     <label className="text-start text-xs">GENDER</label>
 
@@ -2594,7 +2594,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-start text-xs">PROPOSER</label>
 
@@ -2603,14 +2603,14 @@ const Index = () => {
                         type="text"
                         id="success"
                         value={proposer ? proposer : ""}
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleGetProposer}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleGetProposer}
                       />
                     )}
@@ -2626,7 +2626,7 @@ const Index = () => {
                           proposalInfo[0]?.spouse
                           || ""
                         }
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleSpouse}
                       />
                     ) : (
@@ -2642,7 +2642,7 @@ const Index = () => {
                     )}
                   </div>
                 </div>
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-start text-xs">FATHER</label>
                     {proposalInfo[0]?.fathers_name ? (
@@ -2654,14 +2654,14 @@ const Index = () => {
                             ? proposalInfo[0]?.fathers_name
                             : ""
                         }
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleFather}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleFather}
                       />
                     )}
@@ -2677,14 +2677,14 @@ const Index = () => {
                             ? proposalInfo[0]?.mothers_name
                             : ""
                         }
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleMotherName}
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
-                        class="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input uppercase text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         onChange={handleMotherName}
                       />
                     )}
@@ -2695,22 +2695,22 @@ const Index = () => {
                 {/* <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
                     <label className="text-sm p-2">JOINT LIFE POLICY</label>
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="bg-white align-items-center m-1  lg:mt-0">
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                           placeholder="NAME"
                         />
                       </div>
                     </div>
-                    <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                    <div className=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                       <div className="bg-white align-items-center m-1  lg:mt-0">
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                           placeholder="DOB"
                         />
                       </div>
@@ -2719,7 +2719,7 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                           placeholder="AGE"
                           onChange={setAge}
                         />
@@ -2731,17 +2731,17 @@ const Index = () => {
               </div>
 
               <div className="m-3 shadow-lg">
-                <div class="relative overflow-x-auto">
-                  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <div className="relative overflow-x-auto">
+                  <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                       <tr>
-                        <th scope="col" class="px-4 py-2">
+                        <th scope="col" className="px-4 py-2">
                           CHAIN NAME
                         </th>
-                        <th scope="col" class="px-4 py-2">
+                        <th scope="col" className="px-4 py-2">
                           CHAIN CODE
                         </th>
-                        <th scope="col" class="px-4 py-2">
+                        <th scope="col" className="px-4 py-2">
                           CHAIN DESIGNATION
                         </th>
                       </tr>
@@ -2750,11 +2750,11 @@ const Index = () => {
                       {chainlist?.map((chain, i) => (
                         <tr
                           key={i}
-                          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                         >
-                          <td class="px-4 py-2">{chain?.chain_name}</td>
-                          <td class="px-4 py-2">{chain?.chain_code}</td>
-                          <td class="px-4 py-2">{chain?.chain_designation}</td>
+                          <td className="px-4 py-2">{chain?.chain_name}</td>
+                          <td className="px-4 py-2">{chain?.chain_code}</td>
+                          <td className="px-4 py-2">{chain?.chain_designation}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -2765,7 +2765,7 @@ const Index = () => {
           </div>
 
           <div className="shadow-lg m-2 border">
-            <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+            <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
               <div className="text-start px-0">
                 <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
@@ -2773,7 +2773,7 @@ const Index = () => {
                       PRESENT ADDRESS
                     </label>
 
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="bg-white  align-items-center m-1  lg:mt-0">
                         <label className="align-items-center  text-xs">
                           FLAT/HOUSE/ROAD/VILLAGE
@@ -2783,7 +2783,7 @@ const Index = () => {
                             type="text"
                             id="success"
                             value={address}
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleAddressChange}
 
                           />
@@ -2791,14 +2791,14 @@ const Index = () => {
                           <input
                             type="text"
                             id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleAddressChange}
                           />
                         )}
                       </div>
                     </div>
 
-                    <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                    <div className=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                       <div className="text-start px-2">
                         <label className="text-start text-xs">
                           SELECT DISTRICT
@@ -2902,7 +2902,7 @@ const Index = () => {
                       </div>
                     </div>
 
-                    <div class=" mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="bg-white  align-items-center m-1  lg:mt-0">
                         <label className="align-items-center  text-xs">
                           FLAT/HOUSE/ROAD/VILLAGE
@@ -2912,12 +2912,12 @@ const Index = () => {
                           id="success"
                           // value={proposalInfo[0]?.address1}
                           value={permanentAddress}
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
                     </div>
 
-                    <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                    <div className=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                       <div className="text-start px-2">
                         <label className="text-start text-xs">
                           SELECT DISTRICT
@@ -2976,11 +2976,11 @@ const Index = () => {
           </div>
 
           <div className="shadow-xl m-2 ">
-            <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+            <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
               <div className="text-start px-0">
                 <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
-                    <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="text-start flex px-2">
                         <label className="text-start w-40 mt-3 font-bold text-xs">
                           ID TYPE
@@ -3010,21 +3010,21 @@ const Index = () => {
                                 ? proposalInfo[0]?.nid_number
                                 : ""
                             }
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleNid}
                           />
                         ) : (
                           <input
                             type="text"
                             id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleNid}
                           />
                         )}
                       </div>
                     </div>
 
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="bg-white flex  align-items-center m-1  lg:mt-0">
                         <label className="w-32 font-bold  mt-4 text-xs">
                           E-TIN NUMBER{" "}
@@ -3033,7 +3033,7 @@ const Index = () => {
                           type="text"
                           id="success"
                           value={proposalInfo[0]?.nid_number}
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-2 w-full"
                         />
                       </div>
                     </div>
@@ -3045,7 +3045,7 @@ const Index = () => {
                 <div className="text-start">
                   <div className="text-start px-0">
                     <div className="shadow-lg border m-2 rounded p-2">
-                      <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                      <div className=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                         <div className="bg-white flex align-items-center m-1  lg:mt-0">
                           <label className="w-28 mt-4 font-bold text-xs">
                             MOB. NO.{" "}
@@ -3062,7 +3062,7 @@ const Index = () => {
                                   ? proposalInfo[0]?.mobile
                                   : ""
                               }
-                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                              className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                               onChange={handleMobile}
                             />
                           ) : (
@@ -3071,7 +3071,7 @@ const Index = () => {
                               id="success"
                               maxLength={11}
                               minLength={11}
-                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                              className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                               onChange={handleMobile}
                             />
                           )}
@@ -3084,11 +3084,11 @@ const Index = () => {
                             type="text"
                             id="success"
                             value={proposalInfo[0]?.nid_number}
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                           />
                         </div>
                       </div>
-                      <div class=" mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                      <div className=" mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                         <div className="bg-white flex align-items-center m-1  lg:mt-0">
                           <label className="w-24 mt-4 font-bold text-xs">
                             EMAIL{" "}
@@ -3097,7 +3097,7 @@ const Index = () => {
                             type="text"
                             id="success"
                             value={proposalInfo[0]?.nid_number}
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                           />
                         </div>
                       </div>
@@ -3109,11 +3109,11 @@ const Index = () => {
           </div>
 
           <div className="shadow-xl m-2 ">
-            <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+            <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
               <div className="text-start px-0">
                 <div className="text-start">
                   <div className="shadow-lg border m-2 rounded p-2">
-                    <div class=" mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                       <div className="text-start flex px-1">
                         <label className="w-32 mt-4 font-bold text-xs">
                           PLACE OF BIRTH
@@ -3127,7 +3127,7 @@ const Index = () => {
                         </select>
                       </div>
                     </div>
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-1 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded     mt-1 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
                       <div className="bg-white col-span-2 flex align-items-center m-1  lg:mt-0">
                         <label className="w-36 mt-4 font-bold text-xs">
                           DATE OF BIRTH
@@ -3137,14 +3137,14 @@ const Index = () => {
                             type="text"
                             id="success"
                             value={birth_dateE}
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleBirthDateChange}
                           />
                         ) : (
                           <input
                             type="date"
                             id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             onChange={handleBirthDateChange}
                           />
                         )}
@@ -3159,12 +3159,12 @@ const Index = () => {
                           value={calcuAge || proposalInfo[0]?.age}
                           onChange={handleAge}
                           disabled
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
                     </div>
 
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-1 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded     mt-1 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-2">
                       <div className="text-start flex px-1">
                         <label className="w-44 text-center  mt-3 font-bold text-xs">
                           RELIGION
@@ -3229,7 +3229,7 @@ const Index = () => {
                 <div className="text-start">
                   <div className="text-start px-0">
                     <div className="shadow-lg border m-2 rounded p-0">
-                      <div class=" mb-0 flex justify-between rounded p-2 mt-1 lg:grid-cols-2 gap-0 w-full align-items-center   lg:mx-auto lg:mt-0">
+                      <div className=" mb-0 flex justify-between rounded p-2 mt-1 lg:grid-cols-2 gap-0 w-full align-items-center   lg:mx-auto lg:mt-0">
                         <div className="text-start flex px-1">
                           <label className="w-32 text-center  mt-3 font-bold text-xs">
                             EDUCATION
@@ -3318,17 +3318,17 @@ const Index = () => {
                       </div>
 
                       {/* LIEN permanently postponded */}
-                      {/* <div class=" mb-0 flex grid grid-cols-1 rounded  p-2   mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
-                        <div class="flex border items-center shadow p-2 mb-2">
+                      {/* <div className=" mb-0 flex grid grid-cols-1 rounded  p-2   mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                        <div className="flex border items-center shadow p-2 mb-2">
                           <input
                             id="default-checkbox"
                             type="checkbox"
                             value=""
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                           />
                           <label
                             for="default-checkbox"
-                            class="ms-2 ml-2  text-sm font-medium text-gray-900 dark:text-gray-300"
+                            className="ms-2 ml-2  text-sm font-medium text-gray-900 dark:text-gray-300"
                           >
                             LIEN
                           </label>
@@ -3341,7 +3341,7 @@ const Index = () => {
                           <input
                             type="text"
                             id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                           />
                         </div>
                         <div className="bg-white flex  align-items-center m-1  lg:mt-0">
@@ -3351,7 +3351,7 @@ const Index = () => {
                           <input
                             type="text"
                             id="success"
-                            class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                            className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                           />
                         </div>
                       </div> */}
@@ -3365,7 +3365,7 @@ const Index = () => {
             <button
               onClick={saveProposal}
               type="submit"
-              class="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              className="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               SUBMIT
             </button>
@@ -3375,14 +3375,14 @@ const Index = () => {
 
       {selectedTopbarItem === "P" ? (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
-          <div class="p-1 mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+          <div className="p-1 mb-0 flex grid grid-cols-1 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="text-start px-2">
               <div className="shadow border-2 rounded p-1 mt-2 mb-3">
                 <h2 className=" text-center font-bold text-success  p-2 rounded text-xs text-dark">
                   PREMIUM CALCULATION
                 </h2>
 
-                <div class="p-0 mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="p-0 mb-0 flex grid grid-cols-1 rounded  mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
 
                   <div className="text-start px-2">
                     <label className="text-start text-xs">PLAN LIST</label>
@@ -3471,7 +3471,7 @@ const Index = () => {
                   </div>
                 )}
                 {(planName === '22' || planName === '23') && (
-                  <div class="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                  <div className="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                     <div className="text-start px-2">
                       <label className="text-start text-xs">SELECT AN OPTION</label>
                       <select
@@ -3507,7 +3507,7 @@ const Index = () => {
                   </div>
                 )}
 
-                <div class="p-1 mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="p-1 mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="w-full lg:w-full bg-white align-items-center pr-2 m-1  lg:mt-0">
                     <label className="text-start text-xs">
                       POLICY HOLDER AGE
@@ -3517,7 +3517,7 @@ const Index = () => {
                       id="success"
                       value={calcuAge}
                       disabled
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                       onChange={handlePremAge}
                     />
                   </div>
@@ -3545,8 +3545,8 @@ const Index = () => {
 
                   </div>
                 </div>
-                <div class="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
-                  <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="mb-2 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                  <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
 
                     <div className=" bg-white align-items-center m-1  lg:mt-0">
                       <label className="text-start text-xs">PAYMENT MODE</label>
@@ -3576,13 +3576,13 @@ const Index = () => {
                       // value={proposalInfo[0]?.sumatrisk}
                       value={maturityDate}
                       disabled
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                 </div>
                 {/* //total installment and age admitted postponded by Sir  */}
 
-                {/* <div class="p-1 mb-8 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                {/* <div className="p-1 mb-8 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="col-span-2 bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-start text-xs">
                       TOTAL INSTALLMENT
@@ -3593,14 +3593,14 @@ const Index = () => {
                         id="success"
                         value={proposalInfo[0]?.totalinst}
                         disabled
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     ) : (
                       <input
                         type="text"
                         id="success"
                         value={totalInstallment}
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     )}
                   </div>
@@ -3621,7 +3621,7 @@ const Index = () => {
               </div>
 
               <div className="text-start mt-4 mb-2">
-                <div class=" mb-0 grid grid-cols-4 rounded mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                <div className=" mb-0 grid grid-cols-4 rounded mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                   <div className="bg-white align-items-center m-1  lg:mt-0">
                     <label className="text-xs text-start w-44 mt-3 p-0">
                       CALCULATION_TYPE
@@ -3632,7 +3632,7 @@ const Index = () => {
                       id="success"
                       value={calcuType}
                       disabled
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                   <div className="bg-white align-items-center m-1  lg:mt-0">
@@ -3645,7 +3645,7 @@ const Index = () => {
                       id="success"
                       value={suplimentary}
                       disabled
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                   <div className="bg-white  align-items-center m-1 lg:mt-0">
@@ -3656,7 +3656,7 @@ const Index = () => {
                       type="text"
                       id="success"
                       value={extra_loading}
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                   <div className="bg-white  align-items-center m-1 lg:mt-0">
@@ -3667,7 +3667,7 @@ const Index = () => {
                       type="text"
                       id="success"
                       value={major_diseage}
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                   <div className="bg-white  align-items-center m-1 lg:mt-0">
@@ -3679,7 +3679,7 @@ const Index = () => {
                       type="text"
                       id="success"
                       value={prem_waiver === 'Y' ? 'YES' : prem_waiver === 'N' ? 'NO' : ''}
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                   <div className="bg-white  align-items-center m-1 lg:mt-0">
@@ -3691,7 +3691,7 @@ const Index = () => {
                       type="text"
                       id="success"
                       value={impatient_reader}
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                     />
                   </div>
                 </div>
@@ -3700,7 +3700,7 @@ const Index = () => {
               <div className="text-start mt-4 mb-2">
                 <div className="shadow border-2  m-0 rounded p-1">
                   {calcuType === "P" && (
-                    <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                       <div className="w-full lg:w-full bg-white align-items-center m-1  lg:mt-0">
                         <select
                           onChange={handlePaymode}
@@ -3720,7 +3720,7 @@ const Index = () => {
                     </div>
                   )}
 
-                  <div class="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                  <div className="mb-0 flex grid grid-cols-3 rounded mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                     <div className="bg-white align-items-center m-1  lg:mt-0">
                       <label className="text-xs text-start w-44 mt-3 p-0">
                         SUM ASSURED
@@ -3732,7 +3732,7 @@ const Index = () => {
                           id="success"
                           value={proposalInfo[0]?.sum_insure}
                           // disabled
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       ) : (
                         <input
@@ -3741,7 +3741,7 @@ const Index = () => {
                           id="success"
                           // value={sumAssured}
                           value={sumassurance[0] || sumAssured}
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       )}
                     </div>
@@ -3754,7 +3754,7 @@ const Index = () => {
                         type="text"
                         id="success"
                         value={pRate}
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     </div>
                     <div className="bg-white align-items-center m-1 lg:mt-0">
@@ -3766,11 +3766,11 @@ const Index = () => {
                         type="text"
                         id="success"
                         value={pFactor}
-                        class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     </div>
                   </div>
-                  <div class=" mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                  <div className=" mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                     <div className="bg-white  align-items-center m-1  lg:mt-0">
                       <label className="text-xs text-start w-40 mt-3 p-0">
                         BASIC PREMIUM
@@ -3781,7 +3781,7 @@ const Index = () => {
                           id="success"
                           value={proposalInfo[0]?.premium}
                           disabled
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       ) : (
                         <input
@@ -3804,14 +3804,14 @@ const Index = () => {
                           id="success"
                           value={proposalInfo[0]?.sumatrisk}
                           disabled
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       ) : (
                         <input
                           type="text"
                           id="success"
                           value={sumAtRisk}
-                          class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       )}
                     </div>
@@ -3827,7 +3827,7 @@ const Index = () => {
                   <div className="shadow-lg border m-1 rounded p-1">
                     <h2 className="text-xs font-bold ml-2">LOADING EXTRA</h2>
 
-                    <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
                       <div className="bg-white flex align-items-center m-1  lg:mt-0">
                         <label className="text-xs text-start w-80 mt-3 p-0">
                           OE PREM & RATE
@@ -3839,7 +3839,7 @@ const Index = () => {
                           disabled
                           // value={occupation !== '1' ? hosPremRate : 0}
                           value={proposalInfo[0]?.oePrem || oePrem}
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
                           onChange={(e) => setOERate(e.target.value)}
@@ -3847,7 +3847,7 @@ const Index = () => {
                           id="success"
                           disabled
                           value={occupation !== '1' ? premOccupRate?.occupationRate : 0}
-                          class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
                         />
                       </div>
                       {/* console.log(planName, occupation, gender, sumAssured, eduId, 'Y', paymentMode) */}
@@ -3867,7 +3867,7 @@ const Index = () => {
                           //     : 0
                           // }
                           value={proposalInfo[0]?.hPrem || hPrem}
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                         <input
                           onChange={(e) => setHRate(e.target.value)}
@@ -3880,7 +3880,7 @@ const Index = () => {
                               ? premOccupRate?.occupationRate
                               : 0
                           }
-                          class="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] ml-1 mt-1 w-full"
                         />
                       </div>
                     </div>
@@ -3888,7 +3888,7 @@ const Index = () => {
                 </>
               }
 
-              <div class={`${suplimentary === 'NO' ? 'justify-center items-center' : 'p-1 mb-0 grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-centerlg:mx-auto lg:mt-1'}`}>
+              <div className={`${suplimentary === 'NO' ? 'justify-center items-center' : 'p-1 mb-0 grid grid-cols-2 rounded mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-centerlg:mx-auto lg:mt-1'}`}>
 
                 {
                   suplimentary === 'YES' &&
@@ -3977,7 +3977,7 @@ const Index = () => {
                     prem_waiver === 'Y' &&
                     <>
                       <div className="shadow  border-2 m-1 rounded p-0">
-                        <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                        <div className=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
 
                           <div className="bg-white mt-1 lg:mt-0 flex items-center justify-items-center">
                             <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to Waiver Prem</label>
@@ -4002,7 +4002,7 @@ const Index = () => {
                                   id="success"
                                   disabled
                                   value={premiumWaiver || proposalInfo[0]?.premiumWaiver || 0}
-                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                  className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
                             </>
@@ -4014,7 +4014,7 @@ const Index = () => {
                     major_diseage === 'YES' && ipdRider === 'NO' &&
                     <>
                       <div className="shadow  border-2  m-0 rounded p-0">
-                        <div class=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                        <div className=" mb-0 grid grid-cols-3 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                           <div className="bg-white m-1 lg:mt-0 flex items-center justify-items-center">
                             <label className={`text-start text-sm ${suplimentary === 'NO' ? 'w-3/4' : 'w-2/3'}`}>Do you want to MDR</label>
                             <select
@@ -4037,7 +4037,7 @@ const Index = () => {
                                   id="success"
                                   disabled
                                   value={mdrRatee}
-                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                  className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
 
@@ -4050,7 +4050,7 @@ const Index = () => {
                                   id="success"
                                   disabled
                                   value={mdrPrem || proposalInfo[0]?.mdrPrem}
-                                  class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                                  className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                                 />
                               </div>
                             </>
@@ -4173,7 +4173,7 @@ const Index = () => {
                   <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
                     BANK INFORMATION
                   </h2>
-                  <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                  <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                     <div className="bg-white flex align-items-center m-1  lg:mt-0">
                       <label className="text-center mt-3  text-sm  w-32">
                         Account No
@@ -4181,11 +4181,11 @@ const Index = () => {
                       <input
                         type="text"
                         id="success"
-                        class="form-input text-sm p-2 shadow border-[#E3F2FD] mt-1 w-full"
+                        className="form-input text-sm p-2 shadow border-[#E3F2FD] mt-1 w-full"
                       />
                     </div>
                   </div>
-                  <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                  <div className="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                     <div className="text-start flex px-2">
                       <label className="text-center mt-3  text-sm  w-20">
                         BANK
@@ -4225,7 +4225,7 @@ const Index = () => {
             <button
               onClick={handleUpdatePremInfo}
               type="submit"
-              class="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              className="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               UPDATE
             </button>
@@ -4236,12 +4236,12 @@ const Index = () => {
       {selectedTopbarItem === "FAMILY" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
           {/* postponded by sir 9/8/2024 */}
-          {/* <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+          {/* <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="  text-start px-2 mb-3">
-              <div class="h-[150px] p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+              <div className="h-[150px] p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                 <div className="text-start bg-gray mb-4 m-1">
                   <div className="shadow border-2   m-0 rounded p-0">
-                    <div class=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-4 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                    <div className=" mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-4 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                       <div className="bg-white flex align-items-center m-1  lg:mt-0">
                         <label className="text-xs text-center w-48 mt-3 p-0">
                           DEPOSIT
@@ -4249,7 +4249,7 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
 
@@ -4260,7 +4260,7 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
                       <div className="bg-white flex align-items-center m-1  lg:mt-0">
@@ -4270,7 +4270,7 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
 
@@ -4281,22 +4281,22 @@ const Index = () => {
                         <input
                           type="text"
                           id="success"
-                          class="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
+                          className="form-input text-xs shadow border-[#E3F2FD] mt-1 w-full"
                         />
                       </div>
                     </div>
 
-                    <div class=" mb-3 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                    <div className=" mb-3 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                       <div className="bg-white  justify-center flex align-items-center m-1  lg:mt-0">
                         <button
                           type="submit"
-                          class="rounded text-end btn-sm focus:outline-none text-dark bg-green-100 hover:bg-green-100 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-100 dark:focus:ring-green-800"
+                          className="rounded text-end btn-sm focus:outline-none text-dark bg-green-100 hover:bg-green-100 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-100 dark:focus:ring-green-800"
                         >
                           NOMINEE ENTRY
                         </button>
                         <button
                           type="submit"
-                          class="rounded text-end btn-sm focus:outline-none text-dark bg-green-100 hover:bg-green-100 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 ml-2 mb-2 dark:bg-green-100 dark:hover:bg-green-100 dark:focus:ring-green-800"
+                          className="rounded text-end btn-sm focus:outline-none text-dark bg-green-100 hover:bg-green-100 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 ml-2 mb-2 dark:bg-green-100 dark:hover:bg-green-100 dark:focus:ring-green-800"
                         >
                           FAMILY ENTRY
                         </button>
@@ -4432,7 +4432,7 @@ const Index = () => {
             <button
               onClick={handleFamilySubmit}
               type="submit"
-              class="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              className="rounded text-end btn-sm focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-10 py-2 mt-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               SUBMIT
             </button>
@@ -4494,9 +4494,9 @@ const Index = () => {
 
       {selectedTopbarItem === "MEDICAL" && (
         <div className="shadow-lg border lg:mx-48 mt-1 m-2">
-          <div class="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-4 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+          <div className="p-1 mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-4 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
             <div className="col-span-2">
-              <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
+              <div className="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center lg:mx-auto lg:mt-0">
                 <div className="text-start col-span-1 px-2">
                   <div className="shadow border-2 h-100 rounded p-1 mt-2 mb-3">
                     <h2 className="text-center font-bold text-success p-1 rounded text-xs text-dark">
@@ -4705,13 +4705,13 @@ const Index = () => {
                 </div>
 
                 {
-                  gender === '2' && <div class=" p-1 mb-0 flex col-span-2 grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
+                  gender === '2' && <div className=" p-1 mb-0 flex col-span-2 grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-1">
                     <div className="text-start bg-gray mb-4 m-1">
                       <div className="shadow border-2   m-0 rounded p-0">
                         <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
                           ONLY FOR WOMEN
                         </h2>
-                        <div class=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
+                        <div className=" mb-0 flex grid grid-cols-1 rounded     mt-0 lg:grid-cols-1 gap-0  w-full  justify-center align-items-center  p-2  lg:mx-auto lg:mt-0">
                           <div className="text-start flex px-1">
                             <label className="text-center mt-2  text-sm  w-48">
                               Pregnant Info
@@ -4753,7 +4753,7 @@ const Index = () => {
                             <input
                               type="date"
                               id="success"
-                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                              className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             />
                           </div>
                           <div className="bg-white  flex align-items-center m-1  lg:mt-0">
@@ -4763,7 +4763,7 @@ const Index = () => {
                             <input
                               type="date"
                               id="success"
-                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                              className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             />
                           </div>
                           <div className="bg-white  flex align-items-center m-1  lg:mt-0">
@@ -4773,7 +4773,7 @@ const Index = () => {
                             <input
                               type="text"
                               id="success"
-                              class="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
+                              className="form-input text-sm shadow border-[#E3F2FD] mt-1 w-full"
                             />
                           </div>
                         </div>
@@ -4788,7 +4788,7 @@ const Index = () => {
                 <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
                   ARMED FORCE INFORMATION
                 </h2>
-                <div class="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                <div className="p-1 mb-2 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="bg-white flex align-items-center m-1  lg:mt-0">
                     <label className="text-xs text-center w-48 mt-3 p-0">
                       ARMED FORCE DESG
@@ -4952,7 +4952,7 @@ const Index = () => {
                     OPTION & POLICY STATUS
                   </h2>
 
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                  <div className=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-3 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
                     <div className=" flex gap-2">
                       <div className="flex items-center gap-2">
                         <Radio
@@ -4992,7 +4992,7 @@ const Index = () => {
 
                   </div>
 
-                  <div class=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
+                  <div className=" mb-0 flex grid grid-cols-2 rounded  mt-0 lg:grid-cols-2 gap-0  w-full  justify-center align-items-center  p-1  lg:mx-auto lg:mt-0">
                     <div className=" flex gap-2">
                       <div className="flex items-center gap-2">
                         <Radio
@@ -5017,7 +5017,7 @@ const Index = () => {
                 <h2 className=" text-center font-bold text-success  p-1 rounded text-xs text-dark">
                   PREVIOUS POLICY NO
                 </h2>
-                {/* <div class="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
+                {/* <div className="p-1 mb-0 flex grid grid-cols-2 rounded     mt-0 lg:grid-cols-6 gap-0  w-full  justify-center align-items-center   lg:mx-auto lg:mt-0">
                   <div className="text-start col-span-2  flex px-2">
                     <label className=" text-center mt-3  text-sm  w-20">
                       Policy 1
@@ -5041,7 +5041,7 @@ const Index = () => {
                           pol_riskdate ? pol_riskdate : "0"
                         )}`}
                       disabled
-                      class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                      className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                       onChange={handlePolicyNumber}
                     />
                   </div>
@@ -5049,7 +5049,7 @@ const Index = () => {
                     <button
                       onClick={handleClearPolicydata}
                       type="submit"
-                      class="focus:outline-none rounded  btn-sm  text-xs lg:text-md  mt-0   w-24 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-3 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                      className="focus:outline-none rounded  btn-sm  text-xs lg:text-md  mt-0   w-24 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-3 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                     >
                       CLEAR
                     </button>
@@ -5139,7 +5139,7 @@ const Index = () => {
 
             <button
               type="submit"
-              class="focus:outline-none btn-sm lg:text-md mt-1 w-32 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              className="focus:outline-none btn-sm lg:text-md mt-1 w-32 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm ml-2 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
             >
               CLEAR
             </button>
@@ -5368,7 +5368,7 @@ const Index = () => {
                   <input
                     type="text"
                     name="guardianAge"
-                    class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                     onChange={handleNomineeInputChange}
                     value={formData.guardianAge}
                     disabled={isGuardianDisabled}
@@ -5381,7 +5381,7 @@ const Index = () => {
                   <input
                     type="text"
                     name="guardianAccNo"
-                    class="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
+                    className="form-input text-sm shadow border-[#E3F2FD] mt-0 w-full"
                     onChange={handleNomineeInputChange}
                     value={formData.guardianAccNo}
                     disabled={isGuardianDisabled}

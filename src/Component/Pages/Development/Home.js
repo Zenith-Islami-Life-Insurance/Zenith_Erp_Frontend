@@ -125,7 +125,7 @@ const Home = () => {
 
       <div className="flex justify-content-center">
         {projectList?.length > 1 && (
-          <div class="p-3 grid grid-cols-1 shadow-md rounded   mt-3 lg:grid-cols-2 gap-0  w-full lg:w-[600px] justify-center lg:mx-auto lg:mt-2">
+          <div className="p-3 grid grid-cols-1 shadow-md rounded   mt-3 lg:grid-cols-2 gap-0  w-full lg:w-[600px] justify-center lg:mx-auto lg:mt-2">
             {projectList?.map((project, i) => (
               <div className="flex items-center gap-2">
                 <Radio

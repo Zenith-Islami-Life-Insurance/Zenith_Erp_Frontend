@@ -32,7 +32,7 @@ const Modulelist = () => {
   //Get from localstorage user_details data
   const UserD = JSON.parse(localStorage.getItem("UserDetails"));
   const PERSONAL_ID = UserD?.PERSONALID;
-  console.log(PERSONAL_ID);
+  // console.log(PERSONAL_ID);
 
   const DEPT_CODE = UserD?.DEPT_CODE;
 
@@ -165,7 +165,7 @@ const Modulelist = () => {
       </h1>
       <h1 className="mt-5 text-green-700">{addPermission}</h1>
 
-      <div class="p-4 grid grid-cols-1 shadow-md rounded    mt-0 lg:grid-cols-2 gap-0  w-full lg:w-[600px] justify-center  lg:mx-auto lg:mt-2">
+      <div className="p-4 grid grid-cols-1 shadow-md rounded    mt-0 lg:grid-cols-2 gap-0  w-full lg:w-[600px] justify-center  lg:mx-auto lg:mt-2">
         <div className="flex items-center gap-2">
           <Radio
             onChange={(e) => setPermissionType(e.target.value)}
@@ -203,16 +203,16 @@ const Modulelist = () => {
 
       {permissionType === "USER" && (
         <div>
-          <div class=" w-full lg:w-[1500px] justify-center lg:mx-auto lg:mt-2">
-            <div class="block shadow-xl lg:w-full  bordered rounded p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
+          <div className=" w-full lg:w-[1500px] justify-center lg:mx-auto lg:mt-2">
+            <div className="block shadow-xl lg:w-full  bordered p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
               <form className="flex  flex-col gap-4">
-                <div class="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
+                <div className="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
                   {moduleList.length > 0 && (
                     <div className="lg:w-full w-full">
                       <h1 className="shadow-xl p-2 text-white bg-[#2E7D32] rounded">
                         SELECT MODULE
                       </h1>
-                      <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
+                      <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
                         {moduleList?.map((modulename, u) => (
                           <div key={u} className="flex items-center gap-2">
                             <Radio
@@ -237,13 +237,13 @@ const Modulelist = () => {
                       </h1>
 
                       {privilageList?.map((prev, u) => (
-                        <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2">
+                        <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2">
                           <div
                             key={u}
-                            class="flex items-center ps-2  rounded dark:border-gray-700"
+                            className="flex items-center ps-2  rounded dark:border-gray-700"
                           >
-                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" class="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
-                            <label class="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
+                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" className="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
+                            <label className="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
                               {prev?.name}
                             </label>
                           </div>
@@ -336,16 +336,16 @@ const Modulelist = () => {
 
       {permissionType === "PROJECT" && (
         <div>
-          <div class=" w-full lg:w-[1500px] justify-center lg:mx-auto lg:mt-2">
-            <div class="block shadow-xl lg:w-full  bordered rounded p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
+          <div className=" w-full lg:w-[1500px] justify-center lg:mx-auto lg:mt-2">
+            <div className="block shadow-xl lg:w-full  bordered p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
               <form className="flex  flex-col gap-4">
-                <div class="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
+                <div className="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
                   {moduleList.length > 0 && (
                     <div className="lg:w-full w-full">
                       <h1 className="shadow-xl p-2 text-white bg-[#2E7D32] rounded">
                         SELECT MODULE
                       </h1>
-                      <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
+                      <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
                         {moduleList?.map((modulename, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <Radio
@@ -373,11 +373,11 @@ const Modulelist = () => {
                       {stateProjectPrevList?.map((projectName, i) => (
                         <div
                           key={i}
-                          class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2"
+                          className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2"
                         >
-                          <div class="flex items-center ps-2 rounded dark:border-gray-700">
-                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" class="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
-                            <label class="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
+                          <div className="flex items-center ps-2 rounded dark:border-gray-700">
+                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" className="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
+                            <label className="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
                               {projectName?.project_name}
                             </label>
                           </div>

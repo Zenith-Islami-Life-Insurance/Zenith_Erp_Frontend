@@ -70,7 +70,7 @@ const SinglePermission = () => {
 
       {permission?.map((p, i) => (
         <div key={i} className=" p-3 w-full lg:w-1/4 mt-5 mx-auto  text-center">
-          <div class="max-w-xl p-6 bg-white border border-gray-200 rounded-md shadow dark:bg-gray-800 dark:border-gray-700">
+          <div className="max-w-xl p-6 bg-white border border-gray-200 rounded-md shadow dark:bg-gray-800 dark:border-gray-700">
             <h1 className="font-bold text-lg">
               {p?.name} <span className="text-sm">( {p?.dep_name})</span>{" "}
             </h1>
@@ -78,7 +78,7 @@ const SinglePermission = () => {
               Module Name: {p?.module_name}
             </h1>
 
-            <h1 class="px-0 py-5 text-center">
+            <h1 className="px-0 py-5 text-center">
               <span
                 className={`ml-1 text-white bg-[#00838F] rounded p-2 ${selectedPermissions.includes(1) ? "bg-[#DD2C00]" : ""
                   }`}
@@ -111,14 +111,14 @@ const SinglePermission = () => {
             <div className="w-32 rounded-md flex  justify-center mx-auto">
               <button
                 type="button"
-                class="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800"
+                className="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800"
               >
                 UPDATE
               </button>
               <button
                 color="failure"
                 type="button"
-                class="px-3 ml-1 py-2 text-xs font-medium text-center text-white bg-[#DD2C00] rounded hover:bg-[#BF360C] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800"
+                className="px-3 ml-1 py-2 text-xs font-medium text-center text-white bg-[#DD2C00] rounded hover:bg-[#BF360C] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-blue-800"
               >
                 DELETE
               </button>

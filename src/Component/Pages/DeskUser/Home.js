@@ -67,7 +67,7 @@ const Home = () => {
         </div>
 
         <div className="flex justify-content-center">
-          <div class="grid   grid-cols-2 mt-5 lg:grid-cols-6 gap-2 ">
+          <div className="grid   grid-cols-2 mt-5 lg:grid-cols-6 gap-2 ">
             {moduleList.map((mName, i) => (
               <Link key={i} to="#">
                 <div className="shadow-md bordered text-white rounded p-2 lg:p-4 rounded bordered bg-[#0E9F6E] max-w-sm">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../Nabar/Navbar";
 import {
   Button,
@@ -20,7 +20,13 @@ import {
   useCreatePermissionMutation,
   useGetRolePrevlistQuery,
 } from "../../features/api/dept_head_api";
+import { AuthContext } from "../../providers/AuthProvider";
 const Permission = () => {
+
+  const { userDetailsString } = useContext(AuthContext);
+
+  const { PERSONALID, NAME, ROLE_ID, DEPT_CODE, PROJECT, USER_TYPE} = userDetailsString;
+
   const [deptHeadList, setDeptHeadList] = useState([]);
   const [moduleList, setModuleList] = useState([]);
   const [departmentName, setDepartmentName] = useState("");
@@ -29,20 +35,18 @@ const Permission = () => {
   const [spinner, setSpinner] = useState(false);
   const [selectdept, setselectdept] = useState("");
   const [permissionType, setPermissionType] = useState("");
-  const [moduleRoleList, setModueleRoleList] = useState([""]);
+  const [moduleRoleList, setModueleRoleList] = useState([""]);  
 
   const { id, name } = useParams();
-  console.log(id);
   const navigate = useNavigate();
-
-  const user_information = JSON.parse(localStorage.getItem("UserDetails"));
-  const PERSONAL_ID = user_information?.PERSONALID;
 
   //2-project privilage data get data--------------------
   const { data: departmentPrevList } =
     useGetDeptPermissionListQuery(moduleName);
   console.log(departmentPrevList);
+
   const [departmentpList, setDepartmentPList] = useState([""]);
+
   useEffect(() => {
     if (departmentPrevList) {
       setDepartmentPList(departmentPrevList);
@@ -54,7 +58,7 @@ const Permission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://115.127.36.173:5001/api/dept-head-pmodule-list/${PERSONAL_ID}`
+        `http://115.127.36.173:5001/api/dept-head-pmodule-list/${PERSONALID}`
       );
       setModueleRoleList(response.data?.module_list);
       setSpinner(false);
@@ -62,6 +66,7 @@ const Permission = () => {
       console.error("Error fetching data:", error);
     }
   };
+
   useEffect(() => {
     ModuleList();
   }, []);
@@ -70,7 +75,9 @@ const Permission = () => {
   //2-role privilage data get data--------------------
   const { data: rolePrevList } = useGetRolePrevlistQuery(moduleName);
   console.log(rolePrevList);
+
   const [stateRolePrevList, setStateRolePrevList] = useState([""]);
+
   useEffect(() => {
     if (rolePrevList) {
       setStateRolePrevList(rolePrevList);
@@ -81,6 +88,7 @@ const Permission = () => {
   const [sPrevId, setSPrevId] = useState(null);
   const [permittype, setPermitType] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
+
   const handleChange = (event) => {
     const selectData = event.target.value;
     console.log(selectData);
@@ -100,11 +108,12 @@ const Permission = () => {
     createPermission,
     { data: permission, error: permissionError, isSuccess },
   ] = useCreatePermissionMutation();
+
   // Create a new user
   const handleCreateUser = (e) => {
     const MODULE_ID = moduleName;
     const ACCESS_BY = sUserId;
-    const PERMITTED_BY = PERSONAL_ID;
+    const PERMITTED_BY = PERSONALID;
     const PROCESS = permittype;
     const TYPE = permissionType;
     const PRIVILAGE_ID = sPrevId;
@@ -113,6 +122,7 @@ const Permission = () => {
       alert("Please select Module and Access User");
       return;
     }
+
     const permissions = {
       MODULE_ID,
       ACCESS_BY,
@@ -123,6 +133,7 @@ const Permission = () => {
     };
 
     console.log(permissions);
+    
     createPermission(permissions)
       .then((data) => { })
       .catch((error) => {
@@ -171,7 +182,7 @@ const Permission = () => {
     setSpinner(true);
     try {
       const response = await axios.get(
-        `http://115.127.36.173:5001/api/module-list/${id}`
+        `http://localhost:5000/api/module-list/${id}`
       );
       setModuleList(response.data?.sub_module_list);
       setSpinner(false);
@@ -212,7 +223,7 @@ const Permission = () => {
     const MODULE_ID = moduleName;
     const ACCESS_BY = departmentName;
     const PRIVILAGE_IDS = previlage_idd; // Assuming previlage_id is an array of selected privilege IDs
-    const PERMITTED_BY = PERSONAL_ID;
+    const PERMITTED_BY = PERSONALID;
 
     if (MODULE_ID === "") {
       alert("Please Select Module");
@@ -260,7 +271,7 @@ const Permission = () => {
       </h1>
       <h1 className="mt-5 text-green-700">{addPermission}</h1>
 
-      <div class="p-3 grid grid-cols-1 shadow-md rounded   mt-0 lg:grid-cols-2 gap-0  w-full lg:w-[600px] justify-center lg:mx-auto lg:mt-2">
+      <div className="p-3 grid grid-cols-1 shadow-md rounded   mt-0 lg:grid-cols-2 gap-0  w-full lg:w-[600px] justify-center lg:mx-auto lg:mt-2">
         <div className="flex items-center gap-2">
           <Radio
             onChange={(e) => setPermissionType(e.target.value)}
@@ -297,16 +308,16 @@ const Permission = () => {
 
       {permissionType === "DEPT-HEAD" && (
         <div>
-          <div class=" w-full lg:w-[1500px] justify-center lg:mx-auto lg:mt-2">
-            <div class="block shadow-xl lg:w-full  bordered rounded p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
+          <div className=" w-full lg:w-[1500px] justify-center lg:mx-auto lg:mt-2">
+            <div className="block shadow-xl lg:w-full  bordered p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
               <form className="flex  flex-col gap-4">
-                <div class="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
+                <div className="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
                   {moduleList.length > 0 && (
                     <div className="lg:w-full w-full">
                       <h1 className="shadow-xl p-2 text-white bg-[#2E7D32] rounded">
                         SELECT MODULE
                       </h1>
-                      <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
+                      <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
                         {moduleList?.map((modulename, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <Radio
@@ -331,13 +342,14 @@ const Permission = () => {
                       </h1>
 
                       {departmentpList?.map((prev, u) => (
-                        <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2">
+                        <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2">
                           <div
                             key={u}
-                            class="flex items-center ps-2  rounded dark:border-gray-700"
+                            className="flex items-center ps-2  rounded dark:border-gray-700"
                           >
-                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" class="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
-                            <label class="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
+                            
+                            
+                            <label className="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
                               {prev?.DEP_NAME}
                             </label>
                           </div>
@@ -381,16 +393,16 @@ const Permission = () => {
 
       {permissionType === "ROLE" && (
         <div>
-          <div class=" w-full lg:w-[1300px] justify-center lg:mx-auto lg:mt-2">
-            <div class="block shadow-xl lg:w-full  bordered rounded p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
+          <div className=" w-full lg:w-[1300px] justify-center lg:mx-auto lg:mt-2">
+            <div className="block shadow-xl lg:w-full  bordered p-3 lg:p-5 rounded-xl border-gray bordered-sm bg-white">
               <form className="flex  flex-col gap-4">
-                <div class="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
+                <div className="p-2 grid grid-cols-1 mt-2 lg:grid-cols-2 gap-5">
                   {moduleRoleList.length > 0 && (
                     <div className="lg:w-full w-full">
                       <h1 className="shadow-xl p-2 text-white bg-[#2E7D32] rounded">
                         SELECT MODULE
                       </h1>
-                      <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
+                      <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-1 gap-3">
                         {moduleList?.map((modulename, role) => (
                           <div key={role} className="flex items-center gap-2">
                             <Radio
@@ -416,13 +428,13 @@ const Permission = () => {
                       </h1>
 
                       {stateRolePrevList?.map((rolename, Role) => (
-                        <div class="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2">
+                        <div className="p-2 grid grid-cols-1  mt-0 lg:grid-cols-2 gap-2">
                           <div
                             key={Role}
-                            class="flex items-center ps-2  rounded dark:border-gray-700"
+                            className="flex items-center ps-2  rounded dark:border-gray-700"
                           >
-                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" class="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
-                            <label class="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
+                            {/* <input  onChange={(e) => setUser(e.target.value)} id="y" type="checkbox" value={prev?.personal_id} name="y" className="w-4 h-4 text-dark bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/> */}
+                            <label className="w-full py-1 ml-2 text-left ms-2 text-sm font-sm text-dark dark:text-gray-300">
                               {rolename?.role_name}
                             </label>
                           </div>

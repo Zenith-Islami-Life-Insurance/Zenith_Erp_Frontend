@@ -65,19 +65,19 @@ const PolicyStatement = () => {
 
             <div className="flex mb-6 justify-center ">
 
-                <div class="w-full max-w-lg  py-4">
-                    <form  onSubmit={handleAdded} class="bg-white shadow-xl card rounded bordered px-8 pt-2 pb-8 mb-1 p-5">
-                        <div class="mb-4 mt-5">
-                            <label class="block text-left text-gray-700 text-sm  mb-2" for="username">
+                <div className="w-full max-w-lg  py-4">
+                    <form  onSubmit={handleAdded} className="bg-white shadow-xl card rounded bordered px-8 pt-2 pb-8 mb-1 p-5">
+                        <div className="mb-4 mt-5">
+                            <label className="block text-left text-gray-700 text-sm  mb-2" for="username">
                                 *This  fields are mandatory
                             </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name='pol_no' id="pol_no" type="number" placeholder="Type Your Inforce Policy Number" required />
+                            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name='pol_no' id="pol_no" type="number" placeholder="Type Your Inforce Policy Number" required />
                         </div>
 
                         <button className='btn btn-success bg-[#087f23]  rounded btn-sm px-12 py-2 text-white font-bold' variant="contained">SUBMIT</button>
                                     {/* <Button className='w-32 rounded btn-sm px-12 text-white font-bold' variant="contained">SUBMIT</Button> */}
 
-                     {/* <div class="justify-left mt-8 mb-4  lg:mb-0">
+                     {/* <div className="justify-left mt-8 mb-4  lg:mb-0">
                                 <Link to='/Policy-information'>
                                     <Button className='w-32 rounded btn-sm px-12 text-white font-bold' variant="contained">SUBMIT</Button>
                                 </Link>

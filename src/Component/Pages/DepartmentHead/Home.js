@@ -9,7 +9,7 @@ const Home = () => {
   const [moduleList, setModueleList] = useState([]);
   const [spinner, setSpinner] = useState(false);
 
-  console.log(moduleList.length);
+  // console.log(moduleList);
 
   const dept_name = Dept_head?.department_name;
   //Get from localstorage user_details data
@@ -92,10 +92,10 @@ const Home = () => {
           />
         </div>
         {moduleList.length >= 1 && (
-          <div class="grid grid-cols-2 mt-5 lg:grid-cols-6 gap-2 flex  justify-center">
+          <div className="grid grid-cols-2 mt-5 lg:grid-cols-6 gap-2  justify-center">
             {moduleList?.map((mName, i) => (
               <Link key={i} to='/proposal-entry'>
-                <div class=" shadow-md bordered text-white rounded p-2 lg:p-4 rounded bordered  bg-[#0E9F6E] max-w-sm">
+                <div className=" shadow-md bordered text-white p-2 lg:p-4 rounded bordered  bg-[#0E9F6E] max-w-sm">
                   <h5 className="font-normal mt-1">{mName?.Module_name}</h5>
                 </div>
               </Link>

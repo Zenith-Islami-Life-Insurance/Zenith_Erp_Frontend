@@ -19,10 +19,10 @@ import Userlist from './Component/UserList/Userlist';
 import DepartmentUserlist from './Component/Pages/DepartmentHead/Userlist';
 import Contact from './Component/Contact';
 import Module from './Component/ModuleList/Module';
-import Permission from './Component/Permission/Permission';
 import Requireauth from './Component/PrivateRoute/Requireauth';
 import SinglePermission from './Component/Pages/DepartmentHead/SinglePermission';
 import Index from './Component/Modules/ProposalEntry/Index';
+import Permission from './Component/Permission/Permission';
 
 
 
@@ -35,7 +35,7 @@ function App() {
         <Route path='/' element={<Login />}>Login</Route>
         <Route path='/dashboard' element={<Requireauth><Home /></Requireauth>}>Home</Route>
         <Route path='/module' element={<Requireauth><Module /></Requireauth>}>All Module</Route>
-        <Route path='/permission=:id=:name' element={<Requireauth><Permission /></Requireauth>}>Permission</Route>
+        <Route path='/permission/:id/:name' element={<Requireauth><Permission/></Requireauth>}>Permission</Route>
         <Route path='/about' element={<About />}>About</Route>
         <Route path='/contact' element={<Contact />}>Contact</Route>
         <Route path='/user-list' element={<Requireauth><Userlist /></Requireauth>}>All user</Route>
