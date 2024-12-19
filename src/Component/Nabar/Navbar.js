@@ -3,263 +3,149 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/icon/jenith.png";
 import { AiOutlineHome } from "react-icons/ai";
 import { AuthContext } from "../../providers/AuthProvider";
+
 const Navbar = () => {
 
-  const {setLoggedIn} = useContext(AuthContext);
+    const {setLoggedIn} = useContext(AuthContext);
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("UserDetails");
-    setLoggedIn(false);
-    navigate('/');
-  };
-  const userAllInfo = JSON.parse(localStorage.getItem("UserDetails"));
-  const role_id = userAllInfo.ROLE_ID;
-  const location = useLocation();
-  const { pathname } = location;
+    const handleLogout = () => {
+        localStorage.removeItem("UserDetails");
+        setLoggedIn(false);
+        navigate('/');
+    };
 
-  // console.log(role_id);
-  
+    const userAllInfo = JSON.parse(localStorage.getItem("UserDetails"));
+    const role_id = userAllInfo.ROLE_ID;
+    const location = useLocation();
+    const { pathname } = location;  
 
-  return (
-    <div>
-      {/* <!-- Section: Design Block --> */}
-      <section className="mb-0">
-        <nav className="navbar navbar-expand-lg bg-green-500 lg:px-12 shadow-md py-1 relative flex items-center w-full justify-between">
-          <div className="px-6 w-full flex flex-wrap items-center justify-between">
-            <div className="flex items-center">
-              <button
-                className="navbar-toggler border-0 py-3 lg:hidden leading-none text-xl bg-transparent text-white hover:text-white focus:text-white transition-shadow duration-150 ease-in-out mr-2"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContentY"
-                aria-controls="navbarSupportedContentY"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <svg
-                  aria-hidden="true"
-                  focusable="false"
-                  data-prefix="fas"
-                  className="w-5"
-                  role="img"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 448 512"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"
-                  ></path>
-                </svg>
-              </button>
+    return (    
 
-              <img
-                className="w-12  shadow-lg bg-white rounded-full p-1 hidden lg:block"
-                src={logo}
-              />
-              <a className="btn btn-ghost normal-case text-md lg:px-3 text-white font-bold">
-                ZENITH ISLAMI LIFE
-              </a>
+        <div className="navbar bg-green-700 py-0 my-0 sticky top-0">
+
+            <div className="navbar-start flex flex-row gap-2 my-5">
+
+                {/* for mobile device */}
+                <div className="dropdown lg:hidden">
+
+                    <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M4 6h16M4 12h8m-8 6h16" />
+                        </svg>
+                    </div>
+
+                    <ul tabIndex={0} className="menu menu-sm dropdown-content sidemenu">
+                    
+                        {role_id === 0 && (
+
+                            <>
+                                <NavLink to="/dashboard">Home</NavLink>
+                                <NavLink to="/department-head">Module List</NavLink>
+                                <NavLink to="/module-list">Permission</NavLink>
+                                <NavLink to="/permission-user-list">Privilage List</NavLink>
+                                <NavLink to="/module">Module Assign</NavLink>
+                                <NavLink to="/user-list">Department User List</NavLink>
+                            </>                 
+
+                        )}
+
+                        {role_id === 1 && (
+
+                            <>
+                                <NavLink to="/dashboard">Home</NavLink>
+                                <NavLink to="/module">Module List</NavLink>
+                            </>                 
+
+                        )}
+
+                        {role_id === 2 && (
+
+                            <>
+                                <NavLink to="/department-head">Home</NavLink>
+                                <NavLink to="/module-list">Permission</NavLink>
+                                <NavLink to="/permission-user-list">User List</NavLink>
+                            </>                 
+
+                        )}
+
+                        {role_id === 3 && (
+                            <NavLink to="/development">Home</NavLink>
+                        )}
+
+                        {role_id === 4 && (
+                            <NavLink to="/director">Home</NavLink>
+                        )}
+
+                        <NavLink onClick={handleLogout} to="/">Logout</NavLink>
+
+                    </ul>
+
+                </div>
+                {/* for mobile device */}
+
+                <img className="w-12 shadow-lg bg-white rounded-full p-1" src={logo} />
+                <p className="text-lg sm:text-2xl text-white">Zenith Islami Life</p>
+
             </div>
-            <div
-              className="navbar-collapse grow items-center"
-              id="navbarSupportedContentY"
-            >
-              {role_id === 0 && (
-                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
-                  <li className="navitem flex flex-row gap-2">
-                    <AiOutlineHome className="mt-1 text-white mr-1" />{" "}
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/dashboard"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Home
-                    </NavLink>
-                  </li>
 
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/department-head"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Module List
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/module-list"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Access Permission
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/permission-user-list"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Privilage List
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/module"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Module Assign
-                    </NavLink>
-                  </li>
+            <div className="navbar-end hidden lg:flex">
 
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/user-list"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Department User List
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3"
-                      onClick={handleLogout}
-                      to="/"
-                    >
-                      Logout
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+                <ul className="menu menu-horizontal px-1 topmenu">
+                  
+                    {role_id === 0 && (
+                        <>
+                            <NavLink to="/dashboard" className="flex flex-row gap-2" >Home</NavLink>
+                            <NavLink to="/department-head">Module List</NavLink>
+                            <NavLink to="/module-list">Permission</NavLink>
+                            <NavLink to="/permission-user-list">Privilage List</NavLink>
+                            <NavLink to="/module">Module Assign</NavLink>
+                            <NavLink to="/user-list">Department User List</NavLink>
+                        </>
+                    )}
 
-              
-              {role_id === 1 && (
-                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-20">
-                  {/* <li
-                    className={`nav-item flex text-center bg-[#087f23] pl-2  pr-0 mt-1 p-1.5 mr-3 rounded hover:bg-[#005005] ${pathname.includes("dashboard") && "bg-green-800 "
-                      }`}
-                  >
-                    <AiOutlineHome className="mt-1 text-white mr-1" />{" "}
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/dashboard"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Home
-                    </NavLink>
-                  </li> */}
+                    {role_id === 1 && (
+                        <>
+                            <NavLink to="/module">Module List</NavLink>
+                        </>
+                    )}
 
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3 font-weight-bold"
-                      to="/module"
-                      // activeStyle={{ color: "#005005", textDecoration: "none" }}
-                    >
-                      Module List
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3"
-                      onClick={handleLogout}
-                      to="/"
-                    >
-                      Logout
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+                    {role_id === 2 && (
+                        <>
+                            <NavLink to="/department-head" className="flex flex-row gap-2" >Home</NavLink>
+                            <NavLink to="/module-list">Permission</NavLink>
+                            <NavLink to="/permission-user-list">User List</NavLink>
+                        </>
+                    )}
 
-              {role_id === 2 && (
-                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li className="navitem">
-                    <NavLink className="text-white pr-3" to="/department-head">
-                      Home
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink className="text-white pr-3" to="/module-list">
-                      Permission Module
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3"
-                      to="/permission-user-list"
-                    >
-                      User List
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3"
-                      onClick={handleLogout}
-                      to="/"
-                    >
-                      Logout
-                    </NavLink>
-                  </li>
+                    {role_id === 3 && (
+                        <NavLink to="/development" className="flex flex-row gap-2" >Home</NavLink>
+                    )}
+
+                    {role_id === 4 && (
+                        <NavLink to="/director" className="flex flex-row gap-2" >Home</NavLink>
+                    )}
+
+                    <NavLink onClick={handleLogout} to="/">Logout</NavLink>
+                  
                 </ul>
-              )}
-              {role_id === 3 && (
-                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li className="navitem">
-                    <NavLink className="text-white pr-3" to="/development">
-                      Home
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink className="text-white pr-3" to="/contact">
-                      Contact us
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3"
-                      onClick={handleLogout}
-                      to="/"
-                    >
-                      Logout
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
-              {role_id === 4 && (
-                <ul className="navbar-nav mr-auto lg:flex lg:flex-row lg:px-40">
-                  <li className="navitem">
-                    <NavLink className="text-white pr-3" to="/director">
-                      Home
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink className="text-white pr-3" to="/contact">
-                      Contact us
-                    </NavLink>
-                  </li>
-                  <li className="navitem">
-                    <NavLink
-                      className="text-white pr-3"
-                      onClick={handleLogout}
-                      to="/"
-                    >
-                      Logout
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+
             </div>
-            
-          </div>
-        </nav>
-      </section>
 
-    </div>
-  );
+        </div>
+    
+    );
+
 };
 
 export default Navbar;

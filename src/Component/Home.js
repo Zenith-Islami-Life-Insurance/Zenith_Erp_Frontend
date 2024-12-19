@@ -7,6 +7,7 @@ import total_module_icon from "../assets/icon/module.png";
 import department from "../assets/icon/dept_total.png";
 import axios from "axios";
 import { AuthContext } from "../providers/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 
@@ -22,12 +23,20 @@ const Home = () => {
   const [total_module, setTotalModule] = useState("");
   const [total_dept_head, setDeptHead] = useState("");
   const [total_desk_user, setDeskuser] = useState("");
- 
-  //Get from localstorage user_details data
-  // const UserD = JSON.parse(localStorage.getItem("UserDetails"));
-  // console.log(UserD);
-  // const PERSONAL_ID = UserD?.PERSONALID;
-  // const NAME = UserD?.NAME;
+
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(ROLE_ID===1){
+      navigate('/module');
+    }else if(ROLE_ID===2){
+      navigate('/department-head');
+    }else if(ROLE_ID===3){
+      navigate('/development');
+    }else if(ROLE_ID===4){
+      navigate('/director');
+    }
+  },[ROLE_ID])
 
   // Department Head Details
   const departmentHeadList = async () => {

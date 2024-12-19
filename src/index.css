@@ -1,11 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
+  @apply font-urbanista;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -15,19 +16,22 @@ code {
     monospace;
 }
 
-.navitem{
-  @apply p-4 bg-green-600 text-white rounded-xl mr-2
+.topmenu a{
+  @apply mr-4 bg-green-500 text-white px-5 py-3 rounded-xl font-bold
+}
+.topmenu a.active{
+  @apply bg-white text-green-600
 }
 
-.navitem a{
-  @apply p-0 m-0
+.sidemenu{
+  @apply z-[1] mt-3 w-52 p-2 shadow bg-green-700 flex flex-col justify-start items-start gap-5
 }
 
-.navitem a:hover{
-  @apply text-black
+.sidemenu a{
+  @apply text-gray-300
 }
 
-.active{
-  @apply underline text-fuchsia-300
+.sidemenu a.active{
+  @apply text-white underline
 }
 
